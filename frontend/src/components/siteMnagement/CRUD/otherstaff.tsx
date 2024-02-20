@@ -19,12 +19,12 @@ const Create:React.FC = () => {
         email:'',
         password:'timetable',
         username:'',
-        program:null,
-        faculty: null,
-        department:null,
+        program:[],
+        faculty: [],
+        department:[],
         status: true,
         group:null,
-        user_permissions:null
+        user_permissions:[]
 
     })
     useEffect(()=>{
@@ -223,7 +223,7 @@ const Create:React.FC = () => {
                         className="form-select form-select-lg mb-2"  
 
                         multiple
-                    required>
+                    >
                       <option value="">Select a department(s)</option>
                       {
                           depsD?.map((b: any)=>(
@@ -240,7 +240,7 @@ const Create:React.FC = () => {
                         onChange={handleChange} 
                         className="form-select form-select-lg mb-2" 
                         multiple 
-                    required>
+                    >
                       <option value="">Select a program</option>
                       {
                           progrmsD?.map((b: any)=>(
@@ -268,36 +268,34 @@ const Create:React.FC = () => {
         </>
     )
 }
-/*
+
 const Edit:React.FC<{id:number}> =(id) =>{
     const [requestStatus, setRequestStatus] = useState(0)
     const [showEdit, setShowEdit] = useState(true)
     const titles = useSelector((state: any)=> state.titles)
     const [perms, setPerms] = useState([])
     const [grps, setGrps] = useState([])
-    const [formData, setFormData] = useState<LecturerInt>({
+    const [formData, setFormData] = useState<OtherStaffInt>({
         id: 0,
         first_name:"",
         last_name:'',
         email:'',
         password:'timetable',
         username:'',
-        title:0,
-        lecturerid: '',
         program:null,
         faculty: null,
         department:null,
-        is_active: true,
+        status: true,
         group:null,
         user_permissions:null
     })
     const [currentId, setCurrentId] = useState(id.id);
     useEffect(()=>{
-        document.title = 'Edit Lecturer'
+        document.title = 'Edit Other Staff'
     },[])
 
     useEffect(()=>{
-        axiosInstance.get(`/lecturer/${id.id}/`)
+        axiosInstance.get(`/otherstaff/${id.id}/`)
         .then((res:any)=>{
         setShowEdit(true)
         setFormData(res.data)
@@ -358,7 +356,7 @@ const Edit:React.FC<{id:number}> =(id) =>{
     const handleSubmit =async  (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
-            const response = await axiosInstance.put(`lecturer/${id.id}/`,formData)
+            const response = await axiosInstance.put(`otherstaff/${id.id}/`,formData)
             setRequestStatus(response.status)
             setShowEdit(false)
         } catch (error:any) {
@@ -415,32 +413,6 @@ const Edit:React.FC<{id:number}> =(id) =>{
                     name='email'  
                     placeholder="Eg: Prof" 
                     value={formData.email}
-                    onChange={handleChange}
-                    required
-                  />
-                  <label htmlFor="title">Title:</label>
-                  <select 
-                    name="title" 
-                    id="title" 
-                    onChange={handleChange} 
-                    className="form-select form-select-lg mb-2" 
-                  >
-                    <option value="">Select a tilte</option>
-                    {
-                        titles.map((title: any)=>(
-                            <option key={title?.id} value={title?.id} selected={formData.title === title?.id}>
-                                {title.name} ({title.shortname})
-                            </option>
-                        ))
-                    }
-                  </select>
-                  <label htmlFor="lecturerid"  className="form-label">Lecturer ID</label>
-                  <input 
-                    type="text" 
-                    className="form-control"
-                    name='lecturerid'  
-                    placeholder="Lecturer Id"
-                    value={formData.lecturerid} 
                     onChange={handleChange}
                     required
                   />
@@ -526,7 +498,7 @@ const Edit:React.FC<{id:number}> =(id) =>{
                         className="form-select form-select-lg mb-2"  
 
                         multiple
-                    required>
+                    >
                       <option value="">Select a department(s)</option>
                       {
                           depsD?.map((b: any)=>(
@@ -543,7 +515,7 @@ const Edit:React.FC<{id:number}> =(id) =>{
                         onChange={handleChange} 
                         className="form-select form-select-lg mb-2" 
                         multiple 
-                    required>
+                    >
                       <option value="">Select a program</option>
                       {
                           progrmsD?.map((b: any)=>(
@@ -558,9 +530,9 @@ const Edit:React.FC<{id:number}> =(id) =>{
                         type="checkbox" 
                         role="switch" 
                         id="flexSwitchCheckChecked" 
-                        name="is_active"
-                        checked = {formData.is_active}
-                        onChange={()=>{setFormData({...formData,is_active : !formData.is_active})}}
+                        name="status"
+                        checked = {formData.status}
+                        onChange={()=>{setFormData({...formData,status : !formData.status})}}
                     />
                     <label className="form-check-label" htmlFor="flexSwitchCheckChecked">Enable/Disable</label>
                   </div>
@@ -580,7 +552,7 @@ const Edit:React.FC<{id:number}> =(id) =>{
         </>
     )
 }
-*/
+
 const List:React.FC = () => {
     const [data, setData] = useState<any[]>([]);
     const [isLoading, setIsloading] = useState(true)
@@ -743,7 +715,7 @@ const List:React.FC = () => {
         </table>
         {<RequestHandler status={requestHandler}/>}
         
-        {/* {edit !==0? (<Edit id={edit}/>):''} */}
+        {edit !==0? (<Edit id={edit}/>):''}
         </>)
         
     )

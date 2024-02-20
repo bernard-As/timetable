@@ -305,7 +305,7 @@ class OtherStaffViewSet(viewsets.ModelViewSet):
     serializer_class = OtherStaffSerializer
 
     def create(self, request, *args, **kwargs):
-        faculties = [Faculty.objects.get(id=fac) for fac in request.data['faculty']if fac!='']
+        faculties = [Faculty.objects.get(id=fac) for fac in request.data.get('faculty', []) if fac !='']
         department = [Department.objects.get(id=dep) for dep in request.data['department']if dep!='']
         program = [Program.objects.get(id=prog) for prog in request.data['program']if prog!='']
         userData = {
@@ -328,10 +328,12 @@ class OtherStaffViewSet(viewsets.ModelViewSet):
         user_student.department.set(department)
         user_student.program.set(program)
         user_student.save()
-        student_group = Group.objects.get(id=request.data['group'])
-        user_student.groups.add(student_group)
+        if  request.data['group'] is not None:
+            student_group = Group.objects.get(id=request.data['group'])
+            user_student.groups.add(student_group)
         request.data['user'] = user_student.id # type: ignore
-        return Response(200)
+        del request.data['password']
+        request.data['stafftype'] = 'dfew'
         return super().create(request, *args, **kwargs)
     
     def list(self, request, *args, **kwargs):
@@ -384,7 +386,12 @@ class OtherStaffViewSet(viewsets.ModelViewSet):
         item['last_name'] = related_user.last_name
         item['email'] = related_user.email
         item['status'] = related_user.is_active
-        item['group'] = GroupSerializer(related_user.groups.all()[0]).data['id'] # type: ignore
+        groups = related_user.groups.all()
+        if groups:
+            item['group'] = GroupSerializer(groups[0]).data.get('id')  # Use .get() to avoid potential KeyError
+        else:
+            item['group'] = None  # Or handle the case when there are no groups in a way that fits your requirements
+
         item['user_permissions'] = [GroupSerializer(seri).data for  seri in related_user.user_permissions.all()]
         item['faculty']=[FacultySerializer(fac).data['id'] for fac in related_user.faculty.all()] # type: ignore
         item['department']=[DepartmentSerializer(dep).data['id'] for dep in related_user.department.all()] # type: ignore

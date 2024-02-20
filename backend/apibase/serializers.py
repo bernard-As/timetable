@@ -100,6 +100,7 @@ class StudentSerializer(serializers.ModelSerializer):
     
 class OtherStaffSerializer(serializers.ModelSerializer):
     # password = serializers.CharField(read_only=True)
-    # id=serializers.IntegerField(read_only=True)   class Meta:
+    # id=serializers.IntegerField(read_only=True)   
+    class Meta:
         model = OtherStaff
         fields = '__all__'

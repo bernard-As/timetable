@@ -10,7 +10,7 @@ from rest_framework.views import APIView
 from django.contrib.auth.hashers import make_password
 from django.core.serializers import serialize
 from rest_framework.renderers import JSONRenderer, BrowsableAPIRenderer
-
+from rest_framework import status
 from rest_framework.decorators import api_view, renderer_classes
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -103,6 +103,10 @@ class RoomViewSet(viewsets.ModelViewSet):
 class FacultyViewSet(viewsets.ModelViewSet):
     queryset = Faculty.objects.all()
     serializer_class = FacultySerializer
+
+class ActivityTypeViewSet(viewsets.ModelViewSet):
+    queryset = ActivityType.objects.all()
+    serializer_class = ActivitytypeSerializer
 
 class DepartmentViewSet(viewsets.ModelViewSet):
     queryset = Department.objects.all()
@@ -287,7 +291,6 @@ class StudentViewSet(viewsets.ModelViewSet):
         related_user.save()
         return super().update(request,*args,**kwargs)
 
-
     def modify_data(self, item):
         related_user = Users.objects.get(id=item["user"])
         item['first_name'] = related_user.first_name
@@ -300,6 +303,18 @@ class StudentViewSet(viewsets.ModelViewSet):
         item['department']=[DepartmentSerializer(dep).data['id'] for dep in related_user.department.all()] # type: ignore
         item['program']=[ProgramSerializer(prog).data['id'] for prog in related_user.program.all()] # type: ignore
         return item
+
+    def get_short_list(self):
+        data = Student.objects.all()
+        short_data = []
+        for item in data:
+            short_data.append({
+                'first_name': item.user.first_name,
+                'last_name': item.user.last_name,
+                'user': item.user.id,
+                'studentId': item.studentId,
+            })
+        return Response({'users':short_data},status=status.HTTP_200_OK) 
 class OtherStaffViewSet(viewsets.ModelViewSet):
     queryset = OtherStaff.objects.all()
     serializer_class = OtherStaffSerializer
@@ -379,7 +394,6 @@ class OtherStaffViewSet(viewsets.ModelViewSet):
         related_user.save()
         return super().update(request,*args,**kwargs)
 
-
     def modify_data(self, item):
         related_user = Users.objects.get(id=item["user"])
         item['first_name'] = related_user.first_name
@@ -397,4 +411,13 @@ class OtherStaffViewSet(viewsets.ModelViewSet):
         item['department']=[DepartmentSerializer(dep).data['id'] for dep in related_user.department.all()] # type: ignore
         item['program']=[ProgramSerializer(prog).data['id'] for prog in related_user.program.all()] # type: ignore
         return item
-    
+
+class CourseViewSet(viewsets.ModelViewSet):
+    queryset = Course.objects.all()
+    serializer_class = CourseSerializer
+    def create(self, request, *args, **kwargs):
+        try:
+            request.data['user'] = Users.objects.get(user=User.objects.get(id=request.user.id))
+        except:
+            pass
+        return super().create(request, *args, **kwargs)

@@ -90,3 +90,25 @@ export interface OtherStaffInt {
     group: any
     user_permissions: any
 }
+
+export interface CourseInt {
+    id: number,
+    code: string
+    title: string
+    description: string
+    type: string[]
+    capacity:number
+    prerequisites:number[]|null
+    lecturer:number[]
+    assistant:number
+    lecturer_assistant:number
+    duration:string
+    merged_with:number[]|null
+    extra_session_of:number[]|null
+    max_capacity:number
+    program:number[] | null
+    faculty:number[] | null
+    department:number[] | null
+    is_elective: boolean
+    status: boolean
+}

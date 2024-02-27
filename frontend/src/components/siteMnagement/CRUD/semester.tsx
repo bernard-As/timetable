@@ -52,7 +52,7 @@ const Create:React.FC = () => {
     };
     const years = [] 
     const nowYear = new Date().getFullYear()
-    for (let i = nowYear; i < nowYear+5; i++) {years.push(<option key={i} value={i}>{i}</option>);}
+    for (let i = nowYear; i < nowYear+5; i++) {years.push(<option key={i} value={i}>{i}-{i-1}</option>);}
     return(
         <>
         {
@@ -101,7 +101,7 @@ const Create:React.FC = () => {
                         role="switch" 
                         id="flexSwitchCheckChecked" 
                         name="status"
-                        checked = {formData.status}
+                        checked
                         defaultChecked
                         onChange={()=>{setFormData({...formData,status : !formData.status})}}
                     />

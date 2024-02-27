@@ -6,6 +6,11 @@ from django.contrib.auth.models import User,Group,Permission
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField()
     password = serializers.CharField(write_only=True, required = False)
+    
+class ActivitytypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ActivityType
+        fields = '__all__'
 
 class TitleSerializer(serializers.ModelSerializer):
     id=serializers.IntegerField(read_only=True)
@@ -103,4 +108,9 @@ class OtherStaffSerializer(serializers.ModelSerializer):
     # id=serializers.IntegerField(read_only=True)   
     class Meta:
         model = OtherStaff
+        fields = '__all__'
+    
+class CourseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Course
         fields = '__all__'

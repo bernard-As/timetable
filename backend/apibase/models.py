@@ -9,7 +9,6 @@ from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
 
 
-
 class Title(models.Model):
     """Possible titles of users"""
     name = models.CharField(max_length=101)
@@ -56,7 +55,7 @@ class Semester(models.Model):
     SEMESTER_CHOICES = (('SPRING', 'Spring'),
                         ('FALL','Fall'),
                         ('SUMMER', 'Summer'))
-    year = models.IntegerField()
+    year = models.CharField(max_length=10,default="2023-2024")
     season = models.CharField(max_length=6, choices=SEMESTER_CHOICES)
     status = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -187,59 +186,43 @@ class OtherStaff(models.Model):
     stafftype = models.CharField(max_length=100,null=True,blank=True) # e.g., administrator, visitor etc.
     created_at = models.DateTimeField(auto_now_add=True)
 
+class ActivityType(models.Model):
+    """Type of activities for each course"""
+    name = models.CharField(max_length=100)
+    description = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
 class Course(models.Model):
     """A course offered by the university"""
-    COURSE_TYPES = [
-        ("LEC", "Lecture"),
-        ("TUT", "Tutorial"),
-        ("LAB", "Lab"),
-        ("SEM", "Seminar"),
-        ("STU", "Studio"),
-        ("WOR", "Workshop")
-        ]
-    code = models.CharField(max_length=30)
+    code = models.CharField(max_length=30, unique=True)
     title = models.TextField()
     description = models.TextField(blank=True)
-    type = models.CharField(max_length=4, choices=COURSE_TYPES)
-    capacity = models.PositiveSmallIntegerField()
-    waitinglist = models.PositiveSmallIntegerField(default=0)# when student passes the course
-    status = models.BooleanField(default=True)
-    prerequisites = models.ManyToManyField('self', blank=True)
-    lecturer = models.ManyToManyField(Lecturer, related_name="lecture")
-    assistant = models.ManyToManyField(Student, related_name="Assisting",blank=True)
-    lecturer_assistant = models.ManyToManyField(Lecturer,blank=True,related_name="Lecturer_Assisting")
-    duration = models.TextField(null=True)
-    merged_with = models.ManyToManyField('self', blank=True) # foreign key of the main course where it is merged
-    extra_session_of = models.ManyToManyField('self', blank=True)# when there are some extra session that should be linked to the main session
-    # registeredstudents = models.ManyToManyField(Student, through='Enrollment')
+    # waitinglist = models.PositiveSmallIntegerField(default=0)# when student passes the course
+    prerequisites = models.ManyToManyField('self', blank=True,)
     otherstaff = models.ManyToManyField(OtherStaff, blank=True)
-    expected_capacity = models.SmallIntegerField(default=0)
-    program = models.ForeignKey(Program, on_delete=models.CASCADE, null=True, blank=True)
-    departemnt = models.ForeignKey(Department, on_delete=models.CASCADE, null=True, blank=True)
-    faculty = models.ForeignKey(Faculty, on_delete=models.CASCADE, null=True, blank=True)
-    is_elective = models.BooleanField(default=False)
+    course_semester = models.ManyToManyField(CourseSemester, blank=True)
+    status = models.BooleanField(default=True)
+    user = models.ForeignKey(Users, on_delete = models.SET_NULL, blank=True,null=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    # class Meta:
-    #     ordering = ['number']
-    #     def __str__(self):
-    #         return "%s %s (%s)" % (self.number, self.title, self.type)
-    #     # Enrollment model represents a student's enrollment in a course
-    #     @property
-    #     def numenrolled(self):
-    #         return Enrollment.objects.filter(course=self).count()
-        # A many-to-many relationship between Students and Courses that includes additional information about each association
-        # A many-to-many relationship between Students and Courses that allows for modifications to who can access what.
-        # A many-to-many relationship between Students and Courses that includes additional information about each association
-        # A many-to-many relationship between Students and Courses that allows for modifications to who can register for which courses
-        # A many-to-many relationship between Students and Courses that allows for
-        # adding/removing courses from an individual Student object
-# class Enrollment(models.Model):
-#     STATUS = [("W","Waiting List"),("E","Enrolled")]
-#     student = models.ForeignKey(Student)
-#     course = models.ForeignKey(Course)
-#     status = models.CharField(max_length=1,choices=STATUS)
-#     created_at = models.DateField(auto_now_add=True)
-      
+
+class Coursegroup(models.Model):
+    """Groups for each course """
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    extra_session_of = models.ManyToManyField('self', blank=True)# when there are some extra session that should be linked to the main session
+    group_number = models.PositiveSmallIntegerField(default=1)
+    lecturer = models.ForeignKey(Lecturer,on_delete=models.SET_NULL,null=True)
+    assistant = models.ForeignKey(Student,blank=True,on_delete=models.SET_NULL,null=True)
+    lecturer_assistant = models.ForeignKey(Lecturer,blank=True,related_name="Lecturer_Assisting",on_delete=models.SET_NULL,null=True)
+    merged_with = models.ManyToManyField('self', blank=True) # foreign key of the main course where it is merged
+    duration = models.TextField(null=True)
+    current_capacity = models.PositiveSmallIntegerField(default=0)
+    max_capacity = models.SmallIntegerField(default=0)
+    activitytype = models.ManyToManyField(ActivityType)
+    # registeredstudents = models.ManyToManyField(Student, through='Enrollment')
+    status = models.BooleanField(default=True)
+    is_elective = models.BooleanField(default=False)
+    description = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
 
 
@@ -281,6 +264,7 @@ class Buildingpref(models.Model):
     preference = models.ForeignKey(Preference,on_delete=models.CASCADE)
     building = models.ForeignKey(Building,on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_created=True, default=timezone.now)
+ 
 class Floorpref(models.Model):
     """Preference for a specific Floor in the System"""
     preference = models.OneToOneField(Preference,on_delete=models.CASCADE)
@@ -340,6 +324,16 @@ class AdminOperations(models.Model):
             ("edit_preferences_adminoperationsP","Can edit preferences of other users")
         ]
 @receiver(post_migrate)
+def create_predefined_instances(sender, **kwargs):
+    ActivityType.objects.get_or_create(name='Classroom Lecture', description="A regular lecture In a regular classroom.")
+    ActivityType.objects.get_or_create(name='Classroom Tutorial', description="A tutorial session.")
+    ActivityType.objects.get_or_create(name='Studio Lecture', description="A regular lecture In a regular classroom.")
+    ActivityType.objects.get_or_create(name='Studio Tutorial', description="A tutorial session.")
+    ActivityType.objects.get_or_create(name='Computer Laboratory Lecture', description="A tutorial session.")
+    ActivityType.objects.get_or_create(name='Computer Laboratory Tutorial', description="A tutorial session.")
+    ActivityType.objects.get_or_create(name='Seminar', description="Seminar session.")
+    ActivityType.objects.get_or_create(name='Seminar', description="Seminar session.")
+    ActivityType.objects.get_or_create(name='Workshop', description="Workshop session.")
 def create_permissions(sender, **kwargs):
     if sender.name == 'api':
         app_config = apps.get_app_config(sender.name)
@@ -347,6 +341,7 @@ def create_permissions(sender, **kwargs):
 
 @receiver(post_migrate)
 def create_groups_and_permissions(sender, **kwargs):
+
     # Create user groups
     site_admin, created = Group.objects.get_or_create(name='Administration of the site (Timetable managers)')
     rectorate, created = Group.objects.get_or_create(name='Accessing full timetable without editing in the main')

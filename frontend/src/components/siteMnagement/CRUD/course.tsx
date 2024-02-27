@@ -4,7 +4,7 @@ import RequestHandler from "../../RequestHandler"
 import Swal from "sweetalert2"
 import {useSelector } from "react-redux"
 import Alert from "../../alerts/normalAlert"
-import { DepartmentInt, FacultyInt, LecturerInt, OtherStaffInt, ProgramInt } from "../../interfaces"
+import { CourseInt, DepartmentInt, FacultyInt, LecturerInt, OtherStaffInt, ProgramInt } from "../../interfaces"
 
 
 const Create:React.FC = () => {
@@ -12,23 +12,9 @@ const Create:React.FC = () => {
     const [perms, setPerms] = useState([])
     const [grps, setGrps] = useState([])
     const [requestStatus, setRequestStatus] = useState(0)
-    const [formData, setFormData] = useState<OtherStaffInt>({
-        id: 0,
-        first_name:"",
-        last_name:'',
-        email:'',
-        password:'timetable',
-        username:'',
-        program:[],
-        faculty: [],
-        department:[],
-        status: true,
-        group:null,
-        user_permissions:[]
-
-    })
+    const [formData, setFormData] = useState<any>()
     useEffect(()=>{
-        document.title = 'Other Staff Setting'
+        document.title = 'course Setting'
     })
     useEffect(()=>{
         setTimeout(() => {
@@ -60,13 +46,10 @@ const Create:React.FC = () => {
       }
     };
 
-
     const handleSubmit =async  (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
-            formData.username = formData.first_name.replace(' ','')+formData.last_name.replace(' ','')
-            console.log(formData)
-            const response = await axiosInstance.post('otherstaff/',formData)
+            const response = await axiosInstance.post('course/',formData)
             setRequestStatus(response.status)
         } catch (error:any) {
             try{
@@ -92,6 +75,11 @@ const Create:React.FC = () => {
     const [faculties, setFaculties] = useState<FacultyInt[]| null>(null)
     const [progrms, setProgrms] = useState<ProgramInt[]| null>(null)
     const [progrmsD, setProgrmsD] = useState<ProgramInt[]| null>(null)
+    const [lects, setLects] = useState<LecturerInt[]| null>(null)
+    const [stds, setStds] = useState<any>(null)
+    const [course_sem, seetCourse_sem] = useState<any>(null)
+    const [crs, setCrs] = useState<any>(null)
+    const [activitytype, setActivitytype] = useState<any>(null)
     useEffect(()=>{
         const getFac = async() =>{
             try {
@@ -108,6 +96,26 @@ const Create:React.FC = () => {
                 const response2 = await axiosInstance.get('faculty/')
                 .then((res)=>{
                     setFaculties(res.data)
+                })
+                const response3 = await axiosInstance.get('lecturer/')
+                .then((res)=>{
+                    setLects(res.data)
+                })
+                const response4 = await axiosInstance.get('student/')
+                .then((res)=>{
+                    setStds(res.data)
+                })
+                const response5 = await axiosInstance.get('coursesemester/')
+                .then((res)=>{
+                    seetCourse_sem(res.data)
+                })
+                const response6 = await axiosInstance.get('course/')
+                .then((res)=>{
+                    setCrs(res.data)
+                })
+                const response7 = await axiosInstance.get('activitytype/')
+                .then((res)=>{
+                    setActivitytype(res.data)
                 })
             } catch (error) {
                 
@@ -126,59 +134,126 @@ const Create:React.FC = () => {
         }
         permissionFetcher()
     },[])
-    return(
-        <>
-        {
-            requestStatus!==0 && (
-                requestStatus === 2?<Alert title="Lecturer Id Already exist"  icon={'info'}/>:
-                <RequestHandler status={requestStatus}/>
-            )
+    const [number_of_group, setNumber_Of_group] = useState(1)
+    const [existing_group, setExisting_group] = useState<any>([]);
+    useEffect(()=>{
+        for(let i=0; i<number_of_group; i++){
+            
+            if(i >= existing_group.lenght){
+                setExisting_group(existing_group.filter((val:any, index:number)=>index !== i ))
+            }else{
+                if(!existing_group[i]){
+                    existing_group.push([])
+                }
+            }
         }
-        <div className='container mt-5  d-flex justify-content-center card px-5 py-5' >
-            <form className="row g-3" onSubmit={handleSubmit} autoComplete="off">
-                <div className="col-md-6">
-                <label htmlFor="validationCustom01" className="form-label">First Name</label>
-                  <input 
-                    type="text" 
-                    className="form-control" 
-                    name="first_name" 
-                    placeholder="Eg: Robert" 
-                    value={formData.first_name}
-                    onChange={handleChange}
-                    required
-                  />
-                  <label htmlFor="validationCustom01"  className="form-label">Last Name</label>
-                  <input 
-                    type="text" 
-                    className="form-control"  
-                    name='last_name'  
-                    placeholder="Eg: Doe" 
-                    value={formData.last_name}
-                    onChange={handleChange}
-                    required
-                  />
-                  <label htmlFor="validationCustom01"  className="form-label">Email</label>
-                  <input 
-                    type="email" 
-                    className="form-control"  
-                    name='email'  
-                    placeholder="Eg: Robert.Doe@ee.edu" 
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                  />
-                  <label htmlFor="group">Select a group:</label>
+    },[number_of_group])
+    const handleChange2 = (key: string) => {
+        return (e: InputChangeEvent | SelectChangeEvent | TextareaChangeEvent) => {
+          const { name, value, type } = e.target;
+      
+          if (type === 'checkbox') {
+            const isChecked = (e.target as HTMLInputElement).checked;
+            // Handle checkbox input
+            setFormData((prevFormData:any) => ({
+              ...prevFormData,
+              [key]: { ...prevFormData[key], [name]: isChecked }
+            }));
+          } else if (type === 'select-multiple') {
+            // Handle multiple select
+            const selectedOptions = Array.from((e.target as HTMLSelectElement).options)
+              .filter(option => option.selected)
+              .map(option => option.value);
+            setFormData((prevFormData:any) => ({
+              ...prevFormData,
+              [key]: { ...prevFormData[key], [name]: selectedOptions }
+            }));
+          } else {
+            // Handle other input types
+            setFormData((prevFormData:any) => ({
+              ...prevFormData,
+              [key]: { ...prevFormData[key], [name]: value }
+            }));
+          }
+        };
+      };
+      
+      
+    const groupContent:any = (key:any) =>{
+        return(
+            (<>
+                <label htmlFor="group">Select a course activities type (s):</label>
                   <select 
-                        name="group" 
-                        id="group"
-                        onChange={ handleChange} 
+                        name="type" 
+                        id="type"
+                        onChange={ handleChange2(key)} 
+                        className="form-select form-select-lg mb-2" 
+                        multiple
+                    >
+                      <option value="">Select a Type</option>
+                      {
+                          activitytype?.map((b: any)=>(
+                            b?.id&&
+                            <option key={b?.id} value={b?.id} selected={formData?.type?.includes(b?.id)}>
+                                {b.name}
+                            </option>
+                          ))
+                      }
+                    </select>
+                  <label htmlFor="max_capacity"  className="form-label">Max  Capacity (Number of Students)</label>
+                  <input 
+                    type="number" 
+                    className="form-control"  
+                    name='max_capacity'  
+                    id='max_capacity'
+                    placeholder="Max Number of student for this course" 
+                    value={formData?.max_capacity}
+                    onChange={handleChange2(key)}
+                  />
+                  <label htmlFor="lecturer">Select a Lecturer:</label>
+                  <select 
+                        name="lecturer" 
+                        id="lecturer"
+                        onChange={ handleChange2(key)} 
                         className="form-select form-select-lg mb-2" 
                     >
-                      <option value="">Select a Group</option>
+                      <option value="">Select a Lecturer</option>
                       {
-                          grps?.map((b: any)=>(
-                            <option key={b?.id} value={b?.id} selected={formData.group === b?.id}>
-                                {b.name}
+                          lects?.map((b: any)=>(
+                            <option key={b?.id} value={b?.id} selected={formData?.lecturer === b?.id}>
+                                {b.first_name} {b.last_name}
+                            </option>
+                          ))
+                      }
+                    </select>
+                    <label htmlFor="lecturer_assistant">Select a Lecturer Assistant:</label>
+                  <select 
+                        name="lecturer_assistant" 
+                        id="lecturer_assistant"
+                        onChange={ handleChange2(key)} 
+                        className="form-select form-select-lg mb-2" 
+                    >
+                      <option value="">Select a Lecturer Assistant</option>
+                      {
+                          lects?.map((b: any)=>(
+                            <option key={b?.id} value={b?.id} selected={formData?.lecturer_assistant === b?.id}>
+                                {b.first_name} {b.last_name}
+                            </option>
+                          ))
+                      }
+                    </select>
+                  <label htmlFor="assistant">Select an Assistant (optional):</label>
+                  <select 
+                        name="assistant" 
+                        id="assistant"
+                        onChange={ handleChange2(key)} 
+                        className="form-select form-select-lg mb-2" 
+                    >
+                      <option value="">Select an assistant</option>
+                      {
+                          stds?.map((b: any)=>(
+                            <option key={b?.id} value={b?.id} selected={formData?.assistant === b?.id}>
+                                {b.first_name} {b.last_name}
                             </option>
                           ))
                       }
@@ -189,7 +264,7 @@ const Create:React.FC = () => {
                         id="faculty"
                         onChange={
                             (event)=>{
-                                handleChange(event)
+                                handleChange2(key)(event)
                                 let val:any = event.target.value
                                 const filteredData:any = deps?.filter((d) => d.faculty == val);
                                 setDepsD(filteredData);
@@ -214,7 +289,7 @@ const Create:React.FC = () => {
                         id="department" 
                         onChange={
                             (event)=>{
-                                handleChange(event)
+                                handleChange2(key)(event)
                                 let val:any = event.target.value 
                                 const filteredData:any = progrms?.filter((p) => p.department == val);
                                 setProgrmsD(filteredData);
@@ -237,7 +312,7 @@ const Create:React.FC = () => {
                     <select 
                         name="program" 
                         id="program" 
-                        onChange={handleChange} 
+                        onChange={handleChange2(key)} 
                         className="form-select form-select-lg mb-2" 
                         multiple 
                     >
@@ -250,17 +325,151 @@ const Create:React.FC = () => {
                           ))
                       }
                     </select>
+                    <label htmlFor="department">Select a Semester(s):</label>
+                    <select 
+                        name="program" 
+                        id="program" 
+                        onChange={handleChange2(key)} 
+                        className="form-select form-select-lg mb-2" 
+                        multiple 
+                    >
+                      <option value="">Select a program</option>
+                      {
+                          progrmsD?.map((b: any)=>(
+                              <option key={b?.id} value={b?.id} selected={formData?.program?.includes(b?.id)}>
+                                  {b.shortname}: {b.name}
+                              </option>
+                          ))
+                      }
+                    </select>
+                  <label htmlFor="duration"  className="form-label">Duration</label>
+                  <input 
+                    type="text" 
+                    className="form-control" 
+                    name='duration'  
+                    id='duration'
+                    placeholder="Eg: 2  2*2 2*2*2" 
+                    value={formData?.duration}
+                    onChange={handleChange2(key)}
+                  />
+                  <label htmlFor="course">Select the Merged Courses:</label>
+                    <select 
+                        name="merged_with" 
+                        id="merged_with"
+                        onChange={handleChange2(key) }
+                        className="form-select form-select-lg mb-2" 
+                        multiple
+                    >
+                      <option value="">Select the Merged Courses:</option>
+                      {
+                          crs?.map((b: any)=>(
+                            <option key={b?.id} value={b?.id} selected={formData?.merged_with?.includes(b?.id)}>
+                                {b.code}: {b.title}
+                            </option>
+                          
+                          ))
+                      }
+                    </select>
+                    <label htmlFor="extra_session_of">Extra Session Of:</label>
+                    <select 
+                        name="extra_session_of" 
+                        id="extra_session_of"
+                        onChange={handleChange}
+                        className="form-select form-select-lg mb-2" 
+                        multiple
+                    >
+                      <option value="">Select the Merged Courses:</option>
+                      {
+                          crs?.map((b: any)=>(
+                            <option key={b?.id} value={b?.id} selected={formData?.extra_session_of?.includes(b?.id)}>
+                                {b.code}: {b.title}
+                            </option>
+                          
+                          ))
+                      }
+                    </select>
+                    <label htmlFor="extra_session_of">Status</label>
                   <div className="form-check form-switch">
                     <input className="form-check-input" 
                         type="checkbox" 
                         role="switch" 
                         id="flexSwitchCheckChecked" 
                         name="status"
-                        checked = {formData.status}
-                        onChange={()=>{setFormData({...formData,status : !formData.status})}}
+                        checked = {formData[key]?.status}
+                        onChange={()=>{setFormData({...formData[key],status : !formData[key].status})}}
                     />
                     <label className="form-check-label" htmlFor="flexSwitchCheckChecked">Enable/Disable</label>
                   </div>
+                    <label htmlFor="extra_session_of">Is Elective </label>
+                  <div className="form-check form-switch">
+                    <input className="form-check-input" 
+                        type="checkbox" 
+                        role="switch" 
+                        id="flexSwitchCheckChecked" 
+                        name="is_elective"
+                        checked = {formData[key]?.is_elective}
+                        onChange={()=>{setFormData({...formData[key],is_elective : !formData[key].is_elective})}}
+                    />
+                    <label className="form-check-label" htmlFor="flexSwitchCheckChecked">Enable/Disable</label>
+                  </div></>)
+        )
+    }
+    return(
+        <>
+        {
+            requestStatus!==0 && (
+                <RequestHandler status={requestStatus}/>
+            )
+        }
+        <div className='container mt-5  d-flex justify-content-center card px-5 py-5' >
+            <form className="row g-3" onSubmit={handleSubmit} autoComplete="off">
+                <div className="col-md-6">
+                <label htmlFor="code" className="form-label">Code</label>
+                  <input 
+                    type="text" 
+                    className="form-control" 
+                    name="code" 
+                    placeholder="ENGL001" 
+                    value={formData?.code}
+                    onChange={handleChange}
+                    required
+                  />
+                  <label htmlFor="title"  className="form-label">Title</label>
+                  <input 
+                    type="text" 
+                    className="form-control"  
+                    name='title'  
+                    placeholder="English for beginners" 
+                    value={formData?.title}
+                    onChange={handleChange}
+                    required
+                  />
+                <label htmlFor="extra_session_of">Desciption</label>
+                  <div className="form-floating">
+                    <textarea className="form-control" 
+                        name = 'description'   
+                        placeholder="Leave a Description Here"
+                        value = {formData?.description}
+                        onChange={handleChange} 
+                        id="floatingTextarea"
+                    >
+                 
+                    </textarea>
+                    <label htmlFor="floatingTextarea">Description</label>
+                  </div>
+                  <label htmlFor="number_of_group"  className="form-label">Enter the number of group</label>
+                  <input 
+                    type="number" 
+                    className="form-control"  
+                    name='number_of_group'  
+                    placeholder="Enter the number of group" 
+                    onChange={(event)=>{
+                        let val = event?.target.value as unknown as number
+                        setNumber_Of_group(val)
+                    }}
+                    required
+                  /> 
+
                   <button type="submit" className="btn btn-outline-primary btn-lg mt-2 "> Add</button>
                 </div>
             </form>
@@ -268,7 +477,7 @@ const Create:React.FC = () => {
         </>
     )
 }
-
+/*
 const Edit:React.FC<{id:number}> =(id) =>{
     const [requestStatus, setRequestStatus] = useState(0)
     const [showEdit, setShowEdit] = useState(true)
@@ -552,7 +761,7 @@ const Edit:React.FC<{id:number}> =(id) =>{
         </>
     )
 }
-
+*/
 const List:React.FC = () => {
     const [data, setData] = useState<any[]>([]);
     const [isLoading, setIsloading] = useState(true)
@@ -578,7 +787,7 @@ const List:React.FC = () => {
         }
         setData([])//to remove in production mode
 
-        axiosInstance.get('/otherstaff/')
+        axiosInstance.get('/course/')
         .then((res:any)=>{
             setData([...data, ...res.data])
             setIsloading(false)
@@ -629,7 +838,7 @@ const List:React.FC = () => {
     useEffect(()=>{
         setTimeout(() => { 
             if(edit!==0){
-                axiosInstance.get('/otherstaff/')
+                axiosInstance.get('/course/')
                 .then((res:any)=>{
                     if(JSON.stringify(dataRef.current)  !== JSON.stringify(res.data)){
                         dataRef.current = res.data
@@ -700,9 +909,9 @@ const List:React.FC = () => {
             <table className="table table-striped table-hover">
             <thead>
                 <tr>
-                    <th scope="col">First Name</th>
-                    <th scope="col">Last Name</th>
-                    <th scope="col">Email  Address</th>
+                    <th scope="col">Code</th>
+                    <th scope="col">Title</th>
+                    <th scope="col">Activities Type(s)</th>
                     <th scope="col">Group</th>
                     <th scope="col">Faculty</th>
                     <th scope="col">Status</th>
@@ -715,13 +924,13 @@ const List:React.FC = () => {
         </table>
         {<RequestHandler status={requestHandler}/>}
         
-        {edit !==0? (<Edit id={edit}/>):''}
+        {/* {edit !==0? (<Edit id={edit}/>):''} */}
         </>)
         
     )
 }
 
-const OtherStaff = (props:any) => {
+const Course = (props:any) => {
     if(props?.type==='create')
     return <Create/>
     if(props?.type==='list')
@@ -730,5 +939,5 @@ const OtherStaff = (props:any) => {
     
 }
 
-export default OtherStaff
+export default Course
                                                                                                                                                                                                          

@@ -344,7 +344,7 @@ const Create:React.FC = () => {
                     </select>
                   <label htmlFor="duration"  className="form-label">Duration</label>
                   <input 
-                    type="text" 
+                    type="text"
                     className="form-control" 
                     name='duration'  
                     id='duration'

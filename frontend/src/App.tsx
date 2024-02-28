@@ -11,7 +11,7 @@ import {Provider} from 'react-redux'
 import { store } from './store';
 import SiteManagement from './components/siteMnagement/main';
 import StoreChecker from './storeChecker';
-import Test from  "./test";
+// import Test from  "./test";
 function App() {
   return (
     <div className="App">
@@ -22,7 +22,7 @@ function App() {
         <Navigation/>
         <Routes>
           <Route path='/' element={<Home />}/>
-          <Route path='/test' element={<Test />}/>
+          {/* <Route path='/test' element={<Test />}/> */}
           <Route path='/login' element={<Login />}/>
           <Route path='/siteManagement' element={<SiteManagement />}/>
           <Route path='*' element={<P404 />}/>

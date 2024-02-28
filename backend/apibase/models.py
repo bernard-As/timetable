@@ -198,7 +198,6 @@ class Course(models.Model):
     title = models.TextField()
     description = models.TextField(blank=True)
     # waitinglist = models.PositiveSmallIntegerField(default=0)# when student passes the course
-    prerequisites = models.ManyToManyField('self', blank=True,)
     otherstaff = models.ManyToManyField(OtherStaff, blank=True)
     course_semester = models.ManyToManyField(CourseSemester, blank=True)
     status = models.BooleanField(default=True)
@@ -219,6 +218,7 @@ class Coursegroup(models.Model):
     max_capacity = models.SmallIntegerField(default=0)
     activitytype = models.ManyToManyField(ActivityType)
     # registeredstudents = models.ManyToManyField(Student, through='Enrollment')
+    prerequisites = models.ManyToManyField('self', blank=True,)
     status = models.BooleanField(default=True)
     is_elective = models.BooleanField(default=False)
     description = models.TextField(blank=True)

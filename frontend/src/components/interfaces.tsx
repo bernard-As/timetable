@@ -112,3 +112,4 @@ export interface CourseInt {
     is_elective: boolean
     status: boolean
 }
+

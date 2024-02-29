@@ -50,7 +50,6 @@ const Create:React.FC = () => {
         // Handle checkbox input
         setFormData({ ...formData, [name]: isChecked });
       } else if (type === 'select-multiple') {
-        console.log('hi')
         // Handle multiple select
         const selectedOptions = Array.from((e.target as HTMLSelectElement).options)
           .filter((option) => option.selected)
@@ -210,14 +209,16 @@ const Create:React.FC = () => {
                     <select 
                         name="faculty" 
                         id="faculty"
-                        onChange={
-                            (event)=>{
-                                handleChange(event)
-                                let val:any = event.target.value
-                                const filteredData:any = deps?.filter((d) => d.faculty == val);
+                        onChange={(event) => {
+                            handleChange(event);
+                            const selectedOptions = Array.from(event.target.options)
+                                .filter(option => option.selected)
+                                .map(option => option.value);
+                            if (deps) {
+                                const filteredData = deps.filter((d:any) => selectedOptions.find((s:any)=>d.faculty==s));
                                 setDepsD(filteredData);
                             }
-                         } 
+                        }}
                         className="form-select form-select-lg mb-2" 
                         multiple
                     >
@@ -235,14 +236,16 @@ const Create:React.FC = () => {
                     <select 
                         name="department" 
                         id="department" 
-                        onChange={
-                            (event)=>{
-                                handleChange(event)
-                                let val:any = event.target.value 
-                                const filteredData:any = progrms?.filter((p) => p.department == val);
+                        onChange={(event) => {
+                            handleChange(event);
+                            const selectedOptions = Array.from(event.target.options)
+                                .filter(option => option.selected)
+                                .map(option => option.value);
+                            if (deps) {
+                                const filteredData:any = progrms?.filter((d:any) => selectedOptions.find((s:any)=>d.department==s));
                                 setProgrmsD(filteredData);
                             }
-                         }
+                        }}
                         className="form-select form-select-lg mb-2"  
 
                         multiple

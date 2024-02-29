@@ -199,7 +199,6 @@ class Course(models.Model):
     description = models.TextField(blank=True)
     # waitinglist = models.PositiveSmallIntegerField(default=0)# when student passes the course
     otherstaff = models.ManyToManyField(OtherStaff, blank=True)
-    course_semester = models.ManyToManyField(CourseSemester, blank=True)
     status = models.BooleanField(default=True)
     user = models.ForeignKey(Users, on_delete = models.SET_NULL, blank=True,null=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -219,6 +218,7 @@ class Coursegroup(models.Model):
     activitytype = models.ManyToManyField(ActivityType)
     # registeredstudents = models.ManyToManyField(Student, through='Enrollment')
     prerequisites = models.ManyToManyField('self', blank=True,)
+    course_semester = models.ManyToManyField(CourseSemester, blank=True)
     status = models.BooleanField(default=True)
     is_elective = models.BooleanField(default=False)
     description = models.TextField(blank=True)

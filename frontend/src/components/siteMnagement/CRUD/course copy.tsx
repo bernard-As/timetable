@@ -73,6 +73,7 @@ const Create:React.FC = () => {
     const [deps, setDeps] = useState<DepartmentInt[]| null>(null)
     const [depsD, setDepsD] = useState<DepartmentInt[]| null>(null)
     const [faculties, setFaculties] = useState<FacultyInt[]| null>(null)
+    const [facultiesD, setFacultiesD] = useState<FacultyInt[]| null>(null)
     const [progrms, setProgrms] = useState<ProgramInt[]| null>(null)
     const [progrmsD, setProgrmsD] = useState<ProgramInt[]| null>(null)
     const [lects, setLects] = useState<LecturerInt[]| null>(null)
@@ -96,6 +97,7 @@ const Create:React.FC = () => {
                 const response2 = await axiosInstance.get('faculty/')
                 .then((res)=>{
                     setFaculties(res.data)
+                    setFacultiesD(res.data)
                 })
                 const response3 = await axiosInstance.get('lecturer/')
                 .then((res)=>{

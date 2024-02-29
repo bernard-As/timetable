@@ -10,7 +10,7 @@ const Create:React.FC = () => {
     const titles = useSelector((state: any)=> state.titles)
     const [requestStatus, setRequestStatus] = useState(0)
     const [courseData, setCourseData] = useState<any>([])
-    const [groupData, setGroupData] = useState<any[]>([])
+    const [groupData, setGroupData] = useState<any[]>([{}])
 
     interface InputChangeEvent extends React.ChangeEvent<HTMLInputElement> {}
     interface SelectChangeEvent extends React.ChangeEvent<HTMLSelectElement> {}
@@ -83,7 +83,10 @@ const Create:React.FC = () => {
                 ...courseData,
                 groups: groupData.map((group: any) => ({ ...group }))
             };
-            console.log(formData)
+            if (groupData.length<1){
+                setRequestStatus(2)
+                return
+            }
             const response = await axiosInstance.post('course/',formData)
             setRequestStatus(response.status)
         } catch (error:any) {
@@ -108,6 +111,7 @@ const Create:React.FC = () => {
     const [deps, setDeps] = useState<DepartmentInt[]| null>(null)
     const [depsD, setDepsD] = useState<DepartmentInt[]| null>(null)
     const [faculties, setFaculties] = useState<FacultyInt[]| null>(null)
+    const [facultiesD, setFacultiesD] = useState<FacultyInt[]| null>(null)
     const [progrms, setProgrms] = useState<ProgramInt[]| null>(null)
     const [progrmsD, setProgrmsD] = useState<ProgramInt[]| null>(null)
     const [lects, setLects] = useState<LecturerInt[]| null>(null)
@@ -115,6 +119,8 @@ const Create:React.FC = () => {
     const [course_sem, seetCourse_sem] = useState<any>(null)
     const [crs, setCrs] = useState<any>(null)
     const [activitytype, setActivitytype] = useState<any>(null)
+    const [uniSemes, setUniSemes] = useState<any>(null)
+    const [uniSemesD, setUniSemesD] = useState<any>(null)
     useEffect(()=>{
         const getFac = async() =>{
             try {
@@ -131,6 +137,7 @@ const Create:React.FC = () => {
                 const response2 = await axiosInstance.get('faculty/')
                 .then((res)=>{
                     setFaculties(res.data)
+                    setFacultiesD(res.data)
                 })
                 const response3 = await axiosInstance.get('lecturer/')
                 .then((res)=>{
@@ -152,6 +159,11 @@ const Create:React.FC = () => {
                 .then((res)=>{
                     setActivitytype(res.data)
                 })
+                const response8 = await axiosInstance.get('semester/')
+                .then((res)=>{
+                    setUniSemes(res.data)
+                    setUniSemesD(res.data)
+                })
             } catch (error) {
                 
             }
@@ -161,7 +173,7 @@ const Create:React.FC = () => {
 
     return (
       <>
-        {
+        { requestStatus ===2?(<Alert title="Please create at least one group"  icon="warning"/>):
           requestStatus!==0 && (
               <RequestHandler status={requestStatus}/>
           )
@@ -201,6 +213,19 @@ const Create:React.FC = () => {
                 </textarea>
                 <label htmlFor="floatingTextarea">Description</label>
               </div>
+              <label htmlFor="extra_session_of">Status</label>
+                <div className="form-check form-switch">
+                  <input className="form-check-input" 
+                    type="checkbox" 
+                    role="switch" 
+                    id="flexSwitchCheckChecked" 
+                    name="status"
+                    checked 
+                    onChange={handleCourseChange}
+                  />
+                  <label className="form-check-label" htmlFor="flexSwitchCheckChecked">Enable/Disable</label>
+                </div>
+
               <h2>Groups</h2>
               {groupData.map((group:any, index:number) => (
                 <div key={index}>
@@ -281,6 +306,33 @@ const Create:React.FC = () => {
                       ))
                     }
                   </select>
+                  <label htmlFor="faculty">Select the Semster:</label>
+                  <select 
+                    name="semester" 
+                    id="semester"
+                    onChange={(event) => {
+                        handleGroupChange(index)(event)
+                      const selectedOptions = Array.from(event.target.options)
+                          .filter(option => option.selected)
+                          .map(option => option.value);
+                      if (uniSemesD) {
+                          const filteredData:any = uniSemesD?.filter((d:any) => selectedOptions.find((s:any)=>d==s));
+                          setUniSemesD(filteredData);
+                      }
+                    }}
+                     
+                    className="form-select form-select-lg mb-2" 
+                    multiple
+                  >
+                    <option value="">Select a faculty</option>
+                    {
+                      uniSemes?.map((b: any)=>(
+                        <option key={b?.id} value={b?.id} selected={group?.uniSemes?.includes(b?.id)}>
+                          {b.year}_{b.season}
+                        </option>
+                      ))
+                    }
+                  </select>
                   <label htmlFor="faculty">Select the Faculty:</label>
                   <select 
                     name="faculty" 
@@ -289,8 +341,13 @@ const Create:React.FC = () => {
                       (event)=>{
                         handleGroupChange(index)(event)
                         let val:any = event.target.value
-                        const filteredData:any = deps?.filter((d) => d.faculty == val);
+                        const selectedOptions = Array.from(event.target.options)
+                          .filter(option => option.selected)
+                          .map(option => option.value);
+                          const filteredData:any = deps?.filter((d:any) => selectedOptions.find((s:any)=>d.faculty==s));
                         setDepsD(filteredData);
+                        setFacultiesD(faculties?.filter((f:any)=> selectedOptions.filter((s:any)=>f.faculty)) as unknown as FacultyInt[]);
+                        setFacultiesD(faculties?.filter((f:any)=> f != val) as unknown as FacultyInt[]);
                       }
                      } 
                     className="form-select form-select-lg mb-2" 
@@ -354,11 +411,15 @@ const Create:React.FC = () => {
                     className="form-select form-select-lg mb-2" 
                     multiple 
                   >
-                    <option value="">Select a program</option>
+                    <option value="">Select a Course Semester</option>
                     {
-                      progrmsD?.map((b: any)=>(
-                        <option key={b?.id} value={b?.id} selected={group?.program?.includes(b?.id)}>
-                          {b.shortname}: {b.name}
+                      course_sem?.map((b: any)=>(
+                        <option key={b?.id} value={b?.id} selected={group?.course_semester?.includes(b?.id)}>
+                          {uniSemes?.find((u:any)=>u.id===b?.semester).year}_{uniSemes?.find((u:any)=>u.id===b?.semester).season}
+                          {facultiesD?.find((f:any)=>f.id===b?.faculty)?.name}-
+                          {depsD?.find((d:any)=>d.id===b?.department)?.name}- 
+                          {progrmsD?.find((d:any)=>d?.id===b?.program)?.name}-
+                          {b?.semester_num}
                         </option>
                       ))
                     }

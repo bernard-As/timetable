@@ -148,6 +148,7 @@ class CourseSemester(models.Model):
     """Semesters from programs"""
     program = models.ForeignKey(Program, on_delete=models.CASCADE,blank=True)
     department = models.ForeignKey(Department, on_delete=models.CASCADE, null=True, blank=True)
+    faculty = models.ForeignKey(Faculty,on_delete=models.CASCADE, null=True,blank=True)
     semester = models.ForeignKey(Semester, on_delete=models.CASCADE)
     semester_num = models.SmallIntegerField()
     description =  models.CharField(max_length=5000, blank=True)
@@ -206,19 +207,19 @@ class Course(models.Model):
 class Coursegroup(models.Model):
     """Groups for each course """
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    extra_session_of = models.ManyToManyField('self', blank=True)# when there are some extra session that should be linked to the main session
+    extra_session_of = models.ManyToManyField('self')# when there are some extra session that should be linked to the main session
     group_number = models.PositiveSmallIntegerField(default=1)
     lecturer = models.ForeignKey(Lecturer,on_delete=models.SET_NULL,null=True)
     assistant = models.ForeignKey(Student,blank=True,on_delete=models.SET_NULL,null=True)
     lecturer_assistant = models.ForeignKey(Lecturer,blank=True,related_name="Lecturer_Assisting",on_delete=models.SET_NULL,null=True)
-    merged_with = models.ManyToManyField('self', blank=True) # foreign key of the main course where it is merged
+    merged_with = models.ManyToManyField('self') # foreign key of the main course where it is merged
     duration = models.TextField(null=True)
     current_capacity = models.PositiveSmallIntegerField(default=0)
     max_capacity = models.SmallIntegerField(default=0)
     activitytype = models.ManyToManyField(ActivityType)
     # registeredstudents = models.ManyToManyField(Student, through='Enrollment')
-    prerequisites = models.ManyToManyField('self', blank=True,)
-    course_semester = models.ManyToManyField(CourseSemester, blank=True)
+    prerequisites = models.ManyToManyField(Course, related_name='requiredCourse')
+    course_semester = models.ManyToManyField(CourseSemester)
     status = models.BooleanField(default=True)
     is_elective = models.BooleanField(default=False)
     description = models.TextField(blank=True)

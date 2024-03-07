@@ -1,4 +1,4 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, filters
 from apibase.serializers import *
 from django.contrib.auth.models import User,Group, Permission
 from rest_framework.permissions import IsAuthenticated
@@ -315,6 +315,7 @@ class StudentViewSet(viewsets.ModelViewSet):
                 'studentId': item.studentId,
             })
         return Response({'users':short_data},status=status.HTTP_200_OK) 
+
 class OtherStaffViewSet(viewsets.ModelViewSet):
     queryset = OtherStaff.objects.all()
     serializer_class = OtherStaffSerializer
@@ -415,9 +416,71 @@ class OtherStaffViewSet(viewsets.ModelViewSet):
 class CourseViewSet(viewsets.ModelViewSet):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['title','code','description'] 
+
     def create(self, request, *args, **kwargs):
         try:
-            request.data['user'] = Users.objects.get(user=User.objects.get(id=request.user.id))
+            request.data['user'] = Users.objects.get(user=request.user)
         except:
             pass
-        return super().create(request, *args, **kwargs)
+        super().create(request,*args,**kwargs)
+        course = Course.objects.get(code = request.data['code'])
+        for groupInt in request.data['groups']:
+
+            if Coursegroup.objects.filter(course = course, group_number = groupInt['group_number']).exists():
+                continue
+
+            lecturer = Lecturer.objects.filter(pk=groupInt['lecturer']).exists()
+            if(lecturer == True):
+                lecturer = Lecturer.objects.get(id=groupInt.pop('lecturer'))
+            else:
+                return Response({'message': 'Please select a lecturer for the group '+ groupInt['group_number']},200)
+            assistant = Student.objects.get(id=groupInt.pop('assistant')) if groupInt['assistant'] else  None
+            lecturer_assistant = Lecturer.objects.get(id=groupInt.pop('lecturer_assistant')) if groupInt['lecturer_assistant'] else None
+
+            group = {
+                'course': course,
+                'lecturer': lecturer,
+                'assistant': assistant,
+                'lecturer_assistant': lecturer_assistant,
+                'duration': groupInt['duration'] if  "duration" in groupInt else 2,
+                'max_capacity': groupInt['max_capacity'] if 'max_capacity' in groupInt else 20,
+                'group_number':groupInt['group_number'],
+                'status':groupInt['status'] if 'status' in groupInt else True,
+                'is_elective':groupInt['is_elective'] if 'elective' in groupInt else  False,
+                'description' : groupInt['description'] if 'description' in groupInt else ''
+            }
+            
+            course_group = Coursegroup.objects.create(**group)
+            course_group.extra_session_of.set([Coursegroup.objects.get(id=c).id for c in  groupInt.pop('extra_session_of','')])
+            course_group.merged_with.set([Coursegroup.objects.get(id=c) for c in  groupInt.pop('merged_with','')])
+            course_group.activitytype.set([ActivityType.objects.get(pk=ac) for ac in groupInt['activitytype']])
+            course_group.prerequisites.set([Course.objects.get(id=c) for c in  groupInt.pop('prerequisites','')])
+            course_group.course_semester.set([CourseSemester.objects.get(id=c) for c in  groupInt.pop('course_semester', '')])
+            return Response(200)
+
+
+class CourseGroupViewSet(viewsets.ModelViewSet):
+    queryset = Coursegroup.objects.all()
+    serializer_class = CourseGroupSerializer
+    # filter_backends = [filters.SearchFilter]
+    # search_fields = ['*'] 
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        serialized_data = self.get_serializer(queryset, many=True).data
+        modified_data = [self.modify_data(item) for item in serialized_data] # type: ignore
+        return Response(modified_data,200)
+    
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serialized_data = self.get_serializer(instance).data
+        modified_data = self.modify_data(serialized_data)
+        return Response(modified_data)
+
+    def modify_data(self, item):
+        course = Course.objects.get(pk=item['course'])
+        item['code'] = course.code
+        item['title'] = course.title
+        item.pop('course')
+        return item

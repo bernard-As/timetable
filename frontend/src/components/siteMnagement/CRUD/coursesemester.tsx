@@ -119,6 +119,7 @@ const Create:React.FC = () => {
                         value={faculties?.find((item)=> item.id === deps?.find((d)=>d.id === formData.department)?.faculty)?.id}
                         onChange={
                             (event)=>{
+                                handleChange(event)
                                 let val = event.target.value as unknown as number
                                 const filteredData:any = deps?.filter((d) => d.faculty == val);
                                 setDepsD(filteredData);

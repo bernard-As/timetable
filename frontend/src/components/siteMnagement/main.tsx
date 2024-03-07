@@ -65,7 +65,7 @@ const SiteManagement = () =>{
             <div className="container">
             <div className="row d-flex  justify-content-center">
            { models.map((model)=>(
-            <div className="card w-50 m-2">
+            <div className="card w-50 m-2" key={model[0]}>
                 <div className="card-body">
                   <h5 className="card-title">{model[0]}</h5>
                   <p className="card-text">{model[1]}</p>

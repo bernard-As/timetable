@@ -114,3 +114,9 @@ class CourseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Course
         fields = '__all__'
+
+class CourseGroupSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Coursegroup
+        fields = '__all__'
+

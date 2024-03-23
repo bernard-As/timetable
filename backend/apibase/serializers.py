@@ -110,13 +110,16 @@ class OtherStaffSerializer(serializers.ModelSerializer):
         model = OtherStaff
         fields = '__all__'
     
-class CourseSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Course
-        fields = '__all__'
-
 class CourseGroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = Coursegroup
         fields = '__all__'
+
+class CourseSerializer(serializers.ModelSerializer):
+    coursegroup_set = CourseGroupSerializer(many=True, read_only=True)
+    class Meta:
+        model = Course
+        fields = '__all__'
+
+
 

@@ -1,4 +1,5 @@
 from rest_framework import viewsets, filters
+from django_filters.rest_framework import DjangoFilterBackend
 from apibase.serializers import *
 from django.contrib.auth.models import User,Group, Permission
 from rest_framework.permissions import IsAuthenticated
@@ -422,10 +423,11 @@ class CourseViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         try:
             request.data['user'] = Users.objects.get(user=request.user)
+            course = Course.objects.get(code = request.data['code'])
         except:
-            pass
-        super().create(request,*args,**kwargs)
-        course = Course.objects.get(code = request.data['code'])
+            super().create(request,*args,**kwargs)
+            course = Course.objects.get(code = request.data['code'])
+
         for groupInt in request.data['groups']:
 
             if Coursegroup.objects.filter(course = course, group_number = groupInt['group_number']).exists():
@@ -455,16 +457,64 @@ class CourseViewSet(viewsets.ModelViewSet):
             course_group = Coursegroup.objects.create(**group)
             course_group.extra_session_of.set([Coursegroup.objects.get(id=c).id for c in  groupInt.pop('extra_session_of','')])
             course_group.merged_with.set([Coursegroup.objects.get(id=c) for c in  groupInt.pop('merged_with','')])
-            course_group.activitytype.set([ActivityType.objects.get(pk=ac) for ac in groupInt['activitytype']])
+            course_group.activitytype.set([ActivityType.objects.get(id=ac) for ac in groupInt['activitytype']])
             course_group.prerequisites.set([Course.objects.get(id=c) for c in  groupInt.pop('prerequisites','')])
             course_group.course_semester.set([CourseSemester.objects.get(id=c) for c in  groupInt.pop('course_semester', '')])
             return Response(200)
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serialized_data = self.get_serializer(instance).data
+        modified_data = self.modify_data(serialized_data)
+        return Response(modified_data)
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        serialized_data = self.get_serializer(queryset, many=True).data
+        modified_data = [self.modify_data(item) for item in serialized_data] # type: ignore
+        return Response(modified_data,200)
+
+    def modify_data(self, item):
+        """Adds additional data to the response"""
+        coursegroups = Coursegroup.objects.filter(course = Course.objects.get(pk=item['id']))
+        item['num_group'] =  len(coursegroups)
+        try:
+            item['user_name'] =  Users.objects.get(pk=item['user']).first_name+' '+Users.objects.get(pk=item['user']).last_name
+            item['program'] = CourseSemester.objects.get(id=item['course_semester']).program_set
+        except:
+            item['user_name'] = 'Unknow'
+        return item
+
 
 
 class CourseGroupViewSet(viewsets.ModelViewSet):
     queryset = Coursegroup.objects.all()
     serializer_class = CourseGroupSerializer
-    # filter_backends = [filters.SearchFilter]
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['description',
+        'duration',
+        'max_capacity',
+        'group_number',
+        'course__title',
+        'course__code',
+        'course__description',
+        'course__created_at',
+        'lecturer__user__first_name',
+        'lecturer__user__last_name',
+        'assistant__user__first_name',
+        'assistant__user__last_name',
+        'lecturer_assistant__user__first_name',
+        'lecturer_assistant__user__last_name',
+        'course_semester__semester__year',
+        'course_semester__semester__season',
+        'course_semester__program__name',
+        'course_semester__program__shortname',
+        'course_semester__department__name',
+        'course_semester__department__shortname',
+        'course_semester__faculty__name',
+        'course_semester__faculty__shortname',
+    ] 
+
     # search_fields = ['*'] 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
@@ -482,5 +532,4 @@ class CourseGroupViewSet(viewsets.ModelViewSet):
         course = Course.objects.get(pk=item['course'])
         item['code'] = course.code
         item['title'] = course.title
-        item.pop('course')
         return item

@@ -113,3 +113,20 @@ export interface CourseInt {
     status: boolean
 }
 
+export type PreferenceInt = {
+    id?: number
+    general?: number
+    building?: number
+    floor?: number
+    room?: number
+    faculty?: number
+    department?: number
+    program?: number
+    course_semester?: number
+    semster?: number
+    course?: number
+    type?: number
+    event_type?: number
+    position?: number
+    status?: boolean
+}

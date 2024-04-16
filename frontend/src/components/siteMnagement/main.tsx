@@ -14,6 +14,7 @@ import Lecturer from "./CRUD/lecturer";
 import Student from "./CRUD/student";
 import OtherStaff from "./CRUD/otherstaff";
 import Course from "./CRUD/course";
+import Preference from "./CRUD/preference";
 const SiteManagement = () =>{
     const [actions, setAction] = useState({
         object: '',
@@ -35,6 +36,7 @@ const SiteManagement = () =>{
         ['Student','Student Setting'],
         ['OtherStaff','Other Staff Setting'],
         ['Course','Course Setting'],
+        ['Preference','Preference Setting'],
         ]
     const handleclick = (obj:string, meth: string) => {
         return setAction({object:obj,method:meth});
@@ -55,6 +57,7 @@ const SiteManagement = () =>{
         student: Student,
         otherstaff: OtherStaff,
         course: Course,
+        preference: Preference,
     }
     const SelectedComponent:any = componentMap[actions.object]
       

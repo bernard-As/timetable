@@ -254,12 +254,13 @@ const Create:React.FC = () => {
                       {
                         activitytype?.map((b: any)=>(
                           b?.id&&
-                          <option key={b?.id} value={b?.id} selected={group?.type?.includes(b?.id)}>
+                          <option key={b?.id} value={b?.id} selected={group?.activitytype?.includes(b?.id)}>
                               {b.name}
                           </option>
                         ))
                       }
                   </select>
+                  
                   <label htmlFor="max_capacity"  className="form-label">Max  Capacity (Number of Students)</label>
                   <input 
                     type="text" 
@@ -320,8 +321,8 @@ const Create:React.FC = () => {
                   </select>
                   <label htmlFor="faculty">Select the Semster:</label>
                   <select 
-                    name="course_semester" 
-                    id="course_semester"
+                    name="coursesemester" 
+                    id="coursesemester"
                     onChange={(event) => {
                         handleGroupChange(index)(event)
                       const selectedOptions = Array.from(event.target.options)
@@ -427,7 +428,7 @@ const Create:React.FC = () => {
                   </select>
                   <label htmlFor="semester">Select a Course Semester(s):</label>
                   <select 
-                    name="coursesemester" 
+                    name="course_semester" 
                     id="course_semester" 
                     onChange={handleGroupChange(index)} 
                     className="form-select form-select-lg mb-2"
@@ -543,6 +544,7 @@ const Edit:React.FC<{id:number}> = (id) => {
   const getCurrentData = async()=>{
     await axiosInstance.get('course/'+id.id+'/')
     .then((res:any)=>{
+      console.log('user data', res.data)
       setCourseData(res.data)
       configGroupData(res.data.coursegroup_set)
       })
@@ -634,6 +636,7 @@ const Edit:React.FC<{id:number}> = (id) => {
       try {
           const formData = {
               ...courseData,
+              id: id.id,
               groups: groupData.map((group: any) => ({ ...group }))
           };
           if (groupData.length<1){
@@ -816,7 +819,7 @@ const Edit:React.FC<{id:number}> = (id) => {
                     {
                       activitytype?.map((b: any)=>(
                         b?.id&&
-                        <option key={b?.id} value={b?.id} selected={group?.type?.includes(b?.id)}>
+                        <option key={b?.id} value={b?.id} selected={group?.activitytype?.includes(b?.id)}>
                             {b.name}
                         </option>
                       ))
@@ -882,8 +885,8 @@ const Edit:React.FC<{id:number}> = (id) => {
                 </select>
                 <label htmlFor="faculty">Select the Semster:</label>
                 <select 
-                  name="course_semester" 
-                  id="course_semester"
+                  name="coursesemester" 
+                  id="coursesemester"
                   onChange={(event) => {
                       handleGroupChange(index)(event)
                     const selectedOptions = Array.from(event.target.options)
@@ -1066,7 +1069,7 @@ const Edit:React.FC<{id:number}> = (id) => {
                     role="switch" 
                     id="flexSwitchCheckChecked" 
                     name="status"
-                    defaultChecked = {true}
+                    checked = {group?.status? true : false}
                     onChange={handleGroupChange(index)}
                   />
                   <label className="form-check-label" htmlFor="flexSwitchCheckChecked">Enable/Disable</label>
@@ -1078,7 +1081,7 @@ const Edit:React.FC<{id:number}> = (id) => {
                     role="switch" 
                     id="flexSwitchCheckChecked" 
                     name="is_elective"
-                    checked
+                    checked = {group?.is_elective? true : false}
                     onChange={handleGroupChange(index)}
                   />
                   <label className="form-check-label" htmlFor="flexSwitchCheckChecked">Enable/Disable</label>
@@ -1113,6 +1116,9 @@ const List:React.FC = () =>{
     await axiosInstance.get('course/?search='+v)
     .then((res)=>{
       setSearchResult(res.data)
+    }).catch((error)=>{
+      if(error.request.status===404)
+        alert(JSON.stringify("No results found"))
     })
   }
 

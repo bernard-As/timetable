@@ -38,7 +38,7 @@ class End(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 class EventTime(models.Model):
-    """Start and End Time Day/Date """ 
+    """Start and End Time Day/Date is the setting entered by the preference setter""" 
     start = models.ForeignKey(Start, on_delete=models.CASCADE,null=True)
     end = models.ForeignKey(End,on_delete=models.SET_NULL,null=True)
     date = models.IntegerField()
@@ -247,8 +247,9 @@ class Preference(models.Model):
     course_semester = models.ForeignKey(CourseSemester,on_delete= models.CASCADE, null=True)
     semester = models.ForeignKey(Semester,on_delete= models.CASCADE, null=True)
     course = models.ForeignKey(Course,on_delete= models.CASCADE, null=True)
-    type = models.BooleanField(default=False)
+    type = models.SmallIntegerField(default=0, help_text="To know the orientation for the pref wether it is positive, negative, or neutral")
     event_time = models.ForeignKey(EventTime, on_delete =models.CASCADE,null=True)
+    title = models.ForeignKey(Title,on_delete=models.CASCADE, null = True)
     position = models.IntegerField(null=True,help_text = 'Position of the preference in the owner order of preferences')
     status = models.BooleanField()
     created_at = models.DateTimeField(auto_now_add=True)

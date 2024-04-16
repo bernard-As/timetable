@@ -33,6 +33,8 @@ router.register(r'otherstaff', siteManagement.OtherStaffViewSet, basename='other
 router.register(r'course', siteManagement.CourseViewSet, basename='course')
 router.register(r'activitytype', siteManagement.ActivityTypeViewSet, basename='activitytype')
 router.register(r'coursegroup', siteManagement.CourseGroupViewSet, basename='coursegroup')
+router.register(r'preference', siteManagement.PreferenceViewSet, basename='preference')
+router.register(r'eventtime', siteManagement.EventTimeViewSet, basename='eventtime')
 urlpatterns = [
    path('login/', ObtainAuthToken.as_view()),
     path('renewStore/',StoreRenew.as_view(), name='renewStore'),

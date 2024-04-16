@@ -424,6 +424,7 @@ class CourseViewSet(viewsets.ModelViewSet):
         try:
             request.data['user'] = Users.objects.get(user=request.user)
             course = Course.objects.get(code = request.data['code'])
+            course.__setattr__(**request)
         except:
             super().create(request,*args,**kwargs)
             course = Course.objects.get(code = request.data['code'])
@@ -462,6 +463,50 @@ class CourseViewSet(viewsets.ModelViewSet):
             course_group.course_semester.set([CourseSemester.objects.get(id=c) for c in  groupInt.pop('course_semester', '')])
             return Response(200)
 
+    def update(self, request, *args, **kwargs):
+        try:
+            request.data['user'] = Users.objects.filter(user=request.user.id).first()
+            course = Course.objects.get(pk = request.data['id'])
+        except:
+            return Response({'message':'Error when retreiving the course data'},400)
+        super().update(request, *args, **kwargs)
+        print(request.data['groups'])
+        for groupInt in request.data['groups']:
+            try:
+                current_group = Coursegroup.objects.filter(course = course.id, pk = groupInt['id']).first()
+            except:
+                continue 
+            lecturer = Lecturer.objects.filter(pk=groupInt['lecturer']).exists()
+            if(lecturer == True):
+                lecturer = Lecturer.objects.get(id=groupInt.pop('lecturer'))
+            else:
+                return Response({'message': 'Please select a lecturer for the group '+ groupInt['group_number']},200)
+            assistant = Student.objects.get(id=groupInt.pop('assistant')) if groupInt['assistant'] else  None
+            lecturer_assistant = Lecturer.objects.get(id=groupInt.pop('lecturer_assistant')) if groupInt['lecturer_assistant'] else None
+
+            group = {
+                'course': course,
+                'lecturer': lecturer,
+                'assistant': assistant,
+                'lecturer_assistant': lecturer_assistant,
+                'duration': groupInt['duration'] if  "duration" in groupInt else 2,
+                'max_capacity': groupInt['max_capacity'] if 'max_capacity' in groupInt else 20,
+                'group_number':groupInt['group_number'],
+                'status':groupInt['status'] if 'status' in groupInt else True,
+                'is_elective':groupInt['is_elective'] if 'elective' in groupInt else  False,
+                'description' : groupInt['description'] if 'description' in groupInt else ''
+            }
+            for key, value in group.items():
+                setattr(current_group, key, value)
+            # current_group.__setattr__(group)
+            current_group.extra_session_of.set([Coursegroup.objects.get(id=c).id for c in  groupInt.pop('extra_session_of','')])
+            current_group.merged_with.set([Coursegroup.objects.get(id=c) for c in  groupInt.pop('merged_with','')])
+            current_group.activitytype.set([ActivityType.objects.get(id=ac) for ac in groupInt['activitytype']])
+            current_group.prerequisites.set([Course.objects.get(id=c) for c in  groupInt.pop('prerequisites','')])
+            current_group.course_semester.set([CourseSemester.objects.get(id=c) for c in  groupInt.pop('course_semester', '')])
+            current_group.save()
+        return Response({'message':'course updated successfully'},200)
+
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
         serialized_data = self.get_serializer(instance).data
@@ -480,12 +525,22 @@ class CourseViewSet(viewsets.ModelViewSet):
         item['num_group'] =  len(coursegroups)
         try:
             item['user_name'] =  Users.objects.get(pk=item['user']).first_name+' '+Users.objects.get(pk=item['user']).last_name
-            item['program'] = CourseSemester.objects.get(id=item['course_semester']).program_set
         except:
             item['user_name'] = 'Unknow'
+        
+            for index, cg in enumerate(item['coursegroup_set']):
+                course_semester_ids = cg.get('course_semester')  # Get the 'course_semester' field from the current dictionary
+                if course_semester_ids is not None:
+                    related_programs = CourseSemester.objects.filter(id__in=course_semester_ids).values_list('program__pk', flat=True)
+                    item['coursegroup_set'][index]['program'] = list(related_programs)
+                    related_department = CourseSemester.objects.filter(id__in=course_semester_ids).values_list('department__pk', flat=True)
+                    item['coursegroup_set'][index]['department'] = list(related_department)
+                    more_fac = Department.objects.filter(id__in=related_department).values_list('faculty__pk', flat=True)
+                    item['coursegroup_set'][index]['faculty'] = list(more_fac)
+                    uniSemester = CourseSemester.objects.filter(id__in=course_semester_ids).values_list('semester__pk', flat=True)
+                    item['coursegroup_set'][index]['uniSemes'] = list(uniSemester)
+
         return item
-
-
 
 class CourseGroupViewSet(viewsets.ModelViewSet):
     queryset = Coursegroup.objects.all()
@@ -533,3 +588,11 @@ class CourseGroupViewSet(viewsets.ModelViewSet):
         item['code'] = course.code
         item['title'] = course.title
         return item
+    
+class PreferenceViewSet(viewsets.ModelViewSet):
+    queryset = Preference.objects.all().order_by('id')
+    serializer_class = PreferenceSerializer
+
+class EventTimeViewSet(viewsets.ModelViewSet):
+    queryset = EventTime.objects.all().order_by('id')
+    serializer_class = EventTimeSerializer

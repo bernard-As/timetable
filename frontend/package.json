@@ -24,7 +24,7 @@
     "@types/react": "^18.2.45",
     "@types/react-dom": "^18.2.18",
     "@types/react-leaflet": "^3.0.0",
-    "antd": "^5.15.1",
+    "antd": "^5.16.2",
     "axios": "^1.6.7",
     "babel-plugin-jsx-pragmatic": "^1.0.2",
     "babel-plugin-macros": "^3.1.0",

@@ -121,5 +121,12 @@ class CourseSerializer(serializers.ModelSerializer):
         model = Course
         fields = '__all__'
 
+class PreferenceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Preference
+        fields = '__all__'
 
-
+class EventTimeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EventTime
+        fields = '__all__'

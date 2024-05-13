@@ -66,7 +66,7 @@ const Create:React.FC = () => {
         try {
             formData.username = formData.first_name.replace(' ','')+formData.last_name.replace(' ','')
             console.log(formData)
-            const response = await axiosInstance.post('otherstaff/',formData)
+            const response = await axiosInstance.post('other_staff/',formData)
             setRequestStatus(response.status)
         } catch (error:any) {
             try{
@@ -295,7 +295,7 @@ const Edit:React.FC<{id:number}> =(id) =>{
     },[])
 
     useEffect(()=>{
-        axiosInstance.get(`/otherstaff/${id.id}/`)
+        axiosInstance.get(`/other_staff/${id.id}/`)
         .then((res:any)=>{
         setShowEdit(true)
         setFormData(res.data)
@@ -356,7 +356,7 @@ const Edit:React.FC<{id:number}> =(id) =>{
     const handleSubmit =async  (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
-            const response = await axiosInstance.put(`otherstaff/${id.id}/`,formData)
+            const response = await axiosInstance.put(`other_staff/${id.id}/`,formData)
             setRequestStatus(response.status)
             setShowEdit(false)
         } catch (error:any) {
@@ -578,7 +578,7 @@ const List:React.FC = () => {
         }
         setData([])//to remove in production mode
 
-        axiosInstance.get('/otherstaff/')
+        axiosInstance.get('/other_staff/')
         .then((res:any)=>{
             setData([...data, ...res.data])
             setIsloading(false)
@@ -629,7 +629,7 @@ const List:React.FC = () => {
     useEffect(()=>{
         setTimeout(() => { 
             if(edit!==0){
-                axiosInstance.get('/otherstaff/')
+                axiosInstance.get('/other_staff/')
                 .then((res:any)=>{
                     if(JSON.stringify(dataRef.current)  !== JSON.stringify(res.data)){
                         dataRef.current = res.data
@@ -676,7 +676,7 @@ const List:React.FC = () => {
           }).then((result:any) => {
             if (result.isConfirmed) {
                 try {
-                    axiosInstance.delete(`/otherstaff/${id}/`)
+                    axiosInstance.delete(`/other_staff/${id}/`)
                     .then(()=>{
                     <Alert title="Item Deleted" icon='success'/>
                     setData(data.filter((val: LecturerInt)=> val.id !== id))

@@ -7,10 +7,7 @@ class LoginSerializer(serializers.Serializer):
     username = serializers.CharField()
     password = serializers.CharField(write_only=True, required = False)
     
-class ActivitytypeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ActivityType
-        fields = '__all__'
+
 
 class TitleSerializer(serializers.ModelSerializer):
     id=serializers.IntegerField(read_only=True)
@@ -89,6 +86,12 @@ class CourseSemesterSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+# Second run turn 
+class ActivitytypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ActivityType
+        fields = '__all__'
+
 class LecturerSerializer(serializers.ModelSerializer):
     password = serializers.FileField(read_only=True)
     id=serializers.IntegerField(read_only=True)
@@ -122,6 +125,7 @@ class CourseSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class PreferenceSerializer(serializers.ModelSerializer):
+    user = serializers.ImageField(required = False)
     class Meta:
         model = Preference
         fields = '__all__'

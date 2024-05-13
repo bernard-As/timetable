@@ -12,7 +12,7 @@ import Program from "./CRUD/program";
 import CourseSemester from "./CRUD/coursesemester";
 import Lecturer from "./CRUD/lecturer";
 import Student from "./CRUD/student";
-import OtherStaff from "./CRUD/otherstaff";
+import OtherStaff from "./CRUD/other_staff";
 import Course from "./CRUD/course";
 import Preference from "./CRUD/preference";
 const SiteManagement = () =>{
@@ -55,7 +55,7 @@ const SiteManagement = () =>{
         coursesemester: CourseSemester,
         lecturer: Lecturer,
         student: Student,
-        otherstaff: OtherStaff,
+        other_staff: OtherStaff,
         course: Course,
         preference: Preference,
     }

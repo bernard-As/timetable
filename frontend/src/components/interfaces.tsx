@@ -115,18 +115,41 @@ export interface CourseInt {
 
 export type PreferenceInt = {
     id?: number
-    general?: number
-    building?: number
-    floor?: number
-    room?: number
-    faculty?: number
-    department?: number
-    program?: number
-    course_semester?: number
-    semster?: number
-    course?: number
-    type?: number
-    event_type?: number
-    position?: number
+    general?: number[]
+    building?: number[]
+    floor?: number[]
+    room?: number[]
+    faculty?: number[]
+    department?: number[]
+    program?: number[]
+    course_semester?: number[]
+    semester?: number[]
+    course?: number[]
+    coursegroup?: number[]
+    type?: number[]
+    event_type?: number[]
+    position?: number[]
     status?: boolean
+    preference?:number[]
+}
+
+export type CourseGroupInt = {
+    id:number
+    course?:number
+    extra_session_of?:CourseGroupInt[]
+    group_number:number
+    lecturer:LecturerInt
+    assistant:StudentInt
+    lecturer_assistant:LecturerInt
+    merged_with:CourseInt[]
+    duration:string
+    current_capacity:number
+    max_capacity:number
+    activitytype:any
+    prerequisites: CourseGroupInt[]
+    course_semester: CourseSemesterInt[]
+    status : boolean
+    is_elective: boolean
+    description: string
+    created_at?: Date
 }

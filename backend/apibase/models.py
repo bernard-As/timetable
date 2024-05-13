@@ -60,6 +60,8 @@ class Semester(models.Model):
     status = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    class Meta:
+        unique_together = ("year", "season")
 
 class Building(models.Model):
     """Building """
@@ -81,6 +83,7 @@ class Floor(models.Model):
 
     class Meta:
         unique_together = ('building', 'floor_number')
+        
 class Room(models.Model):
     """Room in a floor of a building."""
     ROOM_TYPES = [
@@ -199,7 +202,7 @@ class Course(models.Model):
     title = models.TextField()
     description = models.TextField(blank=True)
     # waitinglist = models.PositiveSmallIntegerField(default=0)# when student passes the course
-    otherstaff = models.ManyToManyField(OtherStaff, blank=True)
+    other_staff = models.ManyToManyField(OtherStaff, blank=True)
     status = models.BooleanField(default=True)
     user = models.ForeignKey(Users, on_delete = models.SET_NULL, blank=True,null=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -237,87 +240,29 @@ class Day(models.Model):
 
 class Preference(models.Model):
     """Preferences set """
-    general = models.ForeignKey(General,on_delete=models.CASCADE, null=True)
-    building = models.ForeignKey(Building, on_delete=models.CASCADE, null=True)
-    floor = models.ForeignKey(Floor, on_delete=models.CASCADE, null=True)
-    room = models.ForeignKey(Room,on_delete= models.CASCADE, null=True)
-    faculty = models.ForeignKey(Faculty,on_delete= models.CASCADE, null=True)
-    department = models.ForeignKey(Department,on_delete= models.CASCADE, null=True)
-    program = models.ForeignKey(Program,on_delete= models.CASCADE, null=True)
-    course_semester = models.ForeignKey(CourseSemester,on_delete= models.CASCADE, null=True)
-    semester = models.ForeignKey(Semester,on_delete= models.CASCADE, null=True)
-    course = models.ForeignKey(Course,on_delete= models.CASCADE, null=True)
+    general = models.ManyToManyField(General, blank=True)
+    building = models.ManyToManyField(Building, blank=True)
+    floor = models.ManyToManyField(Floor, blank=True)
+    room = models.ManyToManyField(Room, blank=True)
+    faculty = models.ManyToManyField(Faculty, blank=True)
+    department = models.ManyToManyField(Department, blank=True)
+    program = models.ManyToManyField(Program, blank=True)
+    course_semester = models.ManyToManyField(CourseSemester, blank=True)
+    semester = models.ManyToManyField(Semester, blank=True)
+    course = models.ManyToManyField(Course, blank=True)
+    coursegroup = models.ManyToManyField(Coursegroup, blank=True)
     type = models.SmallIntegerField(default=0, help_text="To know the orientation for the pref wether it is positive, negative, or neutral")
-    event_time = models.ForeignKey(EventTime, on_delete =models.CASCADE,null=True)
-    title = models.ForeignKey(Title,on_delete=models.CASCADE, null = True)
+    event_time = models.ManyToManyField(EventTime, blank=True)
+    title = models.ManyToManyField(Title, blank=True)
     position = models.IntegerField(null=True,help_text = 'Position of the preference in the owner order of preferences')
+    description = models.TextField(null = True)
+    start = models.CharField(null=True)
+    end = models.CharField(null=True)
+    date = models.DateField(null=True)
     status = models.BooleanField()
+    user = models.ForeignKey(Users, on_delete=models.CASCADE, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
-class Generalpref(models.Model):
-    """Preference for a general settings"""
-    preference = models.ForeignKey(Preference,on_delete=models.CASCADE)
-    general = models.ForeignKey(General,on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-class Buildingpref(models.Model):
-    """Preference for a specific building in the system."""
-    preference = models.ForeignKey(Preference,on_delete=models.CASCADE)
-    building = models.ForeignKey(Building,on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_created=True, default=timezone.now)
- 
-class Floorpref(models.Model):
-    """Preference for a specific Floor in the System"""
-    preference = models.OneToOneField(Preference,on_delete=models.CASCADE)
-    floor = models.ForeignKey(Floor,on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-class Roompref(models.Model):
-    """Preference for a specific Room in the System"""
-    preference = models.OneToOneField(Preference,on_delete=models.CASCADE)
-    room = models.ForeignKey(Room,on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-
-class Facultypref(models.Model):
-    """Preference for a specific Faculty in the System"""
-    preference = models.ForeignKey(Preference,on_delete=models.CASCADE)
-    faculty = models.ForeignKey(Faculty,on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)
-class Departmentpref(models.Model):
-    """Preference for a specific Departement in the System"""
-    preference = models.ForeignKey(Preference,on_delete=models.CASCADE)
-    department = models.ForeignKey(Department,on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)
-class Programpref(models.Model):
-    """Preference for a specific Program in the System"""
-    preference = models.ForeignKey(Preference,on_delete=models.CASCADE)
-    program = models.ForeignKey(Program,on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)
-class EventTimepref(models.Model):
-    """A time that is preferred for events to occur"""
-    preference = models.ForeignKey(Preference,on_delete = models.CASCADE)
-    event_time = models.ForeignKey(EventTime, on_delete=models.CASCADE,null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-class CoursePref(models.Model):
-    """Course Pref"""
-    preference = models.ForeignKey(Preference,on_delete = models.CASCADE)
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-class CourseSemesterPref(models.Model):
-    """Semester Courses Preference"""
-    preference = models.ForeignKey(Preference, on_delete=models.CASCADE)
-    semester_course = models.ForeignKey(CourseSemester, on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-class SemesterPref(models.Model):
-    """Semester  Preference"""
-    preference = models.ForeignKey(Preference, on_delete=models.CASCADE)
-    semester = models.ForeignKey(Semester, on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)
 
 class AdminOperations(models.Model):
     class Meta:

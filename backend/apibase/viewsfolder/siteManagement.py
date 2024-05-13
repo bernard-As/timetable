@@ -1,3 +1,4 @@
+from datetime import datetime
 from rest_framework import viewsets, filters
 from django_filters.rest_framework import DjangoFilterBackend
 from apibase.serializers import *
@@ -19,6 +20,10 @@ from rest_framework.decorators import api_view, renderer_classes
 class TitleViewSet (viewsets.ModelViewSet):
     queryset = Title.objects.all()
     serializer_class = TitleSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['name','shortname']
+
+     
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 
@@ -69,6 +74,9 @@ class UserViewSet (viewsets.ModelViewSet):
     permission_classes = ([IsAuthenticated]) 
     queryset = Users.objects.all()
     serializer_class = UsersSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['user__first_name','user__last_name','title']
+
     def create(self, request, *args, **kwargs):
         hash_pwd = make_password(request.data.get('password'))
         request.data['password'] = hash_pwd
@@ -85,41 +93,118 @@ class UserViewSet (viewsets.ModelViewSet):
         obj.deleted = True 
         obj.save()
         return Response(200)
+
 class GeneralViewSet (viewsets.ModelViewSet):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
     queryset = General.objects.all()
     serializer_class = GeneralSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['description','state_description']
+
+
 class SemesterViewSet (viewsets.ModelViewSet):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
     queryset = Semester.objects.all()
     serializer_class = SemesterSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['year','season']
+
 class BuildingViewSet(viewsets.ModelViewSet):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
     queryset = Building.objects.all()
     serializer_class = BuildingSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['name','code','latitude','longitude','state_description']
+
 class FloorViewSet(viewsets.ModelViewSet):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
     queryset = Floor.objects.all().order_by("building")
     serializer_class = FloorSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['floor_number','state_description','building__name','building__code','building__latitude','building__longitude']
+
 class RoomViewSet(viewsets.ModelViewSet):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
     queryset = Room.objects.all().order_by("floor")
     serializer_class = RoomSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = [
+        'code',
+        'description',
+        'capacity',
+        'room_type',
+        'floor__floor_number',
+        'floor__state_description',
+        'floor__building__name',
+        'floor__building__code',
+        'floor__building__latitude',
+        'floor__building__longitude',
+        'state_description',
+        ]
 
 class FacultyViewSet(viewsets.ModelViewSet):
     queryset = Faculty.objects.all()
     serializer_class = FacultySerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['name','shortname','color','description']
+
 
 class ActivityTypeViewSet(viewsets.ModelViewSet):
     queryset = ActivityType.objects.all()
     serializer_class = ActivitytypeSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['name','description']
 
 class DepartmentViewSet(viewsets.ModelViewSet):
     queryset = Department.objects.all()
     serializer_class = DepartmentSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['name','shortname','color','description','faculty__name','faculty__shortname','faculty__color']
 
 class ProgramViewSet(viewsets.ModelViewSet):
     queryset = Program.objects.all()
     serializer_class = ProgramSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = [
+        'name',
+        'shortname',
+        'color',
+        'description',
+        'department__name',
+        'department__shortname',
+        'department__color',
+        'department__description',
+        'department__faculty__name',
+        'department__faculty__shortname',
+        'department__faculty__color'
+    ]
 
 class CourseSemesterViewSet(viewsets.ModelViewSet):
     queryset = CourseSemester.objects.all()
     serializer_class = CourseSemesterSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = [
+        'semester_num',
+        'description',
+        'program__name',
+        'program__shortname',
+        'program__color',
+        'program__description',
+        'faculty__name',
+        'faculty__shortname',
+        'faculty__color',
+        'department__name',
+        'department__shortname',
+        'department__color'
+        # 'faculty__shortname',
+    ]
+
+
 class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
@@ -127,6 +212,13 @@ class GroupViewSet(viewsets.ModelViewSet):
 class LecturerViewSet(viewsets.ModelViewSet):
     queryset = Lecturer.objects.all()
     serializer_class = LecturerSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = [
+        'user__first_name',
+        'user__last_name',
+        'user__email',
+        'user__title',
+    ]
 
     def create(self, request, *args, **kwargs):
         title=Title.objects.get(id=request.data['title'])
@@ -219,6 +311,13 @@ class LecturerViewSet(viewsets.ModelViewSet):
 class StudentViewSet(viewsets.ModelViewSet):
     queryset = Student.objects.all()
     serializer_class = StudentSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = [
+        'user__first_name',
+        'user__last_name',
+        'user__email',
+        'user__title',
+    ]
 
     def create(self, request, *args, **kwargs):
         faculties = [Faculty.objects.get(id=fac) for fac in request.data['faculty']if fac!='']
@@ -320,6 +419,14 @@ class StudentViewSet(viewsets.ModelViewSet):
 class OtherStaffViewSet(viewsets.ModelViewSet):
     queryset = OtherStaff.objects.all()
     serializer_class = OtherStaffSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = [
+        'user__first_name',
+        'user__last_name',
+        'user__email',
+        'user__title',
+        'stafftype',
+    ]
 
     def create(self, request, *args, **kwargs):
         faculties = [Faculty.objects.get(id=fac) for fac in request.data.get('faculty', []) if fac !='']
@@ -418,7 +525,7 @@ class CourseViewSet(viewsets.ModelViewSet):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
     filter_backends = [filters.SearchFilter]
-    search_fields = ['title','code','description'] 
+    search_fields = ['title','code','description','other_staff__user__first_name','other_staff__user__last_name'] 
 
     def create(self, request, *args, **kwargs):
         try:
@@ -439,8 +546,8 @@ class CourseViewSet(viewsets.ModelViewSet):
                 lecturer = Lecturer.objects.get(id=groupInt.pop('lecturer'))
             else:
                 return Response({'message': 'Please select a lecturer for the group '+ groupInt['group_number']},200)
-            assistant = Student.objects.get(id=groupInt.pop('assistant')) if groupInt['assistant'] else  None
-            lecturer_assistant = Lecturer.objects.get(id=groupInt.pop('lecturer_assistant')) if groupInt['lecturer_assistant'] else None
+            assistant = Student.objects.get(id=groupInt.pop('assistant','')) if hasattr(groupInt,'assistant') else  None
+            lecturer_assistant = Lecturer.objects.get(id=groupInt.pop('lecturer_assistant','')) if hasattr(groupInt,'lecturer_assistant') else  None
 
             group = {
                 'course': course,
@@ -546,8 +653,10 @@ class CourseGroupViewSet(viewsets.ModelViewSet):
     queryset = Coursegroup.objects.all()
     serializer_class = CourseGroupSerializer
     filter_backends = [filters.SearchFilter]
-    search_fields = ['description',
+    search_fields = [
+        'description',
         'duration',
+        'current_capacity',
         'max_capacity',
         'group_number',
         'course__title',
@@ -592,7 +701,97 @@ class CourseGroupViewSet(viewsets.ModelViewSet):
 class PreferenceViewSet(viewsets.ModelViewSet):
     queryset = Preference.objects.all().order_by('id')
     serializer_class = PreferenceSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = [
+        'description',
+        'general__description',
+        'building___name',
+        'building__code',
+        'building__latitude',
+        'building__longitude',
+        'building__state_description',
+        'floor__floor_number',
+        'floor__state_description',
+        'room___code',
+        'room___description',
+        'room__capacity',
+        'room__room_type',
+        'faculty__name',
+        'faculty__shortname',
+        'faculty__color',
+        'faculty__description',
+        'department__color',
+        'department__shortname',
+        'department__name',
+        'program__color',
+        'program__shortname',
+        'program__name',
+        'course_semester__semester_num',
+        'course_semester__description',
+        'semester__year',
+        'semester__season',
+        'course__title',
+        'course__code',
+        'course__description',
+        'course__other_staff__user__first_name',
+        'course__other_staff__user__last_name',
+        'coursegroup__description',
+        'coursegroup__duration',
+        'coursegroup__current_capacity'
+        'coursegroup__max_capacity',
+        'coursegroup__group_number',
+        'coursegroup__course__title',
+        'coursegroup__course__code',
+        'coursegroup__course__description',
+        'coursegroup__course__created_at',
+        'coursegroup__lecturer__user__first_name',
+        'coursegroup__lecturer__user__last_name',
+        'coursegroup__assistant__user__first_name',
+        'coursegroup__assistant__user__last_name',
+        'coursegroup__lecturer_assistant__user__first_name',
+        'coursegroup__lecturer_assistant__user__last_name',
+        'coursegroup__course_semester__semester__year',
+        'coursegroup__course_semester__semester__season',
+        'coursegroup__course_semester__program__name',
+        'coursegroup__course_semester__program__shortname',
+        'coursegroup__course_semester__department__name',
+        'coursegroup__course_semester__department__shortname',
+        'coursegroup__course_semester__faculty__name',
+        'coursegroup__course_semester__faculty__shortname',
+        'event_time__start',
+        'event_time__end',
+        'event_time__date',
+        'title__name',
+        'title__shortname',
+        'title__description',
+        'user__user__first_name',
+        'user__user__last_name',
+        'user__user__email',
+        'user__title__name',
+        'user__title__shortname',
+    ]
+
+    def create(self, request, *args, **kwargs):
+        if Users.objects.filter(user=request.user.id).exists():
+            request.data['user'] = Users.objects.filter(user=request.user.id).id
+            if not hasattr(request.data,'position'):
+                request.data['position'] = Users.objects.filter(user=request.user.id).first().preference_set.count()
+        if not hasattr(request.data, 'status'):
+            request.data['status'] = True
+            print(hasattr(request.data, 'start'))
+        if 'start' in request.data:
+            request.data['start'] = datetime.fromisoformat(request.data['start'][:-1]).strftime('%H:%M')
+        if 'date' in request.data:
+            request.data['date'] = datetime.fromisoformat(request.data['date'][:-1]).strftime('%Y-%m-%d')
+            
+        return super().create(request, *args, **kwargs)
 
 class EventTimeViewSet(viewsets.ModelViewSet):
     queryset = EventTime.objects.all().order_by('id')
     serializer_class = EventTimeSerializer
+    filter_backends = (filters.SearchFilter, filters.OrderingFilter)
+    search_fields = [
+        'start',
+        'end',
+        'date',
+    ]

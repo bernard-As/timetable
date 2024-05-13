@@ -351,6 +351,7 @@ const List:React.FC = () => {
                     <th scope="col">Year</th>
                     <th scope="col">Season</th>
                     <th scope="col">Status</th>
+                    <th scope="col">State Description</th>
                     <th scope="col">Actions</th>
                 </tr>
             </thead>

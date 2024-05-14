@@ -755,16 +755,43 @@ const List:React.FC = () =>{
           }
         });
     }
-    const displayObjectConytaint = async(obj:any, editId:number,target:string) =>{
-        console.info('need to log something');
+    const getTargetContainer = async(id:number,target:string)=>{
+         const response = await axiosInstance.get(`${target}/${id}/`)
+         return response.data
+    }
+        let [text,setText] = useState('')
+        const displayObjectConytaint = async(obj:any, editId:number,target:string) =>{
         switch (target){
             case "general":
+                obj.map(async(o:any)=>{
+                    const x = await getTargetContainer(o,target)
+                    // text.push(`${x.description} - ${x.status?'active':'inactive'}}`)
+                })
                 break
             case 'building':
+                obj.map(async(o:any)=>{
+                    const x = await getTargetContainer(o,target)
+                    // text.push(`${x.code}: ${x.name} -${x.status?'active':'inactive'}`)
+                    text +=`${x.code}: ${x.name} -${x.status?'active':'inactive'}`
+                    setText(text)
+                    // text = [
+                    //     ...text,
+                    //     `${x.code}: ${x.name} -${x.status?'active':'inactive'}`
+                    // ]
+                })
                 break
             case 'floor':
+                obj.map(async(o:any)=>{
+                    const x = await getTargetContainer(o,target)
+                    const d = x.data
+                    const b = await getTargetContainer(x.data.building,'building')
+                    // text.push(`${d.floor_number}  
+                    //  ${b.data.code}: ${b.data.name}
+                    // -${d.status?'active':'inactive'}`)
+                })
                 break
             case 'room':
+                
                 break
             case 'faculty':
                 break
@@ -789,14 +816,13 @@ const List:React.FC = () =>{
             default:
                 return
         }
-        const textContaint = JSON.stringify(
-            obj.map((o:any)=>{
-                return <div></div>
-            })
-        )
+            console.info(text)
+            const textContaint = JSON.stringify(
+             text??'nothing to display'
+            )
         return Swal.fire({
             title: "Deleting",
-            text: "Do you want to delete this item ?",
+            text:textContaint,
             icon: "question",
             showCancelButton: true,
             confirmButtonColor: "#3085d6",
@@ -815,38 +841,37 @@ const List:React.FC = () =>{
           searchResults.map((item:any) => (
               <tr key={item.id}>
                 <td
-                 onClick={()=>{displayObjectConytaint(item.general,item.id,'general')}}>[{item.general.length} ] elements</td>
+                 onClick={()=>{displayObjectConytaint(item.general,item.id,'general')}}>[{item.general.length} ] element(s)</td>
                 <td
-                 onClick={()=>{displayObjectConytaint(item.building,item.id,'building')}}>[{item.building.length} ] elements</td>
+                 onClick={()=>{displayObjectConytaint(item.building,item.id,'building')}}>[{item.building.length} ] element(s)</td>
                 <td
-                 onClick={()=>{displayObjectConytaint(item.floor,item.id,'floor')}}>[{item.floor.length} ] elements</td>
+                 onClick={()=>{displayObjectConytaint(item.floor,item.id,'floor')}}>[{item.floor.length} ] element(s)</td>
                 <td
-                 onClick={()=>{displayObjectConytaint(item.room,item.id,'room')}}>[{item.room.length} ] elements</td>
+                 onClick={()=>{displayObjectConytaint(item.room,item.id,'room')}}>[{item.room.length} ] element(s)</td>
                 <td
-                 onClick={()=>{displayObjectConytaint(item.faculty,item.id,'faculty')}}>[{item.faculty.length} ] elements</td>
+                 onClick={()=>{displayObjectConytaint(item.faculty,item.id,'faculty')}}>[{item.faculty.length} ] element(s)</td>
                 <td
-                 onClick={()=>{displayObjectConytaint(item.department,item.id,'department')}}>[{item.department.length} ] elements</td>
+                 onClick={()=>{displayObjectConytaint(item.department,item.id,'department')}}>[{item.department.length} ] element(s)</td>
                 <td
-                 onClick={()=>{displayObjectConytaint(item.program,item.id,'program')}}>[{item.program.length} ] elements</td>
+                 onClick={()=>{displayObjectConytaint(item.program,item.id,'program')}}>[{item.program.length} ] element(s)</td>
                 <td
-                 onClick={()=>{displayObjectConytaint(item.course_semester,item.id,'course_semester')}}>[{item.course_semester.length} ] elements</td>
+                 onClick={()=>{displayObjectConytaint(item.course_semester,item.id,'course_semester')}}>[{item.course_semester.length} ] element(s)</td>
                 <td
-                 onClick={()=>{displayObjectConytaint(item.semester,item.id,'semester')}}>[{item.semester.length} ] elements</td>
+                 onClick={()=>{displayObjectConytaint(item.semester,item.id,'semester')}}>[{item.semester.length} ] element(s)</td>
                 <td
-                 onClick={()=>{displayObjectConytaint(item.course,item.id,'course')}}>[{item.course.length} ] elements</td>
+                 onClick={()=>{displayObjectConytaint(item.course,item.id,'course')}}>[{item.course.length} ] element(s)</td>
                 <td
-                 onClick={()=>{displayObjectConytaint(item.coursegroup,item.id,'coursegroup')}}>[{item.coursegroup.length} ] elements</td>
+                 onClick={()=>{displayObjectConytaint(item.coursegroup,item.id,'coursegroup')}}>[{item.coursegroup.length} ] element(s)</td>
                 <td>{item.type} </td>
                 <td
-                 onClick={()=>{displayObjectConytaint(item.event_time,item.id,'event_time')}}>[{item.event_time.length} ] elements</td>
+                 onClick={()=>{displayObjectConytaint(item.event_time,item.id,'event_time')}}>[{item.event_time.length} ] element(s)</td>
                 <td
-                 onClick={()=>{displayObjectConytaint(item.title,item.id,'title')}}>[{item.title.length} ] elements</td>
-                <td
-                 onClick={()=>{displayObjectConytaint(item.position,item.id,'position')}}>[{item.position.length} ] elements</td>
-                <td>{item.description} </td>
-                <td>{item.start} </td>
-                <td>{item.end}  </td>
-                <td>{item.date.length} </td>
+                 onClick={()=>{displayObjectConytaint(item.title,item.id,'title')}}>[{item.title.length} ] element(s)</td>
+                <td>{item.position??'Not set'}</td>
+                <td>{item.description??'Not set'} </td>
+                <td>{item.start??'Not set'} </td>
+                <td>{item.end??'Not set'}  </td>
+                <td>{item.date??'Not set'} </td>
                 <td>{item.status?
                       <button type="button" className="btn btn-outline-primary m-2" >Enable</button>: 
                       <button type="button" className="btn btn-outline-danger m-1">Disable</button>}</td>

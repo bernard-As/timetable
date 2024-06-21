@@ -158,8 +158,6 @@ class Program(models.Model):
 class CourseSemester(models.Model):
     """Semesters from programs"""
     program = models.ForeignKey(Program, on_delete=models.CASCADE,blank=True)
-    department = models.ForeignKey(Department, on_delete=models.CASCADE, null=True, blank=True)
-    faculty = models.ForeignKey(Faculty,on_delete=models.CASCADE, null=True,blank=True)
     semester = models.ForeignKey(Semester, on_delete=models.CASCADE)
     semester_num = models.SmallIntegerField()
     description =  models.CharField(max_length=5000, blank=True)
@@ -266,6 +264,7 @@ class Preference(models.Model):
         ]
     general = models.ManyToManyField(General, blank=True)
     building = models.ManyToManyField(Building, blank=True)
+    lecturer = models.ManyToManyField(Lecturer, blank=True)
     floor = models.ManyToManyField(Floor, blank=True)
     room = models.ManyToManyField(Room, blank=True)
     faculty = models.ManyToManyField(Faculty, blank=True)
@@ -277,7 +276,9 @@ class Preference(models.Model):
     coursegroup = models.ManyToManyField(Coursegroup, blank=True)
     type = models.SmallIntegerField(default=0, help_text="To know the orientation for the pref wether it is positive, negative, or neutral")
     event_time = models.ManyToManyField(EventTime, blank=True)
+    activity_type = models.ManyToManyField(ActivityType, blank=True)
     title = models.ManyToManyField(Title, blank=True)
+    room_features = models.ManyToManyField(RoomFeatures,blank=True)
     position = models.IntegerField(null=True,help_text = 'Position of the preference in the owner order of preferences')
     description = models.TextField(null = True)
     start = models.CharField(null=True)

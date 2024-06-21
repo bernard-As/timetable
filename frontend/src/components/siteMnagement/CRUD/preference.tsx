@@ -759,51 +759,113 @@ const List:React.FC = () =>{
          const response = await axiosInstance.get(`${target}/${id}/`)
          return response.data
     }
-        let [text,setText] = useState('')
-        const displayObjectConytaint = async(obj:any, editId:number,target:string) =>{
-        switch (target){
+    const displayObjectConytaint = async(obj:any, editId:number,target:string) =>{
+            let text:string=''
+            let promises:any
+            const parser = new DOMParser()
+            switch (target){
             case "general":
-                obj.map(async(o:any)=>{
-                    const x = await getTargetContainer(o,target)
-                    // text.push(`${x.description} - ${x.status?'active':'inactive'}}`)
-                })
+                 promises = obj.map(async (o: any) => {
+                    const x = await getTargetContainer(o, target);
+                    return `<li>${x.description} - ${x.status ? 'active' : 'inactive'}</li>`;}
+                );
+                text ='<ul>'+(await Promise.all(promises)).join('\n')+'</ul>';
                 break
             case 'building':
-                obj.map(async(o:any)=>{
-                    const x = await getTargetContainer(o,target)
-                    // text.push(`${x.code}: ${x.name} -${x.status?'active':'inactive'}`)
-                    text +=`${x.code}: ${x.name} -${x.status?'active':'inactive'}`
-                    setText(text)
-                    // text = [
-                    //     ...text,
-                    //     `${x.code}: ${x.name} -${x.status?'active':'inactive'}`
-                    // ]
-                })
+                promises = obj.map(async (o: any) => {
+                    const x = await getTargetContainer(o, target);
+                    return `<li>${x.code}: ${x.name} -${x.status?'active':'inactive'}</li>`;
+                });
+                text = '<ul>'+(await Promise.all(promises)).join(`<br>`)+'</ul>';
                 break
             case 'floor':
-                obj.map(async(o:any)=>{
-                    const x = await getTargetContainer(o,target)
-                    const d = x.data
-                    const b = await getTargetContainer(x.data.building,'building')
-                    // text.push(`${d.floor_number}  
-                    //  ${b.data.code}: ${b.data.name}
-                    // -${d.status?'active':'inactive'}`)
-                })
+                promises = obj.map(async (o: any) => {
+                    const x = await getTargetContainer(o, target);
+                    const b = await getTargetContainer(x.building, 'building')
+                    return `<li>
+                    floor: ${x.floor_number}  
+                    building: ${b?.name} - ${b?.code}
+                    -${x.status?'active':'inactive'}
+                    </li>`;
+                });
+                text = '<ul>'+(await Promise.all(promises)).join(`<br>`)+'</ul>';
                 break
             case 'room':
-                
+                promises = obj.map(async (o: any) => {
+                    const x = await getTargetContainer(o, target);
+                    return `<li>
+                    ${x.code} 
+                    -${x.status?'active':'inactive'}
+                    </li>`;
+                });
+                text = '<ul>'+(await Promise.all(promises)).join(`<br>`)+'</ul>';
                 break
             case 'faculty':
+                promises = obj.map(async (o: any) => {
+                    const x = await getTargetContainer(o, target);
+                    return `<li>
+                    ${x.name} 
+                    ${x.shortname} 
+                    -${x.status?'active':'inactive'}
+                    </li>`;
+                });
+                text = '<ul>'+(await Promise.all(promises)).join(`<br>`)+'</ul>';
                 break
             case 'department':
+                promises = obj.map(async (o: any) => {
+                    const x = await getTargetContainer(o, target);
+                    return `<li>
+                    ${x.name} 
+                    ${x.shortname} 
+                    -${x.status?'active':'inactive'}
+                    </li>`;
+                });
+                text = '<ul>'+(await Promise.all(promises)).join(`<br>`)+'</ul>';
                 break
             case 'program':
+                promises = obj.map(async (o: any) => {
+                    const x = await getTargetContainer(o, target);
+                    return `<li>
+                    ${x.name} 
+                    ${x.shortname} 
+                    -${x.status?'active':'inactive'}
+                    </li>`;
+                });
+                text = '<ul>'+(await Promise.all(promises)).join(`<br>`)+'</ul>';
                 break
             case 'coursesemester':
+                promises = obj.map(async (o: any) => {
+                    const x = await getTargetContainer(o, target);
+                    const p = await getTargetContainer(x?.program, 'program');
+                    return `<li>
+                    Semester ${x.semester_num}  
+                    Program ${p.shortname} ${p.name}
+                    - ${x.status?'active':'inactive'}
+                    </li>`;
+                });
+                text = '<ul>'+(await Promise.all(promises)).join(`<br>`)+'</ul>';
                 break
             case 'semester':
+                promises = obj.map(async (o: any) => {
+                    const x = await getTargetContainer(o, target);
+                    return `<li>
+                    ${x.season} - 
+                    ${x.year} 
+                    -${x.status?'active':'inactive'}
+                    </li>`;
+                });
+                text = '<ul>'+(await Promise.all(promises)).join(`<br>`)+'</ul>';
                 break
-            case 'coursegroup': 
+            case 'coursegroup':
+                promises = obj.map(async (o: any) => {
+                    const x = await getTargetContainer(o, target);
+                    return `<li>
+                    ${x.season} - 
+                    ${x.year} 
+                    -${x.status?'active':'inactive'}
+                    </li>`;
+                });
+                text = '<ul>'+(await Promise.all(promises)).join(`<br>`)+'</ul>'; 
                 break
             case 'title':
                 break
@@ -815,24 +877,20 @@ const List:React.FC = () =>{
                 break
             default:
                 return
-        }
-            console.info(text)
-            const textContaint = JSON.stringify(
-             text??'nothing to display'
-            )
-        return Swal.fire({
-            title: "Deleting",
-            text:textContaint,
-            icon: "question",
-            showCancelButton: true,
-            confirmButtonColor: "#3085d6",
-            // cancelButtonColor: "#d33",
-            confirmButtonText: "Yes, delete it!"
-          }).then((result:any) => {
-            if (result.isConfirmed) {
-                
             }
-          });
+            return Swal.fire({
+                title: "Content",
+                html: text,
+                icon: "info",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                // cancelButtonColor: "#d33",
+                confirmButtonText: "Edit"
+              }).then((result:any) => {
+                if (result.isConfirmed) {
+                    
+                }
+              });
     }
   const [edit, setEdit] = useState(0)
   

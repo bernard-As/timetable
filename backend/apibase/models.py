@@ -83,7 +83,14 @@ class Floor(models.Model):
 
     class Meta:
         unique_together = ('building', 'floor_number')
-        
+class RoomFeatures(models.Model):
+    """Room Features"""   
+    name = models.CharField(max_length=500)
+    status = models.BooleanField()
+    state_description = models.TextField(null=True,blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
 class Room(models.Model):
     """Room in a floor of a building."""
     ROOM_TYPES = [
@@ -104,6 +111,7 @@ class Room(models.Model):
     latitude = models.FloatField(default=0)
     longitude = models.FloatField(default=0)
     room_type = models.CharField(max_length=4, choices=ROOM_TYPES)
+    room_feature = models.ManyToManyField(RoomFeatures)
     status = models.BooleanField()
     state_description = models.TextField(blank=True, null = True)
     created_at = models.DateTimeField(auto_created=True, default=timezone.now)

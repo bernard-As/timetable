@@ -248,6 +248,22 @@ class Day(models.Model):
 
 class Preference(models.Model):
     """Preferences set """
+    ORIGIN_CHOICES  = [
+        ("general", "general"),
+        ("building", "building"),
+        ("floor", "floor"),
+        ("room", "room"),
+        ("faculty", "faculty"),
+        ("department", "department"),
+        ("course_semester", "course_semester"),
+        ("course", "course"),
+        ("semester", "semester"),
+        ("course", "course"),
+        ("coursegroup", "coursegroup"),
+        ("event_time", "event_time"),
+        ("title", "title"),
+        ("general", "general"),
+        ]
     general = models.ManyToManyField(General, blank=True)
     building = models.ManyToManyField(Building, blank=True)
     floor = models.ManyToManyField(Floor, blank=True)
@@ -269,6 +285,8 @@ class Preference(models.Model):
     date = models.DateField(null=True)
     status = models.BooleanField()
     user = models.ForeignKey(Users, on_delete=models.CASCADE, null=True, blank=True)
+    origin = models.CharField(choices=ORIGIN_CHOICES,max_length=255)
+    originId = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

@@ -209,7 +209,7 @@ class Course(models.Model):
 
 class Coursegroup(models.Model):
     """Groups for each course """
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE,related_name='groups')
     extra_session_of = models.ManyToManyField('self')# when there are some extra session that should be linked to the main session
     group_number = models.PositiveSmallIntegerField(default=1)
     lecturer = models.ForeignKey(Lecturer,on_delete=models.SET_NULL,null=True)

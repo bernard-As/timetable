@@ -51,6 +51,10 @@ class Frame(models.Model):
     day_time_frame = models.ForeignKey(DayTimeFrame,on_delete=models.CASCADE)
     common_c = models.ForeignKey(CommonC,on_delete=models.CASCADE,related_name='frame')
 
+class TitleC(models.Model):
+    title = models.OneToOneField(Title, on_delete=models.CASCADE)
+    common_c = models.ForeignKey(CommonC,on_delete=models.CASCADE,related_name='title_c')
+    frame = models.ManyToManyField(Frame,on_delete=models.CASCADE)
 
 class BuildingC(models.Model):
     building = models.OneToOneField(Building,on_delete=models.SET_NULL,null=True,related_name='building_c')
@@ -59,7 +63,7 @@ class BuildingC(models.Model):
 
 class FloorC(models.Model):
     floor = models.OneToOneField(Floor,on_delete=models.SET_NULL,null=True,related_name='floor_c')
-    building_c = models.ForeignKey(BuildingC,on_delete=models.CASCADE,related_name='floor_c_building')
+    building = models.ForeignKey(BuildingC,on_delete=models.CASCADE,related_name='floor_c_building')
     frame = models.ManyToManyField(Frame,on_delete=models.CASCADE)
     common_c = models.ForeignKey(CommonC,on_delete=models.CASCADE,related_name='floor_c_frame')
 
@@ -69,7 +73,7 @@ class RoomFeaturesC(models.Model):
 
 class RoomC(models.Model):
     room = models.OneToOneField(Room,on_delete=models.SET_NULL,null=True,related_name='room_c')
-    floor_c = models.ForeignKey(FloorC,on_delete=models.CASCADE, related_name='room_c_floor')
+    floor = models.ForeignKey(FloorC,on_delete=models.CASCADE, related_name='room_c_floor')
     room_feature = models.ManyToManyField(RoomFeaturesC)
     frame = models.ManyToManyField(Frame,on_delete=models.CASCADE)
     common_c = models.ForeignKey(CommonC,on_delete=models.CASCADE,related_name='room_c_frame')

@@ -13,7 +13,7 @@ class Title(models.Model):
     """Possible titles of users"""
     name = models.CharField(max_length=101)
     shortname = models.CharField(max_length=20,null=True)
-
+    status = models.BooleanField(default=True)
 class General(models.Model):
     """General information about the system."""
     description = models.TextField(null=True)
@@ -201,6 +201,7 @@ class ActivityType(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
+    status = models.BooleanField()
 
 class Course(models.Model):
     """A course offered by the university"""

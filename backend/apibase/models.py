@@ -236,6 +236,11 @@ class Coursegroup(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
 
+class StudentGroup(models.Model):
+    student = models.ManyToManyField(Student, on_delete=models.SET_NULL, null=True)
+    coursegroup = models.ManyToManyField(Coursegroup, on_delete=models.SET_NULL,null=True,related_name='studentgroups')
+    timespan = models.DateTimeField(auto_now_add=True)
+    status = models.BooleanField()
 
 class Day(models.Model):
     """Day of week (0-6 is Monday - Sunday) or full date as int"""

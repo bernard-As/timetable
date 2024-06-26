@@ -15,6 +15,9 @@ def refiller():
     10->Course Semester
     11->Lecturer
     12->activity Type
+    ->course
+    ->CourseGroup
+    ->
     """
     logger("Refilling...")
     title_ref()
@@ -115,7 +118,7 @@ def program_ref():
     programs = Program.objects.all()
     for program in programs:
         department_c = DepartmentC.objects.filter(department=program.department)
-        if(department_c.exists and program.status):
+        if(department_c.exists() and program.status):
             ProgramC.objects.get_or_create(program=program,department=department_c)
             logger("New programC created",2)
     logger("Program refilled",1)
@@ -145,4 +148,37 @@ def activity_type_ref():
     for activity_type in activity_types:
         if(activity_type.status):
             ActivityTypeC.objects.get_or_create(activity_type=activity_type)
-logger("Activity Type Refilled",1)
+    logger("Activity Type Refilled",1)
+
+def course_ref():
+    logger("Course Refilling...")
+    courses = Course.objects.all()
+    for course in courses:
+        if(course.status):
+            CourseC.objects.get_or_create(course=course)
+
+def course_group_ref():
+    logger("Course Group Refilling...")
+    course_groups = Coursegroup.objects.all()
+    for course_group in course_groups:
+        coursec = CourseC.objects.filter(course=course_group.course)
+        lecturerc = LecturerC.objects.filter(lecturer=course_group.lecturer)
+        if(coursec.exists() and course_group.status):
+            newCourseGroup,_ = CourseGroupC.objects.get_or_create(
+                course_group=course_group,
+                course=coursec,
+                lecturer = lecturerc,
+            )
+            newCourseGroup.extra_session_of.set([CourseGroupC.objects.get(id=extra_session.id) for extra_session in newCourseGroup.course_group.extra_session_of])
+            newCourseGroup.merged_with.set([CourseGroupC.objects.get(id=m.id) for m in newCourseGroup.course_group.merged_with])
+            newCourseGroup.activitytype.set([ActivityTypeC.objects.get(id=a.id) for a in newCourseGroup.course_group.activitytype])
+            newCourseGroup.prerequisites.set([CourseGroupC.objects.get(id=m.id) for m in newCourseGroup.course_group.prerequisites])
+            newCourseGroup.course_semester.set([CourseSemesterC.objects.get(id=m.id) for m in newCourseGroup.course_group.course_semester])
+
+def student_group_ref():
+    logger("Student Group Refilling...")
+    student_groups = StudentGroup.objects.all()
+    for student_group in student_groups:
+        if student_group.status:
+            studentGroupC,_ = StudentGroupC.objects.get_or_create(student_group = student_group)
+            studentGroupC.course_group.set([Course])

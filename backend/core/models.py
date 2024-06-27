@@ -11,7 +11,7 @@ class SysSeting(models.Model):
     ->PreferenceImpact holds record about the preferences that impact the object
     ->Z-Index for How deep can it be use depanding on the other (for Euristc Algorithm)
     ->impact_status is use to know if it current frame is to be remove or take more in consideration
-
+    rate expressed in converted min to number 
     **event_time modifications will be Impact on frames **
     Next time: fuctions for filling the objects and logic to make the system numeriacal 
     """

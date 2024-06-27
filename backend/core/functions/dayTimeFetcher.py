@@ -1,5 +1,5 @@
 
-from core.models import SysSeting
+from core.models import SysSeting, TimeFrame
 
 
 def day_time_fetcher():
@@ -8,3 +8,9 @@ def day_time_fetcher():
     """
 
     time_rate = SysSeting.objects.create()
+
+    
+def generate_time_frames(time_rate):
+    for i in range(0,2499,time_rate):
+        TimeFrame.objects.create(time=i)
+        

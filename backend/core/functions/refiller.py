@@ -32,6 +32,8 @@ def refiller():
     course_semster_ref()
     lecturer_ref()
     activity_type_ref()
+    course_ref()
+    course_group_ref()
 
     logger("Refilling Done...")
 

@@ -16,7 +16,7 @@ class SysSeting(models.Model):
     Next time: fuctions for filling the objects and logic to make the system numeriacal 
     """
     time_rate = models.IntegerField(default=50)
-    run_time_semesters = models.ManyToManyField(Semester,help_text='Semester to take in consideration')
+    runtime_semesters = models.ManyToManyField(Semester,help_text='Semester to take in consideration')
 
 class CommonC(models.Model):
     """

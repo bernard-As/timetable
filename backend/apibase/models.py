@@ -237,8 +237,8 @@ class Coursegroup(models.Model):
 
 
 class StudentGroup(models.Model):
-    student = models.ManyToManyField(Student, on_delete=models.SET_NULL, null=True)
-    coursegroup = models.ManyToManyField(Coursegroup, on_delete=models.SET_NULL,null=True,related_name='studentgroups')
+    student = models.ManyToManyField(Student, )
+    coursegroup = models.ManyToManyField(Coursegroup, related_name='studentgroups')
     timespan = models.DateTimeField(auto_now_add=True)
     status = models.BooleanField()
 

@@ -14,6 +14,7 @@ class Title(models.Model):
     name = models.CharField(max_length=101)
     shortname = models.CharField(max_length=20,null=True)
     status = models.BooleanField(default=True)
+    
 class General(models.Model):
     """General information about the system."""
     description = models.TextField(null=True)

@@ -1,3 +1,4 @@
+from backend.core.functions.dayTimeFetcher import day_time_fetcher
 from core.functions.clear import clearer
 from core.functions.refiller import refiller
 from .models import *
@@ -10,3 +11,4 @@ def Main ():
     print("Welcome to the Student Management System")
     clearer()
     refiller()
+    day_time_fetcher()

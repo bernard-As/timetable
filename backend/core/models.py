@@ -16,6 +16,9 @@ class SysSeting(models.Model):
     Next time: fuctions for filling the objects and logic to make the system numeriacal 
     """
     time_rate = models.IntegerField(default=50)
+    start_time = models.SmallIntegerField(default=900)
+    end_time = models.SmallIntegerField(default=2200)
+    exept_day = models.TextField(default='6,5')
     runtime_semesters = models.ManyToManyField(Semester,help_text='Semester to take in consideration')
 
 class CommonC(models.Model):
@@ -36,13 +39,13 @@ class TimeFrame(models.Model):
     
 
 class DayFrame(models.Model):
-    day = models.IntegerField()    
+    day = models.IntegerField()
     common_c = models.ForeignKey(CommonC,on_delete=models.CASCADE,related_name='day_frame')
     
 
 class DayTimeFrame(models.Model):
-    day_frame = models.ForeignKey(DayFrame,on_delete=models.CASCADE)
-    time_frame = models.ForeignKey(TimeFrame,on_delete=models.CASCADE)
+    day = models.ForeignKey(DayFrame,on_delete=models.CASCADE)
+    time = models.ForeignKey(TimeFrame,on_delete=models.CASCADE)
     common_c = models.ForeignKey(CommonC,on_delete=models.CASCADE,related_name='day_time_frame')
 
 class Frame(models.Model):

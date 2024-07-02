@@ -37,6 +37,9 @@ class TimeFrame(models.Model):
     time = models.SmallIntegerField()
     common_c = models.ForeignKey(CommonC,on_delete=models.CASCADE,related_name='time_frame')
     
+class ZIndex(models.Model):
+    index = models.IntegerField()
+    field = models.CharField(max_length=255,unique=True)
 
 class DayFrame(models.Model):
     day = models.IntegerField()
@@ -143,4 +146,59 @@ class StudentGroupC(models.Model):
     course_group = models.ManyToManyField(CourseGroupC)
     frame = models.ManyToManyField(Frame,)
     common_c = models.ForeignKey(CommonC,on_delete=models.CASCADE,related_name='course_c_frame')
+
+class PossibleSemesterRoom(models.Model):
+    room = models.ManyToManyField(RoomC,blank=True, related_name='possible_semster_room_room')
+    semester = models.OneToOneField(SemesterC, on_delete=models.CASCADE, related_name='possible_semster_room_semster')
+    status = models.BooleanField()
+    z_index = models.IntegerField(default=0)
+
+class PossibleFacultyRoom(models.Model):
+    room = models.ManyToManyField(RoomC,blank=True, related_name='possible_faculty_room_room')
+    faculty = models.OneToOneField(FacultyC, on_delete=models.CASCADE, related_name='possible_faculty_room_faculty')
+    status = models.BooleanField()
+    z_index = models.IntegerField(default=0)
+
+class PossibleDepartmentRoom(models.Model):
+    room = models.ManyToManyField(RoomC,blank=True, related_name='possible_department_room_room')
+    department = models.OneToOneField(DepartmentC, on_delete=models.CASCADE, related_name='possible_department_room_department')
+    status = models.BooleanField()
+    z_index = models.IntegerField(default=0)
+
+class PossibleProgramRoom(models.Model):
+    room = models.ManyToManyField(RoomC,blank=True, related_name='possible_program_room_room')
+    program = models.OneToOneField(ProgramC, on_delete=models.CASCADE, related_name='possible_program_room_department')
+    status = models.BooleanField()
+    z_index = models.IntegerField(default=0)
+
+class PossibleTitleRoom(models.Model):
+    room = models.ManyToManyField(RoomC,blank=True, related_name='possible_title_room_room')
+    title = models.OneToOneField(TitleC, on_delete=models.CASCADE, related_name='possible_title_room_title')
+    status = models.BooleanField()
+    z_index = models.IntegerField(default=0)
+
+class PossibleLecturerRoom(models.Model):
+    room = models.ManyToManyField(RoomC,blank=True, related_name='possible_lecturer_room_room')
+    lecturer = models.OneToOneField(LecturerC, on_delete=models.CASCADE, related_name='possible_lecturer_room_lecturer')
+    status = models.BooleanField()
+    z_index = models.IntegerField(default=0)
+
+class PossibleStudentGroupRoom(models.Model):
+    room = models.ManyToManyField(RoomC,blank=True, related_name='possible_studentGroup_room_room')
+    student_group = models.OneToOneField(StudentGroupC, on_delete=models.CASCADE, related_name='possible_studentGroup_room_lecturer')
+    status = models.BooleanField()
+    z_index = models.IntegerField(default=0)
+
+class PossibleCourseRoom(models.Model):
+    room = models.ManyToManyField(RoomC,blank=True, related_name='possible_course_room_room')
+    course = models.OneToOneField(CourseC, on_delete=models.CASCADE, related_name='possible_course_room_course')
+    status = models.BooleanField()
+    z_index = models.IntegerField(default=0)
+
+class PossibleCourseGroupRoom(models.Model):
+    room = models.ManyToManyField(RoomC,blank=True, related_name='possible_course_group_room_room')
+    course_group = models.OneToOneField(CourseGroupC, on_delete=models.CASCADE, related_name='possible_course_group_room_course_group')
+    status = models.BooleanField()
+    z_index = models.IntegerField(default=0)
+
 

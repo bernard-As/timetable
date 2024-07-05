@@ -87,7 +87,7 @@ class RoomC(models.Model):
     
 class RoomFrame(models.Model):
     room = models.ForeignKey(RoomC,on_delete=models.CASCADE, related_name='room_frames')
-    frame = models.ManyToManyField(Frame)
+    frame = models.ForeignKey(Frame, on_delete=models.CASCADE, related_name='room_frames_frame')
     backtrack_count = models.IntegerField(default=0)
     accepted = models.BooleanField()
     status = models.BooleanField()

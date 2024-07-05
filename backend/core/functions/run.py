@@ -9,11 +9,10 @@ def runcore():
         if not course_group_room.status and not CIATBS(course_group_room.course_group.pk): 
             continue
         verifying_rooms(course_group_room.pk)
-        
-        use_rooms = course_group_room.use_room.all()
-        for use_room in use_rooms:
-            usable_room_frames = use_room.room.room_frames.filter(status=True).orderby('backtrack_count')
+        usable_room_frames = get_usable_room_frame(course_group_room.pk)
         for room_frame in usable_room_frames:
+
+
             
                
 
@@ -42,10 +41,13 @@ def verifying_rooms(course_group_room_id):
 def get_usable_room_frame(course_group_room_id):
     course_group_room = CourseGroupRoom.objects.get(id = course_group_room_id)
     use_rooms = course_group_room.use_room.all()
-    frame_to_escape = []
+    frame_to_use = []
     for use_room in use_rooms:
         room_frames = use_room.room.room_frames
         for room_frame in room_frames:
+            if room_frame.status and not room_frame.accepted:
+                frame_to_use.append(room_frame)
+                return frame_to_use.sort(key=lambda room_frame:(room_frame.modifiable, room_frame.backtrack_count))
             
 
     

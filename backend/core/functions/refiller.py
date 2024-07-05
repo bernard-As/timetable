@@ -86,7 +86,6 @@ def room_ref():
             room_floor_c = FloorC.objects.filter(floor=room.floor)
             if room.status and room_floor_c.exists() and room_feature_c.exists():
                 r = RoomC.objects.create(room=room,floor=room_floor_c,room_feature=room_feature_c)
-                RoomFrame.objects.create(room=r)
     logger("Room Refilled",1)
 
 def semester_ref():

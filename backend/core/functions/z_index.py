@@ -15,3 +15,4 @@ def renew_x_index():
     ZIndex.objects.create(field='student_group', index=7)
     ZIndex.objects.create(field='lecturer', index=9)
     ZIndex.objects.create(field='title', index=6)
+    ZIndex.objects.create(field='capacity', index=8)

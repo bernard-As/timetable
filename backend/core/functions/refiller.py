@@ -85,7 +85,8 @@ def room_ref():
             room_feature_c = RoomFeaturesC.objects.filter(room_feature=room.room_feature)
             room_floor_c = FloorC.objects.filter(floor=room.floor)
             if room.status and room_floor_c.exists() and room_feature_c.exists():
-                RoomC.objects.create(room=room,floor=room_floor_c,room_feature=room_feature_c)
+                r = RoomC.objects.create(room=room,floor=room_floor_c,room_feature=room_feature_c)
+                RoomFrame.objects.create(room=r)
     logger("Room Refilled",1)
 
 def semester_ref():
@@ -167,9 +168,10 @@ def course_group_ref():
         lecturerc = LecturerC.objects.filter(lecturer=course_group.lecturer)
         if(coursec.exists() and course_group.status):
             newCourseGroup,_ = CourseGroupC.objects.get_or_create(
-                course_group=course_group,
+                course_group=course_group.pk,
                 course=coursec,
                 lecturer = lecturerc,
+                capacity = course_group.max_capacity
             )
             newCourseGroup.extra_session_of.set([CourseGroupC.objects.get(id=extra_session.id) for extra_session in newCourseGroup.course_group.extra_session_of])
             newCourseGroup.merged_with.set([CourseGroupC.objects.get(id=m.id) for m in newCourseGroup.course_group.merged_with])
@@ -183,4 +185,3 @@ def student_group_ref():
     for student_group in student_groups:
         if student_group.status:
             studentGroupC,_ = StudentGroupC.objects.get_or_create(student_group = student_group)
-            studentGroupC.course_group.set([Course])

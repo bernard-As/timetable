@@ -1,5 +1,5 @@
 import React, { useEffect,useRef,useState } from "react"
-import axiosInstance from "../../AxiosInstance"
+import {PrivateDefaultApi} from "../../../utils/AxiosInstance"
 import RequestHandler from "../../RequestHandler"
 import Swal from "sweetalert2"
 import Alert from "../../alerts/normalAlert"
@@ -58,9 +58,9 @@ const Create:React.FC = () => {
     useEffect(()=>{
         const  getBuildings = async () => {
             try {
-                const response = await axiosInstance.get('building/')
+                const response = await PrivateDefaultApi.get('building/')
                 setBuildingsData(response.data)
-                const response2 = await axiosInstance.get('floor/')
+                const response2 = await PrivateDefaultApi.get('floor/')
                 setFloorData(response2.data)
                 setFloorDataD(response2.data)
             } catch (error:any) {
@@ -92,7 +92,7 @@ const Create:React.FC = () => {
     const handleSubmit =async  (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
-            const response = await axiosInstance.post('room/',formData)
+            const response = await PrivateDefaultApi.post('room/',formData)
             setRequestStatus(response.status)
         } catch (error:any) {
             try{
@@ -292,7 +292,7 @@ const Edit:React.FC<{id:number}> =(id) =>{
     },[])
 
     useEffect(()=>{
-        axiosInstance.get(`/room/${id.id}/`)
+        PrivateDefaultApi.get(`/room/${id.id}/`)
         .then((res:any)=>{
         setShowEdit(true)
         setFormData(res.data)
@@ -307,9 +307,9 @@ const Edit:React.FC<{id:number}> =(id) =>{
     useEffect(()=>{
         const  getBuildings = async () => {
             try {
-                const response = await axiosInstance.get('building/')
+                const response = await PrivateDefaultApi.get('building/')
                 setBuildingsData(response.data)
-                const response2 = await axiosInstance.get('floor/')
+                const response2 = await PrivateDefaultApi.get('floor/')
                 setFloorData(response2.data)
                 setFloorDataD(response2.data)
             } catch (error:any) {
@@ -337,7 +337,7 @@ const Edit:React.FC<{id:number}> =(id) =>{
     const handleSubmit =async  (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
-            const response = await axiosInstance.put(`room/${id.id}/`,formData)
+            const response = await PrivateDefaultApi.put(`room/${id.id}/`,formData)
             setRequestStatus(response.status)
             setShowEdit(false)
         } catch (error:any) {
@@ -554,7 +554,7 @@ const List:React.FC = () => {
         }
         setData([])//to remove in production mode
 
-        axiosInstance.get('/room/')
+        PrivateDefaultApi.get('/room/')
         .then((res:any)=>{
             setData([...data, ...res.data])
             setIsloading(false)
@@ -572,7 +572,7 @@ const List:React.FC = () => {
     useEffect(()=>{
         setTimeout(() => { 
             if(edit!==0){
-                axiosInstance.get('/room/')
+                PrivateDefaultApi.get('/room/')
                 .then((res:any)=>{
                     if(JSON.stringify(dataRef.current)  !== JSON.stringify(res.data)){
                         dataRef.current = res.data
@@ -592,7 +592,7 @@ const List:React.FC = () => {
     useEffect(()=>{
         const  getBuildings = async () => {
             try {
-                const response = await axiosInstance.get('building/')
+                const response = await PrivateDefaultApi.get('building/')
                 setBuildingsData(response.data)
                 console.log(buildingsData)
             } catch (error:any) {
@@ -607,7 +607,7 @@ const List:React.FC = () => {
         }
         const getFloors = async ()=>{
             try {
-                const response = await axiosInstance.get('floor/')
+                const response = await PrivateDefaultApi.get('floor/')
                 setFloorData(response.data)
             } catch (error:any) {
                 try{
@@ -662,7 +662,7 @@ const List:React.FC = () => {
           }).then((result:any) => {
             if (result.isConfirmed) {
                 try {
-                    axiosInstance.delete(`/floor/${id}/`)
+                    PrivateDefaultApi.delete(`/floor/${id}/`)
                     .then(()=>{
                     <Alert title="Item Deleted" icon='success'/>
                     setData(data.filter((val: FormData)=> val.id !== id))

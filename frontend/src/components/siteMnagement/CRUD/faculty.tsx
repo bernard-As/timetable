@@ -1,5 +1,5 @@
 import React, { useEffect,useRef,useState } from "react"
-import axiosInstance from "../../AxiosInstance"
+import {PrivateDefaultApi} from "../../../utils/AxiosInstance"
 import RequestHandler from "../../RequestHandler"
 import Swal from "sweetalert2"
 import Alert from "../../alerts/normalAlert"
@@ -46,7 +46,7 @@ const Create:React.FC = () => {
     const handleSubmit =async  (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
-            const response = await axiosInstance.post('faculty/',formData,{
+            const response = await PrivateDefaultApi.post('faculty/',formData,{
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
@@ -152,7 +152,7 @@ const Edit:React.FC<{id:number}> =(id) =>{
     },[])
 
     useEffect(()=>{
-        axiosInstance.get(`/faculty/${id.id}/`)
+        PrivateDefaultApi.get(`/faculty/${id.id}/`)
         .then((res:any)=>{
             setShowEdit(true)
             setFormData(res.data)
@@ -183,7 +183,7 @@ const Edit:React.FC<{id:number}> =(id) =>{
     const handleSubmit =async  (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
-            const response = await axiosInstance.post('faculty/',formData,{
+            const response = await PrivateDefaultApi.post('faculty/',formData,{
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
@@ -301,7 +301,7 @@ const List:React.FC = () => {
         }
         setData([])//to remove in production mode
 
-        axiosInstance.get('/faculty/')
+        PrivateDefaultApi.get('/faculty/')
         .then((res:any)=>{
             setData([...data, ...res.data])
             setIsloading(false)
@@ -319,7 +319,7 @@ const List:React.FC = () => {
     useEffect(()=>{
         setTimeout(() => { 
             if(edit!==0){
-                axiosInstance.get('/faculty/')
+                PrivateDefaultApi.get('/faculty/')
                 .then((res:any)=>{
                     if(JSON.stringify(dataRef.current)  !== JSON.stringify(res.data)){
                         dataRef.current = res.data
@@ -364,7 +364,7 @@ const List:React.FC = () => {
           }).then((result:any) => {
             if (result.isConfirmed) {
                 try {
-                    axiosInstance.delete(`/faculty/${id}/`)
+                    PrivateDefaultApi.delete(`/faculty/${id}/`)
                     .then(()=>{
                     <Alert title="Item Deleted" icon='success'/>
                     setData(data.filter((val: FormData)=> val.id !== id))

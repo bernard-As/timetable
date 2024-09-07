@@ -1,5 +1,5 @@
 import React, { useEffect,useRef,useState } from "react"
-import axiosInstance from "../../AxiosInstance"
+import {PrivateDefaultApi} from "../../../utils/AxiosInstance"
 import RequestHandler from "../../RequestHandler"
 import Swal from "sweetalert2"
 import Alert from "../../alerts/normalAlert"
@@ -51,7 +51,7 @@ const Create:React.FC = () => {
     useEffect(()=>{
         const getFac = async() =>{
             try {
-                const response = await axiosInstance.get('faculty/')
+                const response = await PrivateDefaultApi.get('faculty/')
                 .then((res)=>{
                     setFaculties(res.data)
                 })
@@ -72,7 +72,7 @@ const Create:React.FC = () => {
     const handleSubmit =async  (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
-            const response = await axiosInstance.post('department/',formData,{
+            const response = await PrivateDefaultApi.post('department/',formData,{
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
@@ -189,7 +189,7 @@ const Edit:React.FC<{id:number}> =(id) =>{
     },[])
 
     useEffect(()=>{
-        axiosInstance.get(`/department/${id.id}/`)
+        PrivateDefaultApi.get(`/department/${id.id}/`)
         .then((res:any)=>{
             setShowEdit(true)
             setFormData(res.data)
@@ -213,7 +213,7 @@ const Edit:React.FC<{id:number}> =(id) =>{
     useEffect(()=>{
         const getFac = async() =>{
             try {
-                const response = await axiosInstance.get('faculty/')
+                const response = await PrivateDefaultApi.get('faculty/')
                 .then((res)=>{
                     setFaculties(res.data)
                 })
@@ -236,7 +236,7 @@ const Edit:React.FC<{id:number}> =(id) =>{
     const handleSubmit =async  (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
-            const response = await axiosInstance.post('department/',formData,{
+            const response = await PrivateDefaultApi.post('department/',formData,{
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
@@ -368,7 +368,7 @@ const List:React.FC = () => {
         }
         setData([])//to remove in production mode
 
-        axiosInstance.get('department/')
+        PrivateDefaultApi.get('department/')
         .then((res:any)=>{
             setData([...data, ...res.data])
             setIsloading(false)
@@ -386,7 +386,7 @@ const List:React.FC = () => {
     useEffect(()=>{
         setTimeout(() => { 
             if(edit!==0){
-                axiosInstance.get('department/')
+                PrivateDefaultApi.get('department/')
                 .then((res:any)=>{
                     if(JSON.stringify(dataRef.current)  !== JSON.stringify(res.data)){
                         dataRef.current = res.data
@@ -403,7 +403,7 @@ const List:React.FC = () => {
     useEffect(()=>{
         const getFac = async() =>{
             try {
-                const response = await axiosInstance.get('faculty/')
+                const response = await PrivateDefaultApi.get('faculty/')
                 .then((res)=>{
                     setFaculties(res.data)
                 })
@@ -446,7 +446,7 @@ const List:React.FC = () => {
           }).then((result:any) => {
             if (result.isConfirmed) {
                 try {
-                    axiosInstance.delete(`/department/${id}/`)
+                    PrivateDefaultApi.delete(`/department/${id}/`)
                     .then(()=>{
                     <Alert title="Item Deleted" icon='success'/>
                     setData(data.filter((val: FormData)=> val.id !== id))

@@ -1,5 +1,5 @@
 import React, { useEffect,useRef,useState } from "react"
-import axiosInstance from "../../AxiosInstance"
+import {PrivateDefaultApi} from "../../../utils/AxiosInstance"
 import RequestHandler from "../../RequestHandler"
 import Swal from "sweetalert2"
 import {useSelector } from "react-redux"
@@ -66,7 +66,7 @@ const Create:React.FC = () => {
         try {
             formData.username = formData.first_name.replace(' ','')+formData.last_name.replace(' ','')
             console.log(formData)
-            const response = await axiosInstance.post('other_staff/',formData)
+            const response = await PrivateDefaultApi.post('other_staff/',formData)
             setRequestStatus(response.status)
         } catch (error:any) {
             try{
@@ -95,17 +95,17 @@ const Create:React.FC = () => {
     useEffect(()=>{
         const getFac = async() =>{
             try {
-                const response0 = await axiosInstance.get('program/')
+                const response0 = await PrivateDefaultApi.get('program/')
                 .then((res)=>{
                     setProgrms(res.data)
                     setProgrmsD(res.data)
                 })
-                const response = await axiosInstance.get('department/')
+                const response = await PrivateDefaultApi.get('department/')
                 .then((res)=>{
                     setDeps(res.data)
                     setDepsD(res.data)
                 })
-                const response2 = await axiosInstance.get('faculty/')
+                const response2 = await PrivateDefaultApi.get('faculty/')
                 .then((res)=>{
                     setFaculties(res.data)
                 })
@@ -116,7 +116,7 @@ const Create:React.FC = () => {
         getFac()
         const permissionFetcher= async()=>{
             try {
-                const response = await axiosInstance.get('AllGP/')
+                const response = await PrivateDefaultApi.get('AllGP/')
                 console.log(response.data)
                 setGrps(response.data.groups)
                 setPerms(response.data.permissions)
@@ -295,7 +295,7 @@ const Edit:React.FC<{id:number}> =(id) =>{
     },[])
 
     useEffect(()=>{
-        axiosInstance.get(`/other_staff/${id.id}/`)
+        PrivateDefaultApi.get(`/other_staff/${id.id}/`)
         .then((res:any)=>{
         setShowEdit(true)
         setFormData(res.data)
@@ -313,17 +313,17 @@ const Edit:React.FC<{id:number}> =(id) =>{
     useEffect(()=>{
         const getFac = async() =>{
             try {
-                const response0 = await axiosInstance.get('program/')
+                const response0 = await PrivateDefaultApi.get('program/')
                 .then((res)=>{
                     setProgrms(res.data)
                     setProgrmsD(res.data)
                 })
-                const response = await axiosInstance.get('department/')
+                const response = await PrivateDefaultApi.get('department/')
                 .then((res)=>{
                     setDeps(res.data)
                     setDepsD(res.data)
                 })
-                const response2 = await axiosInstance.get('faculty/')
+                const response2 = await PrivateDefaultApi.get('faculty/')
                 .then((res)=>{
                     setFaculties(res.data)
                 })
@@ -334,7 +334,7 @@ const Edit:React.FC<{id:number}> =(id) =>{
         getFac()
         const permissionFetcher= async()=>{
             try {
-                const response = await axiosInstance.get('AllGP/')
+                const response = await PrivateDefaultApi.get('AllGP/')
                 setGrps(response.data.groups)
                 setPerms(response.data.permissions)
             } catch (error) {
@@ -356,7 +356,7 @@ const Edit:React.FC<{id:number}> =(id) =>{
     const handleSubmit =async  (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
-            const response = await axiosInstance.put(`other_staff/${id.id}/`,formData)
+            const response = await PrivateDefaultApi.put(`other_staff/${id.id}/`,formData)
             setRequestStatus(response.status)
             setShowEdit(false)
         } catch (error:any) {
@@ -578,7 +578,7 @@ const List:React.FC = () => {
         }
         setData([])//to remove in production mode
 
-        axiosInstance.get('/other_staff/')
+        PrivateDefaultApi.get('/other_staff/')
         .then((res:any)=>{
             setData([...data, ...res.data])
             setIsloading(false)
@@ -596,17 +596,17 @@ const List:React.FC = () => {
     useEffect(()=>{
         const getFac = async() =>{
             try {
-                const response0 = await axiosInstance.get('program/')
+                const response0 = await PrivateDefaultApi.get('program/')
                 .then((res)=>{
                     setProgrms(res.data)
                     setProgrmsD(res.data)
                 })
-                const response = await axiosInstance.get('department/')
+                const response = await PrivateDefaultApi.get('department/')
                 .then((res)=>{
                     setDeps(res.data)
                     setDepsD(res.data)
                 })
-                const response2 = await axiosInstance.get('faculty/')
+                const response2 = await PrivateDefaultApi.get('faculty/')
                 .then((res)=>{
                     setFaculties(res.data)
                 })
@@ -617,7 +617,7 @@ const List:React.FC = () => {
         getFac()
         const permissionFetcher= async()=>{
             try {
-                const response = await axiosInstance.get('AllGP/')
+                const response = await PrivateDefaultApi.get('AllGP/')
                 setGrps(response.data.groups)
                 setPerms(response.data.permissions)
             } catch (error) {
@@ -629,7 +629,7 @@ const List:React.FC = () => {
     useEffect(()=>{
         setTimeout(() => { 
             if(edit!==0){
-                axiosInstance.get('/other_staff/')
+                PrivateDefaultApi.get('/other_staff/')
                 .then((res:any)=>{
                     if(JSON.stringify(dataRef.current)  !== JSON.stringify(res.data)){
                         dataRef.current = res.data
@@ -676,7 +676,7 @@ const List:React.FC = () => {
           }).then((result:any) => {
             if (result.isConfirmed) {
                 try {
-                    axiosInstance.delete(`/other_staff/${id}/`)
+                    PrivateDefaultApi.delete(`/other_staff/${id}/`)
                     .then(()=>{
                     <Alert title="Item Deleted" icon='success'/>
                     setData(data.filter((val: LecturerInt)=> val.id !== id))

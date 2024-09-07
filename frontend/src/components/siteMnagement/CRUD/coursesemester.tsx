@@ -1,5 +1,5 @@
 import React, { useEffect,useRef,useState } from "react"
-import axiosInstance from "../../AxiosInstance"
+import {PrivateDefaultApi} from "../../../utils/AxiosInstance"
 import RequestHandler from "../../RequestHandler"
 import Swal from "sweetalert2"
 import Alert from "../../alerts/normalAlert"
@@ -33,21 +33,21 @@ const Create:React.FC = () => {
     useEffect(()=>{
         const getFac = async() =>{
             try {
-                const response0 = await axiosInstance.get('program/')
+                const response0 = await PrivateDefaultApi.get('program/')
                 .then((res)=>{
                     setProgrms(res.data)
                     setProgrmsD(res.data)
                 })
-                const response = await axiosInstance.get('department/')
+                const response = await PrivateDefaultApi.get('department/')
                 .then((res)=>{
                     setDeps(res.data)
                     setDepsD(res.data)
                 })
-                const response2 = await axiosInstance.get('faculty/')
+                const response2 = await PrivateDefaultApi.get('faculty/')
                 .then((res)=>{
                     setFaculties(res.data)
                 })
-                const response3= await axiosInstance.get('semester/')
+                const response3= await PrivateDefaultApi.get('semester/')
                 .then((res)=>{
                     setSems(res.data)
                 })
@@ -68,7 +68,7 @@ const Create:React.FC = () => {
     const handleSubmit =async  (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
-            const response = await axiosInstance.post('coursesemester/',formData,{
+            const response = await PrivateDefaultApi.post('coursesemester/',formData,{
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
@@ -239,7 +239,7 @@ const Edit:React.FC<{id:number}> =(id) =>{
     },[])
 
     useEffect(()=>{
-        axiosInstance.get(`/coursesemester/${id.id}/`)
+        PrivateDefaultApi.get(`/coursesemester/${id.id}/`)
         .then((res:any)=>{
             setShowEdit(true)
             setFormData(res.data)
@@ -257,21 +257,21 @@ const Edit:React.FC<{id:number}> =(id) =>{
     useEffect(()=>{
         const getFac = async() =>{
             try {
-                const response = await axiosInstance.get('faculty/')
+                const response = await PrivateDefaultApi.get('faculty/')
                 .then((res)=>{
                     setFaculties(res.data)
                 })
-                const response2 = await axiosInstance.get('department/')
+                const response2 = await PrivateDefaultApi.get('department/')
                 .then((res)=>{
                     setDeps(res.data)
                     setDepsD(res.data)
                 })
-                const response0 = await axiosInstance.get('program/')
+                const response0 = await PrivateDefaultApi.get('program/')
                 .then((res)=>{
                     setProgrms(res.data)
                     setProgrmsD(res.data)
                 })
-                const response3= await axiosInstance.get('semester/')
+                const response3= await PrivateDefaultApi.get('semester/')
                 .then((res)=>{
                     setSems(res.data)
                 })
@@ -294,7 +294,7 @@ const Edit:React.FC<{id:number}> =(id) =>{
     const handleSubmit =async  (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
-            const response = await axiosInstance.post('coursesemester/',formData)
+            const response = await PrivateDefaultApi.post('coursesemester/',formData)
             setRequestStatus(response.status)
         } catch (error:any) {
             try{
@@ -471,7 +471,7 @@ const List:React.FC = () => {
         }
         setData([])//to remove in production mode
 
-        axiosInstance.get('coursesemester/')
+        PrivateDefaultApi.get('coursesemester/')
         .then((res:any)=>{
             setData([...data, ...res.data])
             setIsloading(false)
@@ -489,7 +489,7 @@ const List:React.FC = () => {
     useEffect(()=>{
         setTimeout(() => { 
             if(edit!==0){
-                axiosInstance.get('coursesemester/')
+                PrivateDefaultApi.get('coursesemester/')
                 .then((res:any)=>{
                     if(JSON.stringify(dataRef.current)  !== JSON.stringify(res.data)){
                         dataRef.current = res.data
@@ -510,20 +510,20 @@ const List:React.FC = () => {
     useEffect(()=>{
         const getFac = async() =>{
             try {
-                const response0 = await axiosInstance.get('program/')
+                const response0 = await PrivateDefaultApi.get('program/')
                 .then((res)=>{
                     setProgrms(res.data)
                 })
-                const response2 = await axiosInstance.get('department/')
+                const response2 = await PrivateDefaultApi.get('department/')
                 .then((res)=>{
                     setDeps(res.data)
                     setDeps(res.data)
                 })
-                const response = await axiosInstance.get('faculty/')
+                const response = await PrivateDefaultApi.get('faculty/')
                 .then((res)=>{
                     setFaculties(res.data)
                 })
-                const response3= await axiosInstance.get('semester/')
+                const response3= await PrivateDefaultApi.get('semester/')
                 .then((res)=>{
                     setSems(res.data)
                 })
@@ -567,7 +567,7 @@ const List:React.FC = () => {
           }).then((result:any) => {
             if (result.isConfirmed) {
                 try {
-                    axiosInstance.delete(`/coursesemester/${id}/`)
+                    PrivateDefaultApi.delete(`/coursesemester/${id}/`)
                     .then(()=>{
                     <Alert title="Item Deleted" icon='success'/>
                     setData(data.filter((val: ProgramInt)=> val.id !== id))

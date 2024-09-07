@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import TokenChecker from '../tokenChecker';
-import StoreChecker from '../storeChecker';
-import TopNavigation from './navigationBar/topNavigation'
-import {loginSuccess, setGroup} from '../store'
-import { useDispatch, useSelector } from 'react-redux';
-
+import rootStore from '../mobx';
+import { Layout } from 'antd';
+import SideMenu from './SideMenu';
 const Home: React.FC = () =>{
-    const titles = useSelector((state: any)=>state.titles)
-    console.log(titles)
+    useEffect(()=>{
+        rootStore.checkTokenValidity();
+    },[])
     return (
         <>
-        <TopNavigation/>
+            <Layout className=''>
+                <SideMenu/>
+            </Layout>
         </>
     );
 }

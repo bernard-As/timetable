@@ -4,7 +4,7 @@ from apibase.models import *
 from django.contrib.auth.models import User,Group,Permission
 
 class LoginSerializer(serializers.Serializer):
-    username = serializers.CharField()
+    email = serializers.CharField()
     password = serializers.CharField(write_only=True, required = False)
     
 

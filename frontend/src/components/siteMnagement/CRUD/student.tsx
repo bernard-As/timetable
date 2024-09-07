@@ -1,5 +1,5 @@
 import React, { useEffect,useRef,useState } from "react"
-import axiosInstance from "../../AxiosInstance"
+import {PrivateDefaultApi} from "../../../utils/AxiosInstance"
 import RequestHandler from "../../RequestHandler"
 import Swal from "sweetalert2"
 import {useSelector } from "react-redux"
@@ -67,7 +67,7 @@ const Create:React.FC = () => {
         try {
             formData.username = formData.first_name.replace(' ','')+formData.studentId
             console.log(formData)
-            const response = await axiosInstance.post('student/',formData)
+            const response = await PrivateDefaultApi.post('student/',formData)
             setRequestStatus(response.status)
         } catch (error:any) {
             try{
@@ -96,18 +96,18 @@ const Create:React.FC = () => {
     useEffect(()=>{
         const getFac = async() =>{
             try {
-                const response0 = await axiosInstance.get('program/')
-                .then((res)=>{
+                const response0 = await PrivateDefaultApi.get('program/')
+                .then((res:any)=>{
                     setProgrms(res.data)
                     setProgrmsD(res.data)
                 })
-                const response = await axiosInstance.get('department/')
-                .then((res)=>{
+                const response = await PrivateDefaultApi.get('department/')
+                .then((res:any)=>{
                     setDeps(res.data)
                     setDepsD(res.data)
                 })
-                const response2 = await axiosInstance.get('faculty/')
-                .then((res)=>{
+                const response2 = await PrivateDefaultApi.get('faculty/')
+                .then((res:any)=>{
                     setFaculties(res.data)
                 })
             } catch (error) {
@@ -117,7 +117,7 @@ const Create:React.FC = () => {
         getFac()
         const permissionFetcher= async()=>{
             try {
-                const response = await axiosInstance.get('AllGP/')
+                const response = await PrivateDefaultApi.get('AllGP/')
                 console.log(response.data)
                 setGrps(response.data.groups)
                 setPerms(response.data.permissions)
@@ -306,7 +306,7 @@ const Edit:React.FC<{id:number}> =(id) =>{
     },[])
 
     useEffect(()=>{
-        axiosInstance.get(`/student/${id.id}/`)
+        PrivateDefaultApi.get(`/student/${id.id}/`)
         .then((res:any)=>{
         setShowEdit(true)
         setFormData(res.data)
@@ -324,18 +324,18 @@ const Edit:React.FC<{id:number}> =(id) =>{
     useEffect(()=>{
         const getFac = async() =>{
             try {
-                const response0 = await axiosInstance.get('program/')
-                .then((res)=>{
+                const response0 = await PrivateDefaultApi.get('program/')
+                .then((res:any)=>{
                     setProgrms(res.data)
                     setProgrmsD(res.data)
                 })
-                const response = await axiosInstance.get('department/')
-                .then((res)=>{
+                const response = await PrivateDefaultApi.get('department/')
+                .then((res:any)=>{
                     setDeps(res.data)
                     setDepsD(res.data)
                 })
-                const response2 = await axiosInstance.get('faculty/')
-                .then((res)=>{
+                const response2 = await PrivateDefaultApi.get('faculty/')
+                .then((res:any)=>{
                     setFaculties(res.data)
                 })
             } catch (error) {
@@ -345,7 +345,7 @@ const Edit:React.FC<{id:number}> =(id) =>{
         getFac()
         const permissionFetcher= async()=>{
             try {
-                const response = await axiosInstance.get('AllGP/')
+                const response = await PrivateDefaultApi.get('AllGP/')
                 setGrps(response.data.groups)
                 setPerms(response.data.permissions)
             } catch (error) {
@@ -367,7 +367,7 @@ const Edit:React.FC<{id:number}> =(id) =>{
     const handleSubmit =async  (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
-            const response = await axiosInstance.put(`student/${id.id}/`,formData)
+            const response = await PrivateDefaultApi.put(`student/${id.id}/`,formData)
             setRequestStatus(response.status)
             setShowEdit(false)
         } catch (error:any) {
@@ -601,7 +601,7 @@ const List:React.FC = () => {
         }
         setData([])//to remove in production mode
 
-        axiosInstance.get('/student/')
+        PrivateDefaultApi.get('/student/')
         .then((res:any)=>{
             setData([...data, ...res.data])
             setIsloading(false)
@@ -619,18 +619,18 @@ const List:React.FC = () => {
     useEffect(()=>{
         const getFac = async() =>{
             try {
-                const response0 = await axiosInstance.get('program/')
-                .then((res)=>{
+                const response0 = await PrivateDefaultApi.get('program/')
+                .then((res:any)=>{
                     setProgrms(res.data)
                     setProgrmsD(res.data)
                 })
-                const response = await axiosInstance.get('department/')
-                .then((res)=>{
+                const response = await PrivateDefaultApi.get('department/')
+                .then((res:any)=>{
                     setDeps(res.data)
                     setDepsD(res.data)
                 })
-                const response2 = await axiosInstance.get('faculty/')
-                .then((res)=>{
+                const response2 = await PrivateDefaultApi.get('faculty/')
+                .then((res:any)=>{
                     setFaculties(res.data)
                 })
             } catch (error) {
@@ -640,7 +640,7 @@ const List:React.FC = () => {
         getFac()
         const permissionFetcher= async()=>{
             try {
-                const response = await axiosInstance.get('AllGP/')
+                const response = await PrivateDefaultApi.get('AllGP/')
                 setGrps(response.data.groups)
                 setPerms(response.data.permissions)
             } catch (error) {
@@ -652,7 +652,7 @@ const List:React.FC = () => {
     useEffect(()=>{
         setTimeout(() => { 
             if(edit!==0){
-                axiosInstance.get('/student/')
+                PrivateDefaultApi.get('/student/')
                 .then((res:any)=>{
                     if(JSON.stringify(dataRef.current)  !== JSON.stringify(res.data)){
                         dataRef.current = res.data
@@ -701,7 +701,7 @@ const List:React.FC = () => {
           }).then((result:any) => {
             if (result.isConfirmed) {
                 try {
-                    axiosInstance.delete(`/student/${id}/`)
+                    PrivateDefaultApi.delete(`/student/${id}/`)
                     .then(()=>{
                     <Alert title="Item Deleted" icon='success'/>
                     setData(data.filter((val: LecturerInt)=> val.id !== id))

@@ -1,5 +1,5 @@
 import React, { useEffect,useRef,useState } from "react"
-import axiosInstance from "../../AxiosInstance"
+import {PrivateDefaultApi} from "../../../utils/AxiosInstance"
 import RequestHandler from "../../RequestHandler"
 import Swal from "sweetalert2"
 import {useSelector } from "react-redux"
@@ -91,7 +91,7 @@ const Create:React.FC = () => {
                 setRequestStatus(2)
                 return
             }
-            const response = await axiosInstance.post('course/',formData)
+            const response = await PrivateDefaultApi.post('course/',formData)
             setRequestStatus(response.status)
         } catch (error:any) {
             try{
@@ -130,48 +130,48 @@ const Create:React.FC = () => {
     useEffect(()=>{
         const getFac = async() =>{
             try {
-                const response0 = await axiosInstance.get('program/')
+                const response0 = await PrivateDefaultApi.get('program/')
                 .then((res)=>{
                     setProgrms(res.data)
                     setProgrmsD(res.data)
                     setProgrmsS(res.data)
                 })
-                const response = await axiosInstance.get('department/')
+                const response = await PrivateDefaultApi.get('department/')
                 .then((res)=>{
                     setDeps(res.data)
                     setDepsD(res.data)
                 })
-                const response2 = await axiosInstance.get('faculty/')
+                const response2 = await PrivateDefaultApi.get('faculty/')
                 .then((res)=>{
                     setFaculties(res.data)
                     setFacultiesD(res.data)
                 })
-                const response3 = await axiosInstance.get('lecturer/')
+                const response3 = await PrivateDefaultApi.get('lecturer/')
                 .then((res)=>{
                     setLects(res.data)
                 })
-                const response4 = await axiosInstance.get('student/')
+                const response4 = await PrivateDefaultApi.get('student/')
                 .then((res)=>{
                     setStds(res.data)
                 })
-                const response5 = await axiosInstance.get('coursesemester/')
+                const response5 = await PrivateDefaultApi.get('coursesemester/')
                 .then((res)=>{
                     seetCourse_sem(res.data)
                 })
-                const response6 = await axiosInstance.get('course/')
+                const response6 = await PrivateDefaultApi.get('course/')
                 .then((res)=>{
                     setCrs(res.data)
                 })
-                const response7 = await axiosInstance.get('activitytype/')
+                const response7 = await PrivateDefaultApi.get('activitytype/')
                 .then((res)=>{
                     setActivitytype(res.data)
                 })
-                const response8 = await axiosInstance.get('semester/')
+                const response8 = await PrivateDefaultApi.get('semester/')
                 .then((res)=>{
                     setUniSemes(res.data)
                     setUniSemesD(res.data)
                 })
-                const response9 = await axiosInstance.get('coursegroup/')
+                const response9 = await PrivateDefaultApi.get('coursegroup/')
                 .then((res)=>{
                     setCrsGrp(res.data)
                 })
@@ -542,7 +542,7 @@ const Edit:React.FC<{id:number}> = (id) => {
   const [groupData, setGroupData] = useState<any[]>([])
 
   const getCurrentData = async()=>{
-    await axiosInstance.get('course/'+id.id+'/')
+    await PrivateDefaultApi.get('course/'+id.id+'/')
     .then((res:any)=>{
       console.log('user data', res.data)
       setCourseData(res.data)
@@ -643,7 +643,7 @@ const Edit:React.FC<{id:number}> = (id) => {
               setRequestStatus(2)
               return
           }
-          const response = await axiosInstance.put('course/'+id.id+'/',formData)
+          const response = await PrivateDefaultApi.put('course/'+id.id+'/',formData)
           setRequestStatus(response.status)
       } catch (error:any) {
           try{
@@ -682,48 +682,48 @@ const Edit:React.FC<{id:number}> = (id) => {
   useEffect(()=>{
       const getFac = async() =>{
           try {
-              const response0 = await axiosInstance.get('program/')
+              const response0 = await PrivateDefaultApi.get('program/')
               .then((res)=>{
                   setProgrms(res.data)
                   setProgrmsD(res.data)
                   setProgrmsS(res.data)
               })
-              const response = await axiosInstance.get('department/')
+              const response = await PrivateDefaultApi.get('department/')
               .then((res)=>{
                   setDeps(res.data)
                   setDepsD(res.data)
               })
-              const response2 = await axiosInstance.get('faculty/')
+              const response2 = await PrivateDefaultApi.get('faculty/')
               .then((res)=>{
                   setFaculties(res.data)
                   setFacultiesD(res.data)
               })
-              const response3 = await axiosInstance.get('lecturer/')
+              const response3 = await PrivateDefaultApi.get('lecturer/')
               .then((res)=>{
                   setLects(res.data)
               })
-              const response4 = await axiosInstance.get('student/')
+              const response4 = await PrivateDefaultApi.get('student/')
               .then((res)=>{
                   setStds(res.data)
               })
-              const response5 = await axiosInstance.get('coursesemester/')
+              const response5 = await PrivateDefaultApi.get('coursesemester/')
               .then((res)=>{
                   seetCourse_sem(res.data)
               })
-              const response6 = await axiosInstance.get('course/')
+              const response6 = await PrivateDefaultApi.get('course/')
               .then((res)=>{
                   setCrs(res.data)
               })
-              const response7 = await axiosInstance.get('activitytype/')
+              const response7 = await PrivateDefaultApi.get('activitytype/')
               .then((res)=>{
                   setActivitytype(res.data)
               })
-              const response8 = await axiosInstance.get('semester/')
+              const response8 = await PrivateDefaultApi.get('semester/')
               .then((res)=>{
                   setUniSemes(res.data)
                   setUniSemesD(res.data)
               })
-              const response9 = await axiosInstance.get('coursegroup/')
+              const response9 = await PrivateDefaultApi.get('coursegroup/')
               .then((res)=>{
                   setCrsGrp(res.data)
               })
@@ -1113,7 +1113,7 @@ const List:React.FC = () =>{
     search(value);
   };
   const search = async(v:string)=>{
-    await axiosInstance.get('course/?search='+v)
+    await PrivateDefaultApi.get('course/?search='+v)
     .then((res)=>{
       setSearchResult(res.data)
     }).catch((error)=>{
@@ -1124,25 +1124,25 @@ const List:React.FC = () =>{
 
   useEffect(()=>{
     const getData = async()=>{
-      await axiosInstance.get('department/')
+      await PrivateDefaultApi.get('department/')
       .then((res)=>{
         setDeps(res.data)
       }).catch((err)=>{
         setRequestStatus(err.request.status)
       })
-      await axiosInstance.get('faculty/')
+      await PrivateDefaultApi.get('faculty/')
       .then((res)=>{
         setFaculties(res.data)
       }).catch((err)=>{
         setRequestStatus(err.request.status)
       })
-      await axiosInstance.get('program/')
+      await PrivateDefaultApi.get('program/')
       .then((res)=>{
         setProgrms(res.data)
       }).catch((err)=>{
         setRequestStatus(err.request.status)
       })
-      await axiosInstance.get('lecturer/')
+      await PrivateDefaultApi.get('lecturer/')
       .then((res)=>{
         setLecturers(res.data)
       }).catch((err)=>{
@@ -1162,7 +1162,7 @@ const List:React.FC = () =>{
       }).then((result:any) => {
         if (result.isConfirmed) {
             try {
-                axiosInstance.delete(`/course/${id}/`)
+                PrivateDefaultApi.delete(`/course/${id}/`)
                 .then(()=>{
                 <Alert title="Item Deleted" icon='success'/>
                 setSearchResult(searchResults.filter((val: any)=> val.id !== id))

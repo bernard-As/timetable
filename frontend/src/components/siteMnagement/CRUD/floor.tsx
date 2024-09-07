@@ -1,5 +1,5 @@
 import React, { useEffect,useRef,useState } from "react"
-import axiosInstance from "../../AxiosInstance"
+import {PrivateDefaultApi} from "../../../utils/AxiosInstance"
 import RequestHandler from "../../RequestHandler"
 import Swal from "sweetalert2"
 import Alert from "../../alerts/normalAlert"
@@ -39,7 +39,7 @@ const Create:React.FC = () => {
     useEffect(()=>{
         const  getBuildings = async () => {
             try {
-                const response = await axiosInstance.get('building/')
+                const response = await PrivateDefaultApi.get('building/')
                 setBuildingsData(response.data)
             } catch (error:any) {
                 try{
@@ -70,7 +70,7 @@ const Create:React.FC = () => {
     const handleSubmit =async  (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
-            const response = await axiosInstance.post('floor/',formData)
+            const response = await PrivateDefaultApi.post('floor/',formData)
             setRequestStatus(response.status)
         } catch (error:any) {
             try{
@@ -159,7 +159,7 @@ const Edit:React.FC<{id:number}> =(id) =>{
     },[])
 
     useEffect(()=>{
-        axiosInstance.get(`/floor/${id.id}/`)
+        PrivateDefaultApi.get(`/floor/${id.id}/`)
         .then((res:any)=>{
         setShowEdit(true)
         setFormData(res.data)
@@ -172,7 +172,7 @@ const Edit:React.FC<{id:number}> =(id) =>{
     useEffect(()=>{
         const  getBuildings = async () => {
             try {
-                const response = await axiosInstance.get('building/')
+                const response = await PrivateDefaultApi.get('building/')
                 setBuildingsData(response.data)
             } catch (error:any) {
                 try{
@@ -199,7 +199,7 @@ const Edit:React.FC<{id:number}> =(id) =>{
     const handleSubmit =async  (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
-            const response = await axiosInstance.put(`floor/${id.id}/`,formData)
+            const response = await PrivateDefaultApi.put(`floor/${id.id}/`,formData)
             setRequestStatus(response.status)
             setShowEdit(false)
         } catch (error:any) {
@@ -307,7 +307,7 @@ const List:React.FC = () => {
         }
         setData([])//to remove in production mode
 
-        axiosInstance.get('/floor/')
+        PrivateDefaultApi.get('/floor/')
         .then((res:any)=>{
             setData([...data, ...res.data])
             setIsloading(false)
@@ -325,7 +325,7 @@ const List:React.FC = () => {
     useEffect(()=>{
         setTimeout(() => { 
             if(edit!==0){
-                axiosInstance.get('/building/')
+                PrivateDefaultApi.get('/building/')
                 .then((res:any)=>{
                     if(JSON.stringify(dataRef.current)  !== JSON.stringify(res.data)){
                         dataRef.current = res.data
@@ -344,7 +344,7 @@ const List:React.FC = () => {
     useEffect(()=>{
         const  getBuildings = async () => {
             try {
-                const response = await axiosInstance.get('building/')
+                const response = await PrivateDefaultApi.get('building/')
                 setBuildingsData(response.data)
             } catch (error:any) {
                 try{
@@ -391,7 +391,7 @@ const List:React.FC = () => {
           }).then((result:any) => {
             if (result.isConfirmed) {
                 try {
-                    axiosInstance.delete(`/floor/${id}/`)
+                    PrivateDefaultApi.delete(`/floor/${id}/`)
                     .then(()=>{
                     <Alert title="Item Deleted" icon='success'/>
                     setData(data.filter((val: FormData)=> val.id !== id))

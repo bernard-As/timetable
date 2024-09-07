@@ -2,6 +2,8 @@ from django.conf import settings
 from django.urls import path,include
 from apibase.viewsfolder.storeRenew import StoreRenew
 from rest_framework.routers import DefaultRouter
+
+from apibase.viewsfolder.auths import VerifyToken
 from .viewsfolder import siteManagement
 from rest_framework.authtoken.views import ObtainAuthToken
 
@@ -36,8 +38,9 @@ router.register(r'coursegroup', siteManagement.CourseGroupViewSet, basename='cou
 router.register(r'preference', siteManagement.PreferenceViewSet, basename='preference')
 router.register(r'eventtime', siteManagement.EventTimeViewSet, basename='eventtime')
 urlpatterns = [
-   path('login/', ObtainAuthToken.as_view()),
+    path('login/', ObtainAuthToken.as_view()),
     path('renewStore/',StoreRenew.as_view(), name='renewStore'),
+    path('verify_token',VerifyToken.as_view(),name='verify_token'),
     path('', include(router.urls)),
     path('GP/',siteManagement.UserGroupPermission.getGP, name='User Groups and permissions user based'),
     path('AllGP/',siteManagement.UserGroupPermission.get_groups_and_permissions, name='All User Group'),

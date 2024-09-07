@@ -1,5 +1,4 @@
 import React from 'react';
-import TokenChecker from '../tokenChecker';
 import Alert from './alerts/normalAlert';
 import { useNavigate } from 'react-router-dom';
 
@@ -26,7 +25,6 @@ const RequestHandler: React.FC<RequestHandlerProps> = ({ status }) => {
     return (
       <>
         <Alert title='Unauthorize Access' icon='warning' />
-        <TokenChecker />
         
       </>
     )

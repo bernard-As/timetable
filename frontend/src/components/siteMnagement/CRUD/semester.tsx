@@ -1,5 +1,5 @@
 import React, { useEffect,useRef,useState } from "react"
-import axiosInstance from "../../AxiosInstance"
+import {PrivateDefaultApi} from "../../../utils/AxiosInstance"
 import RequestHandler from "../../../components/RequestHandler"
 import Swal from "sweetalert2"
 import Alert from "../../alerts/normalAlert"
@@ -38,7 +38,7 @@ const Create:React.FC = () => {
     const handleSubmit =async  (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
-            const response = await axiosInstance.post('semester/',formData)
+            const response = await PrivateDefaultApi.post('semester/',formData)
             setRequestStatus(response.status)
         } catch (error:any) {
             try{
@@ -131,7 +131,7 @@ const Edit:React.FC<{id:number}> =(id) =>{
     },[])
 
     useEffect(()=>{
-        axiosInstance.get(`/semester/${id.id}/`)
+        PrivateDefaultApi.get(`/semester/${id.id}/`)
         .then((res)=>{
         setShowEdit(true)
         setFormData(res.data)
@@ -153,7 +153,7 @@ const Edit:React.FC<{id:number}> =(id) =>{
     const handleSubmit =async  (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
-            const response = await axiosInstance.put(`semester/${id.id}/`,formData)
+            const response = await PrivateDefaultApi.put(`semester/${id.id}/`,formData)
             setRequestStatus(response.status)
             setShowEdit(false)
         } catch (error:any) {
@@ -263,7 +263,7 @@ const List:React.FC = () => {
         }
         setData([])//to remove in production mode
 
-        axiosInstance.get('/semester/')
+        PrivateDefaultApi.get('/semester/')
         .then((res)=>{
             setData([...data, ...res.data])
             setIsloading(false)
@@ -281,7 +281,7 @@ const List:React.FC = () => {
     useEffect(()=>{
         setTimeout(() => { 
             if(edit!==0){
-                axiosInstance.get('/semester/')
+                PrivateDefaultApi.get('/semester/')
                 .then((res)=>{
                     if(JSON.stringify(dataRef.current)  !== JSON.stringify(res.data)){
                         dataRef.current = res.data
@@ -324,7 +324,7 @@ const List:React.FC = () => {
           }).then((result) => {
             if (result.isConfirmed) {
                 try {
-                    axiosInstance.delete(`/semester/${id}/`)
+                    PrivateDefaultApi.delete(`/semester/${id}/`)
                     .then(()=>{
                     <Alert title="Item Deleted" icon='success'/>
                     setData(data.filter((val: FormData)=> val.id !== id))

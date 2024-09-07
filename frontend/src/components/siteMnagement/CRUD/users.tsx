@@ -1,10 +1,9 @@
 import React, { useEffect,useRef,useState } from "react"
-import axiosInstance from "../../AxiosInstance"
+import {PrivateDefaultApi} from "../../../utils/AxiosInstance"
 import RequestHandler from "../../RequestHandler"
 import {useSelector } from "react-redux"
 import Alert from "../../alerts/normalAlert"
 import Swal from "sweetalert2"
-import { setTitles } from "../../../store"
 
 interface FormData {
     id: number
@@ -44,7 +43,7 @@ const Create:React.FC = () => {
     useEffect(()=>{
         const permissionFetcher= async()=>{
             try {
-                const response = await axiosInstance.get('AllGP/')
+                const response = await PrivateDefaultApi.get('AllGP/')
                 console.log(response.data)
                 setGrps(response.data.groups)
                 setPerms(response.data.permissions)
@@ -76,7 +75,7 @@ const Create:React.FC = () => {
                 groups: formData.groups,
                 user_permissions: formData.user_permissions
             }
-            const response = await axiosInstance.post('users/',data)
+            const response = await PrivateDefaultApi.post('users/',data)
             setRequestStatus(response.status)
         } catch (error:any) {
             try{
@@ -207,7 +206,7 @@ const Create:React.FC = () => {
     },[])
 
     useEffect(()=>{
-        axiosInstance.get(`/title/${id.id}/`)
+        PrivateDefaultApi.get(`/title/${id.id}/`)
         .then((res)=>{
         setShowEdit(true)
         setFormData(res.data)
@@ -225,7 +224,7 @@ const Create:React.FC = () => {
     const handleSubmit =async  (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
-            const response = await axiosInstance.put(`title/${id.id}/`,formData)
+            const response = await PrivateDefaultApi.put(`title/${id.id}/`,formData)
             setRequestStatus(response.status)
             setShowEdit(false)
         } catch (error:any) {
@@ -308,16 +307,16 @@ const List:React.FC = () => {
         }
         setData([])//to remove in production mode
 
-        axiosInstance.get('/users/')
-        .then((res)=>{
+        PrivateDefaultApi.get('/users/')
+        .then((res:any)=>{
             setData([...data, ...res.data])
             setIsloading(false)
             })
             .catch((err: any)=>{
                 setRequestHandler(err.response.status)
             })
-        axiosInstance.get('/title/')
-        .then((res)=>{
+        PrivateDefaultApi.get('/title/')
+        .then((res:any)=>{
             setTitles2([...titles, ...res.data])
             setIsloading(false)
             })
@@ -333,8 +332,8 @@ const List:React.FC = () => {
     useEffect(()=>{
         setTimeout(() => { 
             if(edit!==0){
-                axiosInstance.get('/users/')
-                .then((res)=>{
+                PrivateDefaultApi.get('/users/')
+                .then((res:any)=>{
                     if(JSON.stringify(dataRef.current)  !== JSON.stringify(res.data)){
                         dataRef.current = res.data
                         setData(res.data)
@@ -377,11 +376,11 @@ const List:React.FC = () => {
           }).then((result) => {
             if (result.isConfirmed) {
                 try {
-                    axiosInstance.delete(`/users/${id}/`)
+                    PrivateDefaultApi.delete(`/users/${id}/`)
                     .then(()=>{
                     <Alert title="Item Deleted" icon='success'/>
                     setData(data.filter((val: FormData)=> val.id !== id))
-                    }).catch((err)=>{
+                    }).catch((err:any)=>{
                         try {
                             <RequestHandler status={err.response.status}/>
                         } catch (error) {

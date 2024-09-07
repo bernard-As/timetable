@@ -1,5 +1,5 @@
 import React, { useEffect,useRef,useState } from "react"
-import axiosInstance from "../../AxiosInstance"
+import {PrivateDefaultApi} from "../../../utils/AxiosInstance"
 import RequestHandler from "../../RequestHandler"
 import Swal from "sweetalert2"
 import {useSelector } from "react-redux"
@@ -53,7 +53,7 @@ const Create:React.FC = () => {
         e.preventDefault();
         try {
             console.log(formData)
-            const response = await axiosInstance.post('preference/',formData)
+            const response = await PrivateDefaultApi.post('preference/',formData)
             setRequestStatus(response.status)
         } catch (error:any) {
             try{
@@ -105,73 +105,73 @@ const Create:React.FC = () => {
     useEffect(()=>{
         const getFac = async() =>{
             try {
-                await axiosInstance.get('general/')
+                await PrivateDefaultApi.get('general/')
                 .then((res)=>{
                     setGenerals(res.data)
                     setGeneralsD(res.data)
                     setLoading(true)
                 })
-                await axiosInstance.get('building/')
+                await PrivateDefaultApi.get('building/')
                 .then((res)=>{
                     setBuildings(res.data)
                     setBuildingsD(res.data)
                 })
-                await axiosInstance.get('floor/')
+                await PrivateDefaultApi.get('floor/')
                 .then((res)=>{
                     setFloors(res.data)
                     setFloorsD(res.data)
                 })
-                await axiosInstance.get('room/')
+                await PrivateDefaultApi.get('room/')
                 .then((res)=>{
                     setRooms(res.data)
                     setRoomsD(res.data)
                 })
-                await axiosInstance.get('faculty/')
+                await PrivateDefaultApi.get('faculty/')
                 .then((res)=>{
                     setFaculties(res.data)
                     setFacultiesD(res.data)
                 })
-                await axiosInstance.get('department/')
+                await PrivateDefaultApi.get('department/')
                 .then((res)=>{
                     setDeps(res.data)
                     setDepsD(res.data)
                 })
-                await axiosInstance.get('program/')
+                await PrivateDefaultApi.get('program/')
                 .then((res)=>{
                     setProgrms(res.data)
                     setProgrmsD(res.data)
                 })
-                await axiosInstance.get('coursesemester/')
+                await PrivateDefaultApi.get('coursesemester/')
                 .then((res)=>{
                     setCourseSemesters(res.data)
                     setCourseSemestersD(res.data)
                 })
-                await axiosInstance.get('semester/')
+                await PrivateDefaultApi.get('semester/')
                 .then((res)=>{
                     setSemesters(res.data)
                     setSemestersD(res.data)
                 })
-                await axiosInstance.get('course/')
+                await PrivateDefaultApi.get('course/')
                 .then((res)=>{
                     setCourses(res.data)
                     setCoursesD(res.data)
                 })
-                await axiosInstance.get('coursegroup/')
+                await PrivateDefaultApi.get('coursegroup/')
                 .then((res)=>{
                     setCourseGroup(res.data)
                     setCourseGroupD(res.data)
                 })
-                await axiosInstance.get('title/')
+                await PrivateDefaultApi.get('title/')
                 .then((res)=>{
                     setTitles(res.data)
                     setTitlesD(res.data)
                 })
-                await axiosInstance.get('preference/')
+                await PrivateDefaultApi.get('preference/')
                 .then((res)=>{
                     setPreference(res.data)
                     setPreferenceD(res.data)
                 })
-                await axiosInstance.get('title/')
+                await PrivateDefaultApi.get('title/')
                 .then((res)=>{
                     setTitles(res.data)
                     setTitlesD(res.data)
@@ -184,7 +184,7 @@ const Create:React.FC = () => {
         getFac()
         const permissionFetcher= async()=>{
             try {
-                const response = await axiosInstance.get('AllGP/')
+                const response = await PrivateDefaultApi.get('AllGP/')
                 console.log(response.data)
                 setGrps(response.data.groups)
                 setPerms(response.data.permissions)
@@ -197,7 +197,7 @@ const Create:React.FC = () => {
     const handleFetchChange = async(name:string, value:string) =>{
         setLoading(false)
         if(value==="")return
-        const response = await axiosInstance.get(`${name}/?search=${value}`)
+        const response = await PrivateDefaultApi.get(`${name}/?search=${value}`)
         console.info(name)
         switch (name){
             case "general":
@@ -250,7 +250,7 @@ const Create:React.FC = () => {
 
     const onFinish:FormProps<PreferenceInt>['onFinish'] = async (values) =>{
         try{
-            const response = await axiosInstance.post('preference/',values)
+            const response = await PrivateDefaultApi.post('preference/',values)
             setRequestStatus(response.status)
         }catch(error:any){
             try{
@@ -715,7 +715,7 @@ const List:React.FC = () =>{
       search(value);
     };
     const search = async(v:string)=>{
-      await axiosInstance.get('preference/?search='+v)
+      await PrivateDefaultApi.get('preference/?search='+v)
       .then((res)=>{
         setSearchResult(res.data)
       }).catch((error)=>{
@@ -737,7 +737,7 @@ const List:React.FC = () =>{
         }).then((result:any) => {
           if (result.isConfirmed) {
               try {
-                  axiosInstance.delete(`/course/${id}/`)
+                  PrivateDefaultApi.delete(`/course/${id}/`)
                   .then(()=>{
                   <Alert title="Item Deleted" icon='success'/>
                   setSearchResult(searchResults.filter((val: any)=> val.id !== id))
@@ -756,7 +756,7 @@ const List:React.FC = () =>{
         });
     }
     const getTargetContainer = async(id:number,target:string)=>{
-         const response = await axiosInstance.get(`${target}/${id}/`)
+         const response = await PrivateDefaultApi.get(`${target}/${id}/`)
          return response.data
     }
     const displayObjectConytaint = async(obj:any, editId:number,target:string) =>{

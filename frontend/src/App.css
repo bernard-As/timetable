@@ -134,3 +134,32 @@ label {
 .TopperDiv {
   padding-top: 15vh
 }
+
+.loginNotifications {
+  position: relative;
+  min-width: 50%;
+  /* transform: translateX(100px) ; */
+  transition: transform 0.5s ease; /* Smooth transition */
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+.loginCard{
+  /* background-color: var(--background-color); */
+  /* color: var(--text-color); */
+  position: relative;
+  transition: transform 0.5s ease; /* Smooth transition */
+  min-width: 50%;
+
+}
+
+.horiz_devider{
+  background-color:var(--text-color);
+  height: 80vh;
+}
+
+.loginForm{
+  background-color: var(--background-color);
+  color: var(--text-color);
+  
+}

@@ -6,7 +6,7 @@ from rest_framework.authentication import TokenAuthentication
 # from knox.auth import AuthToken
 from rest_framework.authtoken.views import ObtainAuthToken
 from django.contrib.auth import authenticate
-
+from rest_framework.permissions import IsAuthenticated
 from apibase.serializers import LoginSerializer
 
 class LoginView(APIView):
@@ -16,10 +16,10 @@ class LoginView(APIView):
         
         serializer = LoginSerializer(data=request.data)
         if serializer.is_valid():
-            username = serializer.validated_data['username']
+            email = serializer.validated_data['email']
             password = serializer.validated_data['password']
     
-            user = authenticate(request, username=username, password=password)
+            user = authenticate(request, email=email, password=password)
     
             if user:
                 # User is valid, generate token using DRF method
@@ -33,3 +33,10 @@ class LoginView(APIView):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
+
+class VerifyToken(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = ([IsAuthenticated]) 
+    def post(self,request):
+
+        return Response({'success'},200)

@@ -1,12 +1,11 @@
 import React, { useEffect,useRef,useState } from "react"
-import axiosInstance from "../../AxiosInstance"
+import {PrivateDefaultApi} from "../../../utils/AxiosInstance"
 import RequestHandler from "../../../components/RequestHandler"
 import ListGroup from "react-bootstrap/esm/ListGroup"
 import { Row, Col, Button, Navbar, Container, Table } from "react-bootstrap"
 import { Link } from "react-router-dom"
 import Swal from "sweetalert2"
 import Alert from "../../alerts/normalAlert"
-import TokenChecker from "../../../tokenChecker"
 
 interface FormData {
     id: number,
@@ -37,7 +36,7 @@ const Create:React.FC = () => {
     const handleSubmit =async  (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
-            const response = await axiosInstance.post('title/',formData)
+            const response = await PrivateDefaultApi.post('title/',formData)
             setRequestStatus(response.status)
         } catch (error:any) {
             try{
@@ -101,8 +100,8 @@ const Edit:React.FC<{id:number}> =(id) =>{
     },[])
 
     useEffect(()=>{
-        axiosInstance.get(`/title/${id.id}/`)
-        .then((res)=>{
+        PrivateDefaultApi.get(`/title/${id.id}/`)
+        .then((res:any)=>{
         setShowEdit(true)
         setFormData(res.data)
             })
@@ -119,7 +118,7 @@ const Edit:React.FC<{id:number}> =(id) =>{
     const handleSubmit =async  (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
-            const response = await axiosInstance.put(`title/${id.id}/`,formData)
+            const response = await PrivateDefaultApi.put(`title/${id.id}/`,formData)
             setRequestStatus(response.status)
             setShowEdit(false)
         } catch (error:any) {
@@ -201,8 +200,8 @@ const List:React.FC = () => {
         }
         setData([])//to remove in production mode
 
-        axiosInstance.get('/title/')
-        .then((res)=>{
+        PrivateDefaultApi.get('/title/')
+        .then((res:any)=>{
             setData([...data, ...res.data])
             setIsloading(false)
             })
@@ -219,8 +218,8 @@ const List:React.FC = () => {
     useEffect(()=>{
         setTimeout(() => { 
             if(edit!==0){
-                axiosInstance.get('/title/')
-                .then((res)=>{
+                PrivateDefaultApi.get('/title/')
+                .then((res:any)=>{
                     if(JSON.stringify(dataRef.current)  !== JSON.stringify(res.data)){
                         dataRef.current = res.data
                         setData(res.data)
@@ -258,11 +257,11 @@ const List:React.FC = () => {
           }).then((result) => {
             if (result.isConfirmed) {
                 try {
-                    axiosInstance.delete(`/title/${id}/`)
+                    PrivateDefaultApi.delete(`/title/${id}/`)
                     .then(()=>{
                     <Alert title="Item Deleted" icon='success'/>
                     setData(data.filter((val: FormData)=> val.id !== id))
-                    }).catch((err)=>{
+                    }).catch((err:any)=>{
                         try {
                             <RequestHandler status={err.response.status}/>
                         } catch (error) {

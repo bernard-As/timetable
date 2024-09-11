@@ -1,9 +1,9 @@
 import { observer } from 'mobx-react';
-import { Button, Divider, notification, Space } from 'antd';
+import { Button, Divider, message, Space } from 'antd';
 import { useEffect } from 'react';
 import rootStore from '../mobx';
 const Notifications = observer(() =>{
-    const [notificationApi, contextHolder] = notification.useNotification();
+    const [notificationApi, contextHolder] = message.useMessage();
     console.info('rerending Notification');
     
     return (
@@ -12,12 +12,17 @@ const Notifications = observer(() =>{
             {contextHolder}
            {
             rootStore.notification.notifications.map((notification:any) =>{
+                let cnt = 'error';
+                if(notification.text !== ''){
+                    cnt = notification.text;
+                }else
+                {
+                    cnt = notification.title;
+                }
                 setTimeout(() => {
                     notificationApi.info({
                         key : notification.id,
-                        message: notification.title,
-                        description: notification.text,
-                        placement: 'topRight'
+                        content: cnt,
                       });
                 }, 250);
                 return <></>

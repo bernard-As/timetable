@@ -1,5 +1,7 @@
 
 const Main:React.FC = ()=>{
-    return null
+    return (
+        <div>This should display the main content</div>
+    )
 }
 export default Main;

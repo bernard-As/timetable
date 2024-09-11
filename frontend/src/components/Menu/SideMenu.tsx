@@ -1,0 +1,161 @@
+import Sider from "antd/es/layout/Sider";
+import React, {  useEffect, useState } from 'react';
+import { UserOutlined, SettingOutlined } from '@ant-design/icons';
+import { MdLogout } from "react-icons/md";
+import { GrSchedule, GrSchedules } from "react-icons/gr";
+import { Menu } from "antd";
+import { useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
+import rootStore from "../../mobx";
+import { observer } from "mobx-react";
+import { RiHome2Line, RiMiniProgramLine } from "react-icons/ri";
+import { GiBookAura,GiTeacher } from "react-icons/gi";
+import { SiGoogleclassroom, SiClickhouse} from "react-icons/si";
+import { LiaChalkboardTeacherSolid } from "react-icons/lia";
+import { PiBuilding, PiListStarDuotone } from "react-icons/pi";
+import { ImListNumbered } from "react-icons/im";
+const SideMenu: React.FC = observer(() => {
+  const [collapsed, setCollapsed] = useState(false);
+  const navigate = useNavigate();
+
+  const menuItems = [
+    {
+      key: 1,
+      icon: React.createElement(RiHome2Line),
+      label: "Home",
+      style: rootStore.mainStore.darkMode?{color:'white'}:{color:'black'}
+    },
+    {
+      key: 2,
+      icon: React.createElement(GrSchedule),
+      label: "My timetable",
+    },
+    {
+      key: 3,
+      icon: React.createElement(GrSchedules),
+      label: "Holistic Schedule",
+      children: [
+        { 
+          key: 4, 
+          icon: React.createElement(GiBookAura),
+          label: 'Course',
+          onClick: ()=>{
+            navigate('/holistic-schedule/course')
+          }
+        },
+        { 
+          key: 5, 
+          icon: React.createElement(SiGoogleclassroom),
+          label: 'Room',
+          onClick: ()=>{
+            navigate('/holistic-schedule/room')
+          }
+        },
+        { 
+          key: 6, 
+          icon: React.createElement(GiTeacher),
+          label: 'Lecturer',
+          onClick: ()=>{
+            navigate('/holistic-schedule/lecturer')
+          }
+        },
+        { 
+          key: 7, 
+          icon: React.createElement(LiaChalkboardTeacherSolid),
+          label: 'Assistant',
+          onClick: ()=>{
+            navigate('/holistic-schedule/assistant')
+          }
+        },
+        { 
+          key: 8, 
+          icon: React.createElement(ImListNumbered),
+          label: 'Semester',
+          onClick: ()=>{
+            navigate('/holistic-schedule/semester')
+          }
+        },
+        { 
+          key: 9, 
+          icon: React.createElement(RiMiniProgramLine),
+          label: 'Program',
+          onClick: ()=>{
+            navigate('/holistic-schedule/program')
+          }
+        },
+        { 
+          key: 10, 
+          icon: React.createElement(SiClickhouse),
+          label: 'Faculty',
+          onClick: ()=>{
+            navigate('/holistic-schedule/faculty')
+          }
+        },
+        { 
+          key: 11, 
+          icon: React.createElement(PiBuilding),
+          label: 'Building',
+          onClick: ()=>{
+            navigate('/holistic-schedule/building')
+          }
+        },
+        { 
+          key: 12, 
+          icon: React.createElement(PiListStarDuotone),
+          label: 'Complete',
+          onClick: ()=>{
+            navigate('/holistic-schedule/complete')
+          }
+        },
+      ],
+      
+    },
+    {
+      key: 13,
+      icon: React.createElement(UserOutlined),
+      label: "Profile",
+    },
+    {
+      key: 14,
+      icon: React.createElement(SettingOutlined),
+      label: "Settings",
+    },
+    {
+      key: 15,
+      icon: React.createElement(MdLogout),
+      label: "Logout",
+      onClick: () => {
+        Cookies.remove("token");
+        navigate("/login");
+      },
+    },
+  ];
+
+  // Handle dark mode setting from localStorage or Cookies
+  // Handle auto-collapse based on screen size
+  const handleCollapse = (collapsedState:any) => {
+    setCollapsed(collapsedState);
+    rootStore.mainStore.sideMenuCollapse = collapsedState;
+  };
+
+  return (
+    <Sider
+      collapsible
+      collapsed={collapsed}
+      onCollapse={handleCollapse}
+      breakpoint="lg"
+      collapsedWidth="80"
+      className="sider-container"
+      style={rootStore.mainStore.darkMode ? { backgroundColor: '#52616B' } : { backgroundColor: '#C9D6DF' }}
+    >
+      <Menu
+        mode="inline"
+        defaultSelectedKeys={['1']}
+        items={menuItems}
+        className="side-menu"
+      />
+    </Sider>
+  );
+});
+
+export default SideMenu;

@@ -9,12 +9,13 @@ const MainRoutes: React.FC = ()=>{
         <Router>
             <Routes>
               <Route path='/*' element={<Home />}/>
-              <Route path='/home' element={<Home />}/>
+              <Route path='/home/*' element={<Home />}/>
               <Route path='/welcome' element={<LandingPage />}/>
               <Route path='/landing' element={<LandingPage />}/>
               {/* <Route path='/test' element={<Test />}/> */}
               <Route path='/login' element={<Login />}/>
               <Route path='/siteManagement' element={<SiteManagement />}/>
+              <Route path='*' element={<P404 />}/>
               <Route path='*' element={<P404 />}/>
             </Routes>
         </Router>

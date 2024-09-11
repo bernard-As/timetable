@@ -1,5 +1,6 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import rootStore from '../mobx';
 
 // Utility function to get the token
 const getToken = () => Cookies.get('token');
@@ -32,8 +33,19 @@ PrivateDefaultApi.interceptors.response.use(
   response => response,
   error => {
     if (error.response && error.response.status === 401) {
-      Cookies.remove('token');
-      window.location.href = '/login';
+      rootStore.notification.notify({
+        type:'error',
+        text: 'Your session has expired. Please login again.',
+        title:'Unauthenticated',
+        timeout:1500
+      })
+    }else if(error.response && error.response.status === 500){
+      rootStore.notification.notify({
+        type:'error',
+        text: 'An Unexpected error occur. Please try later',
+        title:'Unexpected',
+        timeout:1500
+      })
     }
     return Promise.reject(error);
   }

@@ -165,6 +165,12 @@ class CourseSemester(models.Model):
     status = models.BooleanField(default=True)
 
 class Users(User):
+    CRED_TYPE = [
+        ("SYSADM", "SystemAdmin"),
+        ("PADM", "PlatformAdmin"),
+        ("VR", "ViceRector"),
+        ("OT","Other")
+        ]
     user = models.OneToOneField(User, on_delete=models.CASCADE, parent_link=True)
     profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True)
     title = models.ForeignKey(Title, null=True, blank=False, on_delete=models.SET_NULL)
@@ -172,7 +178,7 @@ class Users(User):
     faculty = models.ManyToManyField(Faculty)
     department = models.ManyToManyField(Department)
     program = models.ManyToManyField(Program)
-
+    credential = models.CharField(max_length=255,choices=CRED_TYPE, default='OT')
 #***************Second to run**/**************************#
     
 
@@ -202,7 +208,7 @@ class ActivityType(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
-    status = models.BooleanField()
+    status = models.BooleanField(default=True)
 
 class Course(models.Model):
     """A course offered by the university"""

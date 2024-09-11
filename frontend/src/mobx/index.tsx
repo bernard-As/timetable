@@ -4,9 +4,12 @@ import { PrivateDefaultApi } from '../utils/AxiosInstance';
 import MainStore from './MainStore';
 import NotificationStore from './NotificationsStore';
 import Cookies from 'js-cookie';
+import HolisticScheduleStore from './HolisticSchedule';
 class RootStore {
   notification = new NotificationStore();
   mainStore = new MainStore();
+  holisticScheduleStore = new HolisticScheduleStore();
+
   constructor() {
     makeAutoObservable(this);
   }
@@ -22,7 +25,8 @@ class RootStore {
         window.location.href = process.env.REACT_APP_BASE_URL + 'welcome';
     })
     :window.location.href=  process.env.REACT_APP_BASE_URL + 'login'
-}  
+  }
+    
 }
 
 const rootStore = new RootStore();

@@ -1,13 +1,14 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Main from "./Main"
-
+import P404 from './404page';
+import HolisticSchedule from './Content/HolisticSchedule';
 const ContentRoutes: React.FC = ()=>{
     return(
-        <Router>
-            <Routes>
-                <Route path="/" element={<Main />} />
-            </Routes>
-        </Router>
+        <Routes>
+            <Route path="/" element={<Main />} />
+            <Route path="/holistic-schedule/*" element={<HolisticSchedule />} />
+            <Route path="/*" element={<P404 />} />
+        </Routes>
     )
 }
 export default ContentRoutes;

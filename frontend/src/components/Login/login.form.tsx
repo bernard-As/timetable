@@ -23,7 +23,7 @@ const LoginForm: React.FC = () => {
     try {
       const referrerUrl = new URL(referrer);
 
-      if (referrerUrl.hostname.endsWith(currentHostname) && (referrer!==`${process.env.REACT_APP_BASE_URL}welcome` || referrer!==`${process.env.REACT_APP_BASE_URL}login`)) {
+      if (referrerUrl.hostname.endsWith(currentHostname) && (referrer!==`${process.env.REACT_APP_BASE_URL}welcome` && referrer!==`${process.env.REACT_APP_BASE_URL}login`)) {
         // Same subdomain, navigate to the referrer
         // navigate(referrer);
         window.location.href=referrer
@@ -34,6 +34,7 @@ const LoginForm: React.FC = () => {
     } catch (error) {
       // If referrer is not a valid URL or any other issue
         navigate(`/welcome`);
+        // console.info(error)
     }
   };
   const onFinish: FormProps<FieldType>['onFinish'] = (values) => {

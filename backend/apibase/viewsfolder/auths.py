@@ -8,6 +8,7 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from django.contrib.auth import authenticate
 from rest_framework.permissions import IsAuthenticated
 from apibase.serializers import LoginSerializer
+from apibase.models import Users
 
 class LoginView(APIView):
     def post(self, request, *args, **kwargs):
@@ -38,5 +39,7 @@ class VerifyToken(APIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = ([IsAuthenticated]) 
     def post(self,request):
+        cred = Users.objects.get(user=request.user.id).credential
 
-        return Response({'success'},200)
+        return Response({'message':'success','credential':cred},200)
+    

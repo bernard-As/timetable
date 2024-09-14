@@ -9,7 +9,7 @@ import DynamicFooter from './Footer';
 const { Header, Content, Sider } = Layout;
 const Home: React.FC = () =>{
     useEffect(()=>{
-        // rootStore.checkTokenValidity();
+        rootStore.checkTokenValidity();
     },[])
     return (
         <>

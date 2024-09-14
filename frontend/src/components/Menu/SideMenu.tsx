@@ -3,7 +3,7 @@ import React, {  useEffect, useState } from 'react';
 import { UserOutlined, SettingOutlined } from '@ant-design/icons';
 import { MdLogout } from "react-icons/md";
 import { GrSchedule, GrSchedules } from "react-icons/gr";
-import { Menu } from "antd";
+import { Menu, Switch } from "antd";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import rootStore from "../../mobx";
@@ -12,13 +12,19 @@ import { RiHome2Line, RiMiniProgramLine } from "react-icons/ri";
 import { GiBookAura,GiTeacher } from "react-icons/gi";
 import { SiGoogleclassroom, SiClickhouse} from "react-icons/si";
 import { LiaChalkboardTeacherSolid } from "react-icons/lia";
-import { PiBuilding, PiListStarDuotone } from "react-icons/pi";
+import { PiBuilding, PiListStarDuotone,PiStudentThin } from "react-icons/pi";
 import { ImListNumbered } from "react-icons/im";
 const SideMenu: React.FC = observer(() => {
   const [collapsed, setCollapsed] = useState(false);
   const navigate = useNavigate();
 
   const menuItems = [
+    {
+      key: 0,
+      icon: (<Switch defaultChecked onChange={(checked)=>rootStore.enableManagement = checked} />),
+      label: "Site Management",
+      style: rootStore.isManager()?{display:'block'}:{display:'none'}
+    },
     {
       key: 1,
       icon: React.createElement(RiHome2Line),
@@ -41,7 +47,10 @@ const SideMenu: React.FC = observer(() => {
           label: 'Course',
           onClick: ()=>{
             navigate('/holistic-schedule/course')
-          }
+          },
+          style:
+              (rootStore.holisticScheduleStore.checkCredentialAllowence('course')
+              &&rootStore.holisticScheduleStore.checkAllowDisplay('course'))?{display:'block'}:{display:'none'}
         },
         { 
           key: 5, 
@@ -49,7 +58,10 @@ const SideMenu: React.FC = observer(() => {
           label: 'Room',
           onClick: ()=>{
             navigate('/holistic-schedule/room')
-          }
+          },
+          style:
+              (rootStore.holisticScheduleStore.checkCredentialAllowence('room')
+              &&rootStore.holisticScheduleStore.checkAllowDisplay('room'))?{display:'block'}:{display:'none'}
         },
         { 
           key: 6, 
@@ -57,7 +69,9 @@ const SideMenu: React.FC = observer(() => {
           label: 'Lecturer',
           onClick: ()=>{
             navigate('/holistic-schedule/lecturer')
-          }
+          },style:
+          (rootStore.holisticScheduleStore.checkCredentialAllowence('lecturer')
+          &&rootStore.holisticScheduleStore.checkAllowDisplay('lecturer'))?{display:'block'}:{display:'none'}
         },
         { 
           key: 7, 
@@ -65,63 +79,92 @@ const SideMenu: React.FC = observer(() => {
           label: 'Assistant',
           onClick: ()=>{
             navigate('/holistic-schedule/assistant')
-          }
+          },
+          style:
+              (rootStore.holisticScheduleStore.checkCredentialAllowence('assistant')
+              &&rootStore.holisticScheduleStore.checkAllowDisplay('assistant'))?{display:'block'}:{display:'none'}
         },
         { 
           key: 8, 
+          icon: React.createElement(PiStudentThin),
+          label: 'Student',
+          onClick: ()=>{
+            navigate('/holistic-schedule/student')
+          },
+          style:
+              (rootStore.holisticScheduleStore.checkCredentialAllowence('assistant')
+              &&rootStore.holisticScheduleStore.checkAllowDisplay('assistant'))?{display:'block'}:{display:'none'}
+        },
+        { 
+          key: 9, 
           icon: React.createElement(ImListNumbered),
           label: 'Semester',
           onClick: ()=>{
             navigate('/holistic-schedule/semester')
-          }
+          },
+          style:
+              (rootStore.holisticScheduleStore.checkCredentialAllowence('semester')
+              &&rootStore.holisticScheduleStore.checkAllowDisplay('semester'))?{display:'block'}:{display:'none'}
         },
         { 
-          key: 9, 
+          key: 10, 
           icon: React.createElement(RiMiniProgramLine),
           label: 'Program',
           onClick: ()=>{
             navigate('/holistic-schedule/program')
-          }
+          },
+          style:
+              (rootStore.holisticScheduleStore.checkCredentialAllowence('program')
+              &&rootStore.holisticScheduleStore.checkAllowDisplay('program'))?{display:'block'}:{display:'none'}
         },
         { 
-          key: 10, 
+          key: 11, 
           icon: React.createElement(SiClickhouse),
           label: 'Faculty',
           onClick: ()=>{
             navigate('/holistic-schedule/faculty')
-          }
+          },
+          style:
+              (rootStore.holisticScheduleStore.checkCredentialAllowence('faculty')
+              &&rootStore.holisticScheduleStore.checkAllowDisplay('faculty'))?{display:'block'}:{display:'none'}
         },
         { 
-          key: 11, 
+          key: 12, 
           icon: React.createElement(PiBuilding),
           label: 'Building',
           onClick: ()=>{
             navigate('/holistic-schedule/building')
-          }
+          },
+          style:
+              (rootStore.holisticScheduleStore.checkCredentialAllowence('building')
+              &&rootStore.holisticScheduleStore.checkAllowDisplay('building'))?{display:'block'}:{display:'none'}
         },
         { 
-          key: 12, 
+          key: 13, 
           icon: React.createElement(PiListStarDuotone),
           label: 'Complete',
           onClick: ()=>{
             navigate('/holistic-schedule/complete')
-          }
+          },
+          style:
+              (rootStore.holisticScheduleStore.checkCredentialAllowence('complete')
+              &&rootStore.holisticScheduleStore.checkAllowDisplay('complete'))?{display:'block'}:{display:'none'}
         },
       ],
       
     },
     {
-      key: 13,
+      key: 14,
       icon: React.createElement(UserOutlined),
       label: "Profile",
     },
     {
-      key: 14,
+      key: 15,
       icon: React.createElement(SettingOutlined),
       label: "Settings",
     },
     {
-      key: 15,
+      key: 16,
       icon: React.createElement(MdLogout),
       label: "Logout",
       onClick: () => {

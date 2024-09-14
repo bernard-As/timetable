@@ -105,3 +105,11 @@ code {
 .main-layout{
   height: 100vh;
 }
+
+.holistic-header{
+
+}
+.H-content{
+  margin-top: 15px;
+  background-color: transparent;
+}

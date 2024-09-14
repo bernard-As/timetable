@@ -32,14 +32,14 @@ export const PrivateDefaultApi = axios.create({
 PrivateDefaultApi.interceptors.response.use(
   response => response,
   error => {
-    if (error.response && error.response.status === 401) {
+    if (error&&error.response && error.response.status === 401) {
       rootStore.notification.notify({
         type:'error',
-        text: 'Your session has expired. Please login again.',
-        title:'Unauthenticated',
+        text: 'Please login to access fine-tuned informations.',
+        title:'Please login to access fine-tuned informations.',
         timeout:1500
       })
-    }else if(error.response && error.response.status === 500){
+    }else if(error&&error.response && error.response.status === 500){
       rootStore.notification.notify({
         type:'error',
         text: 'An Unexpected error occur. Please try later',

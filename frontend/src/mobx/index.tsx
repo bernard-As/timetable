@@ -9,7 +9,8 @@ class RootStore {
   notification = new NotificationStore();
   mainStore = new MainStore();
   holisticScheduleStore = new HolisticScheduleStore();
-
+  credential = 'OT'
+  enableManagement = false;
   constructor() {
     makeAutoObservable(this);
   }
@@ -19,14 +20,21 @@ class RootStore {
     PrivateDefaultApi.post('verify_token').then((res)=>{
         if(res.status === 401){
             window.location.href = process.env.REACT_APP_BASE_URL + 'welcome';
+        }else{
+          this.credential = res.data.credential
         }
     }).catch((error)=>{
-      if(error.response.status===401)
+      if(error.status===401)
         window.location.href = process.env.REACT_APP_BASE_URL + 'welcome';
     })
     :window.location.href=  process.env.REACT_APP_BASE_URL + 'login'
   }
-    
+  isManager(){
+    if(this.credential===('SYSADM'||'PADM')){
+      return true
+    }
+    return false
+  }
 }
 
 const rootStore = new RootStore();

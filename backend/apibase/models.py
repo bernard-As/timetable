@@ -1,3 +1,4 @@
+import re
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
@@ -171,7 +172,7 @@ class Users(User):
         ("VR", "ViceRector"),
         ("OT","Other")
         ]
-    user = models.OneToOneField(User, on_delete=models.CASCADE, parent_link=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, parent_link=True, )
     profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True)
     title = models.ForeignKey(Title, null=True, blank=False, on_delete=models.SET_NULL)
     deleted = models.BooleanField(default=False)

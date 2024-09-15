@@ -148,6 +148,9 @@ class RoomViewSet(viewsets.ModelViewSet):
         ]
 
 class FacultyViewSet(viewsets.ModelViewSet):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
     queryset = Faculty.objects.all()
     serializer_class = FacultySerializer
     filter_backends = [filters.SearchFilter]
@@ -155,18 +158,24 @@ class FacultyViewSet(viewsets.ModelViewSet):
 
 
 class ActivityTypeViewSet(viewsets.ModelViewSet):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
     queryset = ActivityType.objects.all()
     serializer_class = ActivitytypeSerializer
     filter_backends = [filters.SearchFilter]
     search_fields = ['name','description']
 
 class DepartmentViewSet(viewsets.ModelViewSet):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
     queryset = Department.objects.all()
     serializer_class = DepartmentSerializer
     filter_backends = [filters.SearchFilter]
     search_fields = ['name','shortname','color','description','faculty__name','faculty__shortname','faculty__color']
 
 class ProgramViewSet(viewsets.ModelViewSet):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
     queryset = Program.objects.all()
     serializer_class = ProgramSerializer
     filter_backends = [filters.SearchFilter]
@@ -185,6 +194,8 @@ class ProgramViewSet(viewsets.ModelViewSet):
     ]
 
 class CourseSemesterViewSet(viewsets.ModelViewSet):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
     queryset = CourseSemester.objects.all()
     serializer_class = CourseSemesterSerializer
     filter_backends = [filters.SearchFilter]
@@ -206,10 +217,14 @@ class CourseSemesterViewSet(viewsets.ModelViewSet):
 
 
 class GroupViewSet(viewsets.ModelViewSet):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
 
 class LecturerViewSet(viewsets.ModelViewSet):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
     queryset = Lecturer.objects.all()
     serializer_class = LecturerSerializer
     filter_backends = [filters.SearchFilter]
@@ -309,6 +324,8 @@ class LecturerViewSet(viewsets.ModelViewSet):
         return item
 
 class StudentViewSet(viewsets.ModelViewSet):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
     queryset = Student.objects.all()
     serializer_class = StudentSerializer
     filter_backends = [filters.SearchFilter]
@@ -417,6 +434,8 @@ class StudentViewSet(viewsets.ModelViewSet):
         return Response({'users':short_data},status=status.HTTP_200_OK) 
 
 class OtherStaffViewSet(viewsets.ModelViewSet):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
     queryset = OtherStaff.objects.all()
     serializer_class = OtherStaffSerializer
     filter_backends = [filters.SearchFilter]
@@ -522,6 +541,8 @@ class OtherStaffViewSet(viewsets.ModelViewSet):
         return item
 
 class CourseViewSet(viewsets.ModelViewSet):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
     filter_backends = [filters.SearchFilter]
@@ -650,6 +671,8 @@ class CourseViewSet(viewsets.ModelViewSet):
         return item
 
 class CourseGroupViewSet(viewsets.ModelViewSet):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
     queryset = Coursegroup.objects.all()
     serializer_class = CourseGroupSerializer
     filter_backends = [filters.SearchFilter]
@@ -699,6 +722,8 @@ class CourseGroupViewSet(viewsets.ModelViewSet):
         return item
     
 class PreferenceViewSet(viewsets.ModelViewSet):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
     queryset = Preference.objects.all().order_by('id')
     serializer_class = PreferenceSerializer
     filter_backends = [filters.SearchFilter]
@@ -787,6 +812,8 @@ class PreferenceViewSet(viewsets.ModelViewSet):
         return super().create(request, *args, **kwargs)
 
 class EventTimeViewSet(viewsets.ModelViewSet):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
     queryset = EventTime.objects.all().order_by('id')
     serializer_class = EventTimeSerializer
     filter_backends = (filters.SearchFilter, filters.OrderingFilter)

@@ -28,6 +28,14 @@ export const PrivateDefaultApi = axios.create({
   }
 });
 
+export const PrivateApi = axios.create({
+  baseURL: process.env.REACT_APP_API_BASE_URL + 'mainapi' || 'http://localhost:8000/mainapi/',
+  headers: {
+    'Authorization': `Token ${getToken()}`,
+    'Content-Type': 'application/json'
+    }
+})
+
 // Axios response interceptor for DefaultApi
 PrivateDefaultApi.interceptors.response.use(
   response => response,
@@ -40,6 +48,42 @@ PrivateDefaultApi.interceptors.response.use(
         timeout:1500
       })
     }else if(error&&error.response && error.response.status === 500){
+      rootStore.notification.notify({
+        type:'error',
+        text: 'An Unexpected error occur. Please try later',
+        title:'Unexpected',
+        timeout:1500
+      })
+    }else if(error&&error.response && error.response.status === 400){
+      rootStore.notification.notify({
+        type:'error',
+        text: `Error=> ${Object.keys(error.response.data).map(key => `${key}: ${error.response.data[key]}`).join('\n')}`,
+        title:'Unexpected',
+        timeout:1500
+      })
+    }
+    return Promise.reject(error);
+  }
+);
+
+PrivateApi.interceptors.response.use(
+  response => response,
+  error => {
+    if (error&&error.response && error.response.status === 401) {
+      rootStore.notification.notify({
+        type:'error',
+        text: 'Please login to access fine-tuned informations.',
+        title:'Please login to access fine-tuned informations.',
+        timeout:1500
+      })
+    }else if(error&&error.response && error.response.status === 500){
+      rootStore.notification.notify({
+        type:'error',
+        text: 'An Unexpected error occur. Please try later',
+        title:'Unexpected',
+        timeout:1500
+      })
+    }else if(error&&error.response && error.response.status === 404){
       rootStore.notification.notify({
         type:'error',
         text: 'An Unexpected error occur. Please try later',

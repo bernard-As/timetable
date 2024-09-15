@@ -6,11 +6,19 @@ import { TfiLayoutAccordionList } from "react-icons/tfi";
 import { FaStar,FaRegStar } from "react-icons/fa6";
 import { FaPlus,FaSearch } from "react-icons/fa";
 import { RiDeleteBin5Line } from "react-icons/ri";
-const HHeader:React.FC=()=>{
+import { useLocation } from "react-router-dom";
+import rootStore from "../../../mobx";
+import { observer } from "mobx-react";
+const HHeader:React.FC<{setToDisplay:any,setsearchData:any}> = observer(({setToDisplay,setsearchData})=>{
+    const location = useLocation();
+    const model = rootStore.holisticScheduleStore.getModelName(location)
     const inputRef = useRef<InputRef>(null);
     type SearchProps = GetProps<typeof Input.Search>;
     const onSearch: SearchProps['onSearch'] = (value, _e, info) => {
         console.log(info?.source, value)
+        if(value.trim()!==(""||null)){
+            setsearchData(value.trim())
+        }
     };
     useEffect(()=>{
         const focusOnSearch=()=>{
@@ -22,6 +30,8 @@ const HHeader:React.FC=()=>{
         }
         focusOnSearch();
     },[])
+    
+
     return (
         <Header
             style={{backgroundColor:'transparent',
@@ -34,7 +44,9 @@ const HHeader:React.FC=()=>{
             >
                 
                 <Row justify={'space-around'} style={{height:'20px'}}>
-                    {   window.innerWidth >768&&<Col span={16}>
+                    {   window.innerWidth >768&&
+                        rootStore.holosticScheduleContentStore.header.find(h=>h.name===model)?.search &&
+                        <Col span={16}>
                             <Search 
                             placeholder="input search text" 
                             onSearch={onSearch}
@@ -46,7 +58,9 @@ const HHeader:React.FC=()=>{
                         />
                     </Col>}
                     {
-                        window.innerWidth<768&&<Col span={1}>
+                        window.innerWidth<768&&
+                        rootStore.holosticScheduleContentStore.header.find(h=>h.name===model)?.search&&
+                        <Col span={1}>
                             <Tooltip 
                                 title="Search"
                             >
@@ -54,39 +68,52 @@ const HHeader:React.FC=()=>{
                             </Tooltip>
                         </Col>
                     }
-                    <Col span={1}>
+                    {   rootStore.holosticScheduleContentStore.header.find(h=>h.name===model)?.list&&
+                        rootStore.enableManagement&&rootStore.isManager()&&
+                        <Col span={1}>
                         <Tooltip 
                             title="List"
                         >
-                            <TfiLayoutAccordionList size={20}/>
+                            <TfiLayoutAccordionList size={20}
+                                onClick={()=>{setToDisplay('list')}}
+                                color="blue"
+                            />
                         </Tooltip>
-                    </Col>
+                    </Col>}
+                    { rootStore.holosticScheduleContentStore.header.find(h=>h.name===model)?.add&&
+                    rootStore.enableManagement&&rootStore.isManager()&&
                     <Col span={1}>
                         <Tooltip 
                             title="Add"
                         >
-                            <FaPlus  size={20}/>
+                            <FaPlus  size={20} 
+                                onClick={()=>{setToDisplay('add')}}
+                                color="green"
+                            />
                         </Tooltip>
-                    </Col>
+                    </Col>}
+                    {rootStore.holosticScheduleContentStore.header.find(h=>h.name===model)?.delete&&
+                    rootStore.enableManagement&&rootStore.isManager()&&
                     <Col span={1}>
                         <Tooltip 
                             title="Delete"
                         >
-                            <RiDeleteBin5Line  size={20}/>
+                            <RiDeleteBin5Line color="red" size={20}/>
                         </Tooltip>
-                    </Col>
+                    </Col>}
+                    {rootStore.holosticScheduleContentStore.header.find(h=>h.name===model)?.prefered&&
                     <Col span={1}>
                         <Tooltip 
-                            title="Marked"
+                            title="Bookmark"
                         >
                             {/* <FaRegStar size={20}/> */}
-                            <FaStar  size={20}/>
+                            <FaStar  size={20} color="#dbdf0b"/>
                         </Tooltip>
-                    </Col>
+                    </Col>}
                 </Row>
             </Card>
         </Header>
     )
-}
+})
 
 export default HHeader;

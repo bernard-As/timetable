@@ -68,11 +68,14 @@ class Semester(models.Model):
 class Building(models.Model):
     """Building """
     name = models.CharField(max_length=500)
-    code = models.CharField(max_length=50)
+    code = models.CharField(max_length=50,unique=True)
     latitude = models.FloatField(default=0)
     longitude = models.FloatField(default=0)
     status = models.BooleanField()
     state_description = models.TextField(null=True,blank=True)
+    class Meta:
+        unique_together = ("name", "code")
+        
 
 class Floor(models.Model):
     """Floors in a building."""

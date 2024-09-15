@@ -90,7 +90,7 @@ const LoginForm: React.FC = () => {
     if (remember) {
       form.setFieldsValue({
         remember: true,
-        email: Cookies.get('email') || '',
+        username: Cookies.get('email') || '',
         password: Cookies.get('pwd') || '',
       });
     }

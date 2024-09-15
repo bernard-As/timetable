@@ -10,6 +10,7 @@ class NotificationStore {
 
   addNotification(notification) {
     this.notifications.push(notification);
+    this.nId = this.nId +1
   }
 
   removeNotification(notificationId) {
@@ -34,12 +35,13 @@ class NotificationStore {
             timeout = 5000;
             break;
           default:
+            timeout = 3000;
             break;
         }
       }
       const notification =
 	    {
-	    	id : (this.nId+1).toString,
+	    	id : this.nId+1,
 	    	type,
 	    	title,
 	    	text,
@@ -47,7 +49,7 @@ class NotificationStore {
 	    };
         this.addNotification(notification);
         setTimeout(()=>{
-          this.removeNotification(notification.id);
+          this.removeNotification(this.nId);
         }, timeout)
   }
 }

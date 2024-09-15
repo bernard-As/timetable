@@ -83,10 +83,20 @@ class HolisticScheduleStore {
     constructor() {
         makeAutoObservable(this);
     }
+    getModelUrlId(locationArr){
+        if(locationArr.includes('home'))
+            return 3
+        else
+            return 2
+
+    }
+    getModelName(location){
+        const locArr = location.pathname.split('/')
+        return locArr[this.getModelUrlId(locArr)]
+    }
     checkDisplayAvailability(location){
         const locationArr = location.pathname.split('/');
-        let targetId = 3
-        if(locationArr.length===3) targetId = 2;
+        let targetId = this.getModelUrlId(locationArr)
         const isAllowed = Boolean(this.checkAllowDisplay(locationArr[targetId])&&this.checkCredentialAllowence(locationArr[targetId]))
         return isAllowed;
     }
@@ -98,6 +108,17 @@ class HolisticScheduleStore {
     checkAllowDisplay(name){
         if(!name) return false;
         return this.allowedDisplay.filter(a=>a.name===name.toString()&&a.status).length>0
+    }
+    deleteLocalStorageItemWith(text){
+        for (let key in localStorage) {
+
+            if (key.startsWith(text)) {
+        
+                localStorage.removeItem(key);
+        
+            }
+        
+        }
     }
 }
 

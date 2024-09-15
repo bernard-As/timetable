@@ -5,12 +5,14 @@ import MainStore from './MainStore';
 import NotificationStore from './NotificationsStore';
 import Cookies from 'js-cookie';
 import HolisticScheduleStore from './HolisticSchedule';
+import HolosticScheduleContentStore from './HolosticScheduleContent';
 class RootStore {
   notification = new NotificationStore();
   mainStore = new MainStore();
   holisticScheduleStore = new HolisticScheduleStore();
+  holosticScheduleContentStore = new HolosticScheduleContentStore();
   credential = 'OT'
-  enableManagement = false;
+  enableManagement = true;
   constructor() {
     makeAutoObservable(this);
   }

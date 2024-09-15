@@ -31,6 +31,12 @@ const HHeader:React.FC<{setToDisplay:any,setsearchData:any}> = observer(({setToD
         focusOnSearch();
     },[])
     
+    const triggerDelete =()=>{
+        rootStore.holosticScheduleContentStore.delete.recordToDelete = rootStore.holosticScheduleContentStore.selectedRows.selectedRows;
+        rootStore.holosticScheduleContentStore.selectedRows.targetModel=null
+        rootStore.holosticScheduleContentStore.delete.targetModel = model
+
+    }
 
     return (
         <Header
@@ -94,11 +100,15 @@ const HHeader:React.FC<{setToDisplay:any,setsearchData:any}> = observer(({setToD
                     </Col>}
                     {rootStore.holosticScheduleContentStore.header.find(h=>h.name===model)?.delete&&
                     rootStore.enableManagement&&rootStore.isManager()&&
+                    rootStore.holosticScheduleContentStore.selectedRows.selectedRows.length>0&&
+                    rootStore.holosticScheduleContentStore.selectedRows.targetModel===model&&
                     <Col span={1}>
                         <Tooltip 
                             title="Delete"
                         >
-                            <RiDeleteBin5Line color="red" size={20}/>
+                            <RiDeleteBin5Line color="red" size={20}
+                                onClick={triggerDelete}
+                            />
                         </Tooltip>
                     </Col>}
                     {rootStore.holosticScheduleContentStore.header.find(h=>h.name===model)?.prefered&&

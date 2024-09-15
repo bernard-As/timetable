@@ -19,6 +19,14 @@ class HolosticScheduleContentStore{
         targetModel: null,
         recordToView: null
     }
+    edit = {
+        targetModel: null,
+        recordToEdit: null
+    }
+    selectedRows = {
+        targetModel: null,
+        selectedRows:[]
+    }
 
     header = [
         {
@@ -26,8 +34,8 @@ class HolosticScheduleContentStore{
             search:true,
             list:true,
             add:true,
-            delete:false,
-            prefered:true,
+            delete:true,
+            prefered:false,
         },
         {
             name:'room',
@@ -35,7 +43,7 @@ class HolosticScheduleContentStore{
             list:true,
             add:true,
             delete:false,
-            prefered:true,
+            prefered:false,
         },
         {
             name:'lecturer',
@@ -43,7 +51,7 @@ class HolosticScheduleContentStore{
             list:true,
             add:true,
             delete:false,
-            prefered:true,
+            prefered:false,
         },
         {
             name:'assistant',
@@ -51,7 +59,7 @@ class HolosticScheduleContentStore{
             list:true,
             add:true,
             delete:false,
-            prefered:true,
+            prefered:false,
         },
         {
             name:'semester',
@@ -59,7 +67,7 @@ class HolosticScheduleContentStore{
             list:true,
             add:true,
             delete:false,
-            prefered:true,
+            prefered:false,
         },
         {
             name:'program',
@@ -67,7 +75,7 @@ class HolosticScheduleContentStore{
             list:true,
             add:true,
             delete:false,
-            prefered:true,
+            prefered:false,
         },
         {
             name:'faculty',
@@ -75,15 +83,15 @@ class HolosticScheduleContentStore{
             list:true,
             add:true,
             delete:false,
-            prefered:true,
+            prefered:false,
         },
         {
             name:'building',
             search:true,
             list:true,
             add:true,
-            delete:false,
-            prefered:true,
+            delete:true,
+            prefered:false,
         }
     ]
 
@@ -150,11 +158,15 @@ class HolosticScheduleContentStore{
                         <Tooltip title={'Schedule'}>
                             <GrFormSchedule size={27}/>
                         </Tooltip>
-                        <Tooltip title={'Bookmark'}>
+                        {/* <Tooltip title={'Bookmark'}>
                             <IoStarOutline size={25}/>
-                        </Tooltip>
+                        </Tooltip> */}
                         <Tooltip title={'Edit'}>
-                            <CiEdit size={25}/>
+                            <CiEdit size={25}
+                                onClick={()=>{
+                                    this.prepareToEdit(record.id)
+                                }}
+                            />
                         </Tooltip>
                         <Tooltip title={'Delete'}>
                             <Popconfirm 
@@ -175,13 +187,112 @@ class HolosticScheduleContentStore{
                 'status',
                 // 'created_at',
                 // 'updated_at',
+            ],
+            edit:[
+                'name',
+                'code',
+                'status',
             ]
         },
         {
-            name:"course",
-            apiUrl:'course'
-    
-        }
+            name:'floor',
+            apiUrl:'floor',
+            addFields:[
+                'floor_number',
+                'building',
+                'status',
+                // 'longitude',
+                // 'latitude',
+            ],
+            listFields:[
+                'name',
+            ],
+            listExtraButtons:{
+                prefered:true,
+                viewSchedule:true
+            },
+            columns:[
+                {
+                    title:'name',
+                    dataIndex:'name',
+                    key:'name',
+                    
+                },
+                {
+                    title:'code',
+                    dataIndex:'code',
+                    key:'code',
+                    render: (text)=><Tag color="blue">{text}</Tag>
+ 
+                },
+                {
+                    title:'status',
+                    dataIndex:'status',
+                    key:'status',
+                    render: (b) => 
+                        <Tooltip title={b ?'Active':'Inactive'}>
+                        <FaDotCircle  
+                            style={{
+                                color: b ? 'green' : 'red',
+                            }}
+                        />
+                        </Tooltip>
+                    ,
+                    style:{width:2}
+                },
+                {
+                    title: 'Action',
+                    key: 'operation',
+                    fixed: 'right',
+                    // width: 100,
+                    render: (_,record) => <Space>
+                         <Tooltip title={'View full details'}>
+                            <GrView size={21} 
+                                onClick={()=>{
+                                    this.prepareToViewDetail(record.id)
+                                }}
+                            />
+                        </Tooltip>
+                        <Tooltip title={'Schedule'}>
+                            <GrFormSchedule size={27}/>
+                        </Tooltip>
+                        {/* <Tooltip title={'Bookmark'}>
+                            <IoStarOutline size={25}/>
+                        </Tooltip> */}
+                        <Tooltip title={'Edit'}>
+                            <CiEdit size={25}
+                                onClick={()=>{
+                                    this.prepareToEdit(record.id)
+                                }}
+                            />
+                        </Tooltip>
+                        <Tooltip title={'Delete'}>
+                            <Popconfirm 
+                                title="Sure to delete?"  
+                                onConfirm={() => {
+                                    this.prepareToDelete(record.id)
+                                }}>
+                                <MdDeleteForever color="red" size={25}/>
+                            </Popconfirm>
+                        </Tooltip>
+
+                    </Space>,
+                  },
+            ],
+            detail:[
+                'name',
+                'code',
+                'status',
+                // 'created_at',
+                // 'updated_at',
+            ],
+            edit:[
+                'name',
+                'code',
+                'status',
+            ]
+        },
+        
     ]
     constructor() {
         makeAutoObservable(this);
@@ -193,6 +304,10 @@ class HolosticScheduleContentStore{
     prepareToViewDetail(id){
         this.viewDetail.targetModel = this.currentModel.name;
         this.viewDetail.recordToView = id;
+    }
+    prepareToEdit(id){
+        this.edit.targetModel = this.currentModel.name;
+        this.edit.recordToEdit = id
     }
 }
 

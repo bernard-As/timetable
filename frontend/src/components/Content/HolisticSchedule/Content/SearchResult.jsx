@@ -13,7 +13,7 @@ const SearchResult = observer(({results,model})=>{
                 rootStore.notification.notify({
                     type:'success',
                     text: `${model.name} deleted `,
-                    timeout:1500,
+                    timeout:1000,
                     title:`${model.name} deleted `
                 })
             }).catch((error)=>{ 
@@ -22,17 +22,32 @@ const SearchResult = observer(({results,model})=>{
         }
         const handleDelete = ()=>{
             if(model.name===rootStore.holosticScheduleContentStore.delete.targetModel ){
+                const idsTodel = rootStore.holosticScheduleContentStore.delete.recordToDelete;
                 rootStore.holosticScheduleContentStore.delete.recordToDelete.forEach((id)=>{
                     singleDelete(id)
                     rootStore.holosticScheduleContentStore.delete.recordToDelete = rootStore.holosticScheduleContentStore.delete.recordToDelete.filter(r=>r!==id);
-                    rootStore.holosticScheduleContentStore.delete.targetModel = null
-                    setData(data.filter(d=>d.id!== id))
+                    // setData(data.filter(d=>d.id!== id))
                 })
+                rootStore.holosticScheduleContentStore.delete.targetModel = null
+                setData(data.filter(d=>!idsTodel.includes(d.id)))
             }
         }
         rootStore.enableManagement&&rootStore.isManager()&&handleDelete()
     },[rootStore.holosticScheduleContentStore.delete.targetModel])
-
+    useEffect(()=>{
+        if(data.length>0&&data[0].key===undefined){
+            const newData = data.map(({ id, ...rest }) => ({ key: id,id:id, ...rest }));
+            setData(newData);
+        }
+    },[data])
+    const rowSelection = {
+        onChange: (selectedRowKeys, selectedRows) => {
+        //   console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+          rootStore.holosticScheduleContentStore.selectedRows.selectedRows = selectedRowKeys
+          rootStore.holosticScheduleContentStore.selectedRows.targetModel = model.name
+        },
+        
+      };
     return (<>
         {data.length===0&&
             <div>Nothing to display yet</div>
@@ -42,6 +57,7 @@ const SearchResult = observer(({results,model})=>{
                 dataSource={data} 
                 columns={model.columns}
                 pagination={{pageSize:7}}
+                rowSelection={rowSelection}
             />
             :
             data.map((result, index) => {

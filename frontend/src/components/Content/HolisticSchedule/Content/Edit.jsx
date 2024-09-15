@@ -1,18 +1,28 @@
-import { Button, Checkbox, Form, Input } from "antd";
-import rootStore from "../../../../mobx";
+import { Button, Card, Checkbox, Form, Input } from "antd"
 import { PrivateDefaultApi } from "../../../../utils/AxiosInstance";
-import { observer } from "mobx-react";
+import rootStore from "../../../../mobx";
+import { useEffect, useState } from "react";
 
-const Add  = observer(({model})=>{
-  const [form] = Form.useForm();
-    const normalAdd = (values)=>{
-        PrivateDefaultApi.post(`${model.apiUrl}/`,values).then((res)=>{
-            rootStore.holisticScheduleStore.deleteLocalStorageItemWith(`${model.name}_`)
+const Edit=()=>{
+    const model = rootStore.holosticScheduleContentStore.currentModel;
+    const id = rootStore.holosticScheduleContentStore.edit.recordToEdit;
+    const [data,setData] = useState()
+    useEffect(()=>{
+        PrivateDefaultApi.get(`${model.apiUrl}/${id}/`).then((res)=>{
+            setData(res.data)
+        }).catch((error)=>{
+            console.error(error)
+        })
+    },[id])
+    const [form] = Form.useForm();
+    const normalUpdate = (values)=>{
+        PrivateDefaultApi.patch(`${model.apiUrl}/${id}/`,values).then((res)=>{
+            rootStore.holisticScheduleStore.deleteLocalStorageItemWith(`${model.name}_edit_`)
             rootStore.notification.notify({
               type:'success',
-              text:`${model.name } created `
+              text:`${model.name } updated `
             })
-            form.resetFields()
+            // form.resetFields()
         }).catch((error)=>{
           console.log(error);
         })
@@ -20,20 +30,20 @@ const Add  = observer(({model})=>{
     const onFinishFailed = (errorInfo) => {
         rootStore.notification.notify({
             type: 'error',
-            title:'Fail to add a new '+model.name,
-            text:'Fail to add a new '+model.name,
+            title:'Fail to update '+model.name,
+            text:'Fail to update '+model.name,
             timeout:1500
         })
         console.log('Failed:', errorInfo);
     };
     return (
-        <Form
+        <>{
+        data&&<Form
             name="add"
-            onFinish={normalAdd}
+            onFinish={normalUpdate}
             onFinishFailed={onFinishFailed}
-            initialValues={{
-                status:true,
-            }}
+            initialValues={data}
+            // defaultValue={data}
             form={form}
             autoComplete="off"
             labelCol={{
@@ -47,7 +57,7 @@ const Add  = observer(({model})=>{
               }}
               // onReset={}
         >
-            {model.addFields.includes('name')&&
+            {model.edit.includes('name')&&
                 <Form.Item
                     label="Name"
                     name="name"
@@ -57,15 +67,15 @@ const Add  = observer(({model})=>{
                           message: `Please input a name for ${model.name}!`,
                         },
                       ]}
-                    initialValue={localStorage.getItem(`${model.name}_name`)}
+                    //   initialValue={data.name}
                 >
                     <Input 
-                      onKeyUp={(event)=>localStorage.setItem(`${model.name}_name`,event.target.value)}
+                      onKeyUp={(event)=>localStorage.setItem(`${model.name}_edit_name`,event.target.value)}
                     />
                 </Form.Item>
             
             }
-            {model.addFields.includes('code')&&
+            {model.edit.includes('code')&&
                 <Form.Item
                     label="Code"
                     name="code"
@@ -75,15 +85,15 @@ const Add  = observer(({model})=>{
                           message: `Please input a code for ${model.name}!`,
                         },
                       ]}
-                    initialValue={localStorage.getItem(`${model.name}_code`)}
+                    // initialValue={localStorage.getItem(`${model.name}_edit_code`)}
                 >
                     <Input 
-                      onKeyUp={(event)=>localStorage.setItem(`${model.name}_code`,event.target.value)}
+                      onKeyUp={(event)=>localStorage.setItem(`${model.name}_edit_code`,event.target.value)}
                     />
                 </Form.Item>
             
             }
-            {model.addFields.includes('status')&&
+            {model.edit.includes('status')&&
                 <Form.Item
                   name="status"
                   valuePropName="checked"
@@ -102,11 +112,11 @@ const Add  = observer(({model})=>{
               }}
             >
               <Button type="primary" htmlType="submit">
-                Submit
+                Update
               </Button>
             </Form.Item>
-        </Form>
+        </Form>}
+        </>
     )
 }
-)
-export default Add;
+export default Edit;

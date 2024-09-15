@@ -7,6 +7,7 @@ import { PrivateApi, PrivateDefaultApi } from "../../../utils/AxiosInstance";
 import SearchResult from "./Content/SearchResult";
 import Add from "./Content/Add";
 import Details from "./Content/Details";
+import Edit from "./Content/Edit";
 
  
 const HContent:React.FC<{stopLoadingf:any,toDisplay:any,setToDisplay:any,searchData:any}> =observer(({stopLoadingf,toDisplay,setToDisplay,searchData})=>{
@@ -53,6 +54,14 @@ const HContent:React.FC<{stopLoadingf:any,toDisplay:any,setToDisplay:any,searchD
         }
 
     },[rootStore.holosticScheduleContentStore.viewDetail.targetModel])
+
+    useEffect(()=>{
+        if(rootStore.holosticScheduleContentStore.edit.targetModel===modelContent?.name){
+            setToDisplay('edit');
+            rootStore.holosticScheduleContentStore.edit.targetModel=null
+        }
+
+    },[rootStore.holosticScheduleContentStore.edit.targetModel])
 
     const getModelContent = async(target=null)=>{
         if(target){
@@ -103,6 +112,10 @@ const HContent:React.FC<{stopLoadingf:any,toDisplay:any,setToDisplay:any,searchD
                 {
                     toDisplay==='detail'&&rootStore.enableManagement&&rootStore.isManager()&&
                     <Details/>
+                }
+                {
+                    toDisplay==='edit'&&rootStore.enableManagement&&rootStore.isManager()&&
+                    <Edit/>
                 }
             </div>
             }

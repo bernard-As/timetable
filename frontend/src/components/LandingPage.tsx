@@ -3,7 +3,7 @@ const LandingPage: React.FC = ()=>{
     return (
         <div>Landing 
             page 
-            <a href="http://localhost:3000/login"> Login Page</a>
+            <a href={`${process.env.REACT_APP_URL}/login`}> Login Page</a>
         </div>
     )
 }

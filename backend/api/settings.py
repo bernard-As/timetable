@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-jzfw01meq70*gul)88)pxl9(-_iri=ec*w7pb_c3gv8ss*t&g+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['timetable.rdu.edu.tr','localhost']
 
 
 # Application definition
@@ -152,8 +152,7 @@ REST_FRAMEWORK = {
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://localhost:8000",
-    "http://192.168.1.20:8000",
-    "http://192.168.1.20:3000",
+    "https://timetable.rdu.edu.tr"
 ]
 CORS_ALLOW_CREDENTIALS = True
 

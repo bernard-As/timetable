@@ -125,7 +125,7 @@ dist
 node_modules/
 venv/
 __pycache__/
-
+settings.py
 # yarn  v2
 .yarn/cache
 .yarn/unplugged

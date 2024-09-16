@@ -1,4 +1,4 @@
-import { Button, Card, Checkbox, Form, Input } from "antd"
+import { Button, Card, Checkbox, Form, Input, Select } from "antd"
 import { PrivateDefaultApi } from "../../../../utils/AxiosInstance";
 import rootStore from "../../../../mobx";
 import { useEffect, useState } from "react";
@@ -7,13 +7,32 @@ const Edit=()=>{
     const model = rootStore.holosticScheduleContentStore.currentModel;
     const id = rootStore.holosticScheduleContentStore.edit.recordToEdit;
     const [data,setData] = useState()
-    useEffect(()=>{
+  const [additionalData,setadditionalData] = useState([]);
+  useEffect(()=>{
         PrivateDefaultApi.get(`${model.apiUrl}/${id}/`).then((res)=>{
             setData(res.data)
         }).catch((error)=>{
             console.error(error)
         })
     },[id])
+    const fetchAdditional = (targetModel,id=null) =>{
+      let url = targetModel+'/';
+      if(id)
+        url = url+id+'/'
+      PrivateDefaultApi.get(url).then((res)=>{
+        console.log('hello')
+        setadditionalData([...additionalData, {
+          target:targetModel,
+          data:res.data
+
+        }])
+      }).catch((error)=>{
+        console.log(error);
+      })
+    }
+    useEffect(()=>{
+      fetchAdditional('building')
+    },[])
     const [form] = Form.useForm();
     const normalUpdate = (values)=>{
         PrivateDefaultApi.patch(`${model.apiUrl}/${id}/`,values).then((res)=>{
@@ -92,6 +111,59 @@ const Edit=()=>{
                     />
                 </Form.Item>
             
+            }
+            {
+              model.addFields.includes('floor_number')&&
+              <Form.Item
+                label="Floor Number"
+                name="floor_number"
+                rules={[
+                    {
+                      required: true,
+                      message: `Please input a floor number for ${model.name}!`,
+                    },
+                  ]}
+                initialValue={localStorage.getItem(`${model.name}_floor_number`)}
+                >
+                    <Input 
+                      onKeyUp={(event)=>localStorage.setItem(`${model.name}_floor_number`,event.target.value)}
+                      type="number"
+                      defaultValue={0}
+                    />
+                </Form.Item>
+            }
+            {
+              model.addFields.includes('building')&&
+              additionalData.find(ad=>ad.target==='building')&&
+              <Form.Item
+                label="Building"
+                name="building"
+                rules={[
+                    {
+                      required: true,
+                      message: `Please select a building for ${model.name}!`,
+                    },
+                  ]}
+                >
+                    <Select
+                      onSelect={(event)=>{
+                        localStorage.setItem(`${model.name}_building`,event)
+                      }}
+                      filterOption={(input, option) =>
+                        (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                      }
+                      allowClear
+                      initialValue={localStorage.getItem(`${model.name}_building`)}
+                    >
+                      {additionalData.find(ad=>ad.target==='building').data.map(b=>{
+                        return <Select.Option key={b.id} value={b.id}>{b.code}</Select.Option>
+                      })
+
+                      }
+
+                    </Select>
+
+                </Form.Item>
             }
             {model.edit.includes('status')&&
                 <Form.Item

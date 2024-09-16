@@ -116,7 +116,7 @@ class Room(models.Model):
     latitude = models.FloatField(default=0)
     longitude = models.FloatField(default=0)
     room_type = models.CharField(max_length=4, choices=ROOM_TYPES)
-    room_feature = models.ManyToManyField(RoomFeatures)
+    room_feature = models.ManyToManyField(RoomFeatures,blank=True)
     status = models.BooleanField()
     state_description = models.TextField(blank=True, null = True)
     created_at = models.DateTimeField(auto_created=True, default=timezone.now)

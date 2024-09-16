@@ -11,6 +11,7 @@ class HolisticScheduleStore {
         {name:'semester',status:true},
         {name:'program',status:true},
         {name:'faculty',status:true},
+        {name:'floor',status:true},
         {name:'building',status:true},
         {name:'complete',status:true},
     ]
@@ -27,6 +28,7 @@ class HolisticScheduleStore {
                 'semester',
                 'program',
                 'faculty',
+                'floor',
                 'building',
                 'complete'
             ],
@@ -44,6 +46,7 @@ class HolisticScheduleStore {
                 'semester',
                 'program',
                 'faculty',
+                'floor',
                 'building',
                 'complete',
             ]
@@ -60,6 +63,7 @@ class HolisticScheduleStore {
                 'semester',
                 'program',
                 'faculty',
+                'floor',
                 'building',
                 'complete',
             ]
@@ -75,6 +79,7 @@ class HolisticScheduleStore {
                 'semester',
                 'program',
                 'faculty',
+                'floor',
                 'building',
                 'complete'
             ]

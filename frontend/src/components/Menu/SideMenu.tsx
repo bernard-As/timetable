@@ -14,6 +14,7 @@ import { SiGoogleclassroom, SiClickhouse} from "react-icons/si";
 import { LiaChalkboardTeacherSolid } from "react-icons/lia";
 import { PiBuilding, PiListStarDuotone,PiStudentThin } from "react-icons/pi";
 import { ImListNumbered } from "react-icons/im";
+import { FaGripLines } from "react-icons/fa6";
 const SideMenu: React.FC = observer(() => {
   const [collapsed, setCollapsed] = useState(false);
   const navigate = useNavigate();
@@ -130,6 +131,17 @@ const SideMenu: React.FC = observer(() => {
         },
         { 
           key: 12, 
+          icon: React.createElement(FaGripLines),
+          label: 'Floor',
+          onClick: ()=>{
+            navigate('/holistic-schedule/floor')
+          },
+          style:
+              (rootStore.holisticScheduleStore.checkCredentialAllowence('floor')
+              &&rootStore.holisticScheduleStore.checkAllowDisplay('floor'))?{display:'block'}:{display:'none'}
+        },
+        { 
+          key: 13, 
           icon: React.createElement(PiBuilding),
           label: 'Building',
           onClick: ()=>{
@@ -140,7 +152,7 @@ const SideMenu: React.FC = observer(() => {
               &&rootStore.holisticScheduleStore.checkAllowDisplay('building'))?{display:'block'}:{display:'none'}
         },
         { 
-          key: 13, 
+          key: 14, 
           icon: React.createElement(PiListStarDuotone),
           label: 'Complete',
           onClick: ()=>{
@@ -154,17 +166,17 @@ const SideMenu: React.FC = observer(() => {
       
     },
     {
-      key: 14,
+      key: 15,
       icon: React.createElement(UserOutlined),
       label: "Profile",
     },
     {
-      key: 15,
+      key: 16,
       icon: React.createElement(SettingOutlined),
       label: "Settings",
     },
     {
-      key: 16,
+      key: 17,
       icon: React.createElement(MdLogout),
       label: "Logout",
       onClick: () => {

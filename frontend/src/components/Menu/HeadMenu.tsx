@@ -12,7 +12,6 @@ import { observer } from "mobx-react";
 const HeadMenu:React.FC = ()=>{
     const { Header } = Layout;
 
-    console.info(rootStore.mainStore.darkMode)
     const menuItems = [
         {
           key: 1,
@@ -20,24 +19,24 @@ const HeadMenu:React.FC = ()=>{
           label: "Home",
           style: rootStore.mainStore.darkMode?{color:'white'}:{color:'black'}
         },
-        {
-          key: 2,
-          icon: React.createElement(IoNotificationsOutline),
-          label: "Notification",
-          style: rootStore.mainStore.darkMode?{color:'white'}:{color:'black'}
-        },
-        {
-          key: 3,
-          icon: React.createElement(BiMessageRounded),
-          label: "Message",
-          style: rootStore.mainStore.darkMode?{color:'white'}:{color:'black'}
-        },
-        {
-          key: 4,
-          icon: React.createElement(TbMessageChatbot),
-          label: "Ai Chatbot",
-          style: rootStore.mainStore.darkMode?{color:'white'}:{color:'black'}
-        },
+        // {
+        //   key: 2,
+        //   icon: React.createElement(IoNotificationsOutline),
+        //   label: "Notification",
+        //   style: rootStore.mainStore.darkMode?{color:'white'}:{color:'black'}
+        // },
+        // {
+        //   key: 3,
+        //   icon: React.createElement(BiMessageRounded),
+        //   label: "Message",
+        //   style: rootStore.mainStore.darkMode?{color:'white'}:{color:'black'}
+        // },
+        // {
+        //   key: 4,
+        //   icon: React.createElement(TbMessageChatbot),
+        //   label: "Ai Chatbot",
+        //   style: rootStore.mainStore.darkMode?{color:'white'}:{color:'black'}
+        // },
       ];
     
     return (

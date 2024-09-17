@@ -42,7 +42,7 @@ class HolosticScheduleContentStore{
             search:true,
             list:true,
             add:true,
-            delete:false,
+            delete:true,
             prefered:false,
         },
         {
@@ -50,7 +50,7 @@ class HolosticScheduleContentStore{
             search:true,
             list:true,
             add:true,
-            delete:false,
+            delete:true,
             prefered:false,
         },
         {
@@ -58,7 +58,7 @@ class HolosticScheduleContentStore{
             search:true,
             list:true,
             add:true,
-            delete:false,
+            delete:true,
             prefered:false,
         },
         {
@@ -66,7 +66,7 @@ class HolosticScheduleContentStore{
             search:true,
             list:true,
             add:true,
-            delete:false,
+            delete:true,
             prefered:false,
         },
         {
@@ -74,7 +74,15 @@ class HolosticScheduleContentStore{
             search:true,
             list:true,
             add:true,
-            delete:false,
+            delete:true,
+            prefered:false,
+        },
+        {
+            name:'department',
+            search:true,
+            list:true,
+            add:true,
+            delete:true,
             prefered:false,
         },
         {
@@ -422,6 +430,795 @@ class HolosticScheduleContentStore{
                 'status',
             ]
         },
+        {
+            name:'faculty',
+            apiUrl:'faculty',
+            addFields:[
+                'name',
+                'shortname',
+                'status',
+                // 'longitude',
+                // 'latitude',
+            ],
+            listFields:[
+                'name',
+            ],
+            listExtraButtons:{
+                prefered:true,
+                viewSchedule:true
+            },
+            columns:[
+                {
+                    title:'Name',
+                    dataIndex:'name',
+                    key:'name',
+                    
+                },
+                {
+                    title:'Shortname',
+                    dataIndex:'shortname',
+                    key:'shortname',
+                    render: (text)=><Tag color="blue">{text}</Tag>
+ 
+                },
+                {
+                    title:'status',
+                    dataIndex:'status',
+                    key:'status',
+                    render: (b) => 
+                        <Tooltip title={b ?'Active':'Inactive'}>
+                        <FaDotCircle  
+                            style={{
+                                color: b ? 'green' : 'red',
+                            }}
+                        />
+                        </Tooltip>
+                    ,
+                    style:{width:2}
+                },
+                {
+                    title: 'Action',
+                    key: 'operation',
+                    fixed: 'right',
+                    // width: 100,
+                    render: (_,record) => <Space>
+                         <Tooltip title={'View full details'}>
+                            <GrView size={21} 
+                                onClick={()=>{
+                                    this.prepareToViewDetail(record.id)
+                                }}
+                            />
+                        </Tooltip>
+                        <Tooltip title={'Schedule'}>
+                            <GrFormSchedule size={27}/>
+                        </Tooltip>
+                        {/* <Tooltip title={'Bookmark'}>
+                            <IoStarOutline size={25}/>
+                        </Tooltip> */}
+                        <Tooltip title={'Edit'}>
+                            <CiEdit size={25}
+                                onClick={()=>{
+                                    this.prepareToEdit(record.id)
+                                }}
+                            />
+                        </Tooltip>
+                        <Tooltip title={'Delete'}>
+                            <Popconfirm 
+                                title="Sure to delete?"  
+                                onConfirm={() => {
+                                    this.prepareToDelete(record.id)
+                                }}>
+                                <MdDeleteForever color="red" size={25}/>
+                            </Popconfirm>
+                        </Tooltip>
+
+                    </Space>,
+                  },
+            ],
+            detail:[
+                'name',
+                'shortname',
+                'status',
+                // 'created_at',
+                // 'updated_at',
+            ],
+            edit:[
+                'name',
+                'shortname',
+                'status',
+            ]
+        },
+        {
+            name:'department',
+            apiUrl:'department',
+            addFields:[
+                'name',
+                'shortname',
+                'faculty',
+                'status',
+                // 'longitude',
+                // 'latitude',
+            ],
+            listFields:[
+                'name',
+            ],
+            listExtraButtons:{
+                prefered:true,
+                viewSchedule:true
+            },
+            columns:[
+                {
+                    title:'Name',
+                    dataIndex:'name',
+                    key:'name',
+                    
+                },
+                {
+                    title:'Shortname',
+                    dataIndex:'shortname',
+                    key:'shortname',
+                    render: (text)=><Tag color="blue">{text}</Tag>
+ 
+                },
+                {
+                    title:'Faculty',
+                    dataIndex:'faculty',
+                    key:'faculty',
+                    
+                },
+                {
+                    title:'status',
+                    dataIndex:'status',
+                    key:'status',
+                    render: (b) => 
+                        <Tooltip title={b ?'Active':'Inactive'}>
+                        <FaDotCircle  
+                            style={{
+                                color: b ? 'green' : 'red',
+                            }}
+                        />
+                        </Tooltip>
+                    ,
+                    style:{width:2}
+                },
+                {
+                    title: 'Action',
+                    key: 'operation',
+                    fixed: 'right',
+                    // width: 100,
+                    render: (_,record) => <Space>
+                         <Tooltip title={'View full details'}>
+                            <GrView size={21} 
+                                onClick={()=>{
+                                    this.prepareToViewDetail(record.id)
+                                }}
+                            />
+                        </Tooltip>
+                        <Tooltip title={'Schedule'}>
+                            <GrFormSchedule size={27}/>
+                        </Tooltip>
+                        {/* <Tooltip title={'Bookmark'}>
+                            <IoStarOutline size={25}/>
+                        </Tooltip> */}
+                        <Tooltip title={'Edit'}>
+                            <CiEdit size={25}
+                                onClick={()=>{
+                                    this.prepareToEdit(record.id)
+                                }}
+                            />
+                        </Tooltip>
+                        <Tooltip title={'Delete'}>
+                            <Popconfirm 
+                                title="Sure to delete?"  
+                                onConfirm={() => {
+                                    this.prepareToDelete(record.id)
+                                }}>
+                                <MdDeleteForever color="red" size={25}/>
+                            </Popconfirm>
+                        </Tooltip>
+
+                    </Space>,
+                  },
+            ],
+            detail:[
+                'name',
+                'shortname',
+                'faculty',
+                'status',
+                // 'created_at',
+                // 'updated_at',
+            ],
+            edit:[
+                'name',
+                'shortname',
+                'faculty',
+                'status',
+            ]
+        },
+        {
+            name:'program',
+            apiUrl:'program',
+            addFields:[
+                'name',
+                'shortname',
+                'department',
+                'status',
+                // 'longitude',
+                // 'latitude',
+            ],
+            listFields:[
+                'name',
+            ],
+            listExtraButtons:{
+                prefered:true,
+                viewSchedule:true
+            },
+            columns:[
+                {
+                    title:'Name',
+                    dataIndex:'name',
+                    key:'name',
+                    
+                },
+                {
+                    title:'Shortname',
+                    dataIndex:'shortname',
+                    key:'shortname',
+                    render: (text)=><Tag color="blue">{text}</Tag>
+ 
+                },
+                {
+                    title:'Department',
+                    dataIndex:'department',
+                    key:'department',
+                    
+                },
+                {
+                    title:'status',
+                    dataIndex:'status',
+                    key:'status',
+                    render: (b) => 
+                        <Tooltip title={b ?'Active':'Inactive'}>
+                        <FaDotCircle  
+                            style={{
+                                color: b ? 'green' : 'red',
+                            }}
+                        />
+                        </Tooltip>
+                    ,
+                    style:{width:2}
+                },
+                {
+                    title: 'Action',
+                    key: 'operation',
+                    fixed: 'right',
+                    // width: 100,
+                    render: (_,record) => <Space>
+                         <Tooltip title={'View full details'}>
+                            <GrView size={21} 
+                                onClick={()=>{
+                                    this.prepareToViewDetail(record.id)
+                                }}
+                            />
+                        </Tooltip>
+                        <Tooltip title={'Schedule'}>
+                            <GrFormSchedule size={27}/>
+                        </Tooltip>
+                        {/* <Tooltip title={'Bookmark'}>
+                            <IoStarOutline size={25}/>
+                        </Tooltip> */}
+                        <Tooltip title={'Edit'}>
+                            <CiEdit size={25}
+                                onClick={()=>{
+                                    this.prepareToEdit(record.id)
+                                }}
+                            />
+                        </Tooltip>
+                        <Tooltip title={'Delete'}>
+                            <Popconfirm 
+                                title="Sure to delete?"  
+                                onConfirm={() => {
+                                    this.prepareToDelete(record.id)
+                                }}>
+                                <MdDeleteForever color="red" size={25}/>
+                            </Popconfirm>
+                        </Tooltip>
+
+                    </Space>,
+                  },
+            ],
+            detail:[
+                'name',
+                'shortname',
+                'department',
+                'status',
+                // 'created_at',
+                // 'updated_at',
+            ],
+            edit:[
+                'name',
+                'shortname',
+                'department',
+                'status',
+            ]
+        },
+        {
+            name:'semester',
+            apiUrl:'coursesemester',
+            addFields:[
+                'program',
+                'semester',
+                'semester_num',
+                'status',
+                // 'longitude',
+                // 'latitude',
+            ],
+            listFields:[
+                'name',
+            ],
+            listExtraButtons:{
+                prefered:true,
+                viewSchedule:true
+            },
+            columns:[
+                {
+                    title:'Program',
+                    dataIndex:'program',
+                    key:'program',
+                    
+                },
+                {
+                    title:'Semester',
+                    dataIndex:'semester',
+                    key:'semester',
+ 
+                },
+                {
+                    title:'Semester Number',
+                    dataIndex:'semester_num',
+                    key:'semester_num',
+                    render: (text)=><Tag color="blue">{text}</Tag>
+                    
+                },
+                {
+                    title:'status',
+                    dataIndex:'status',
+                    key:'status',
+                    render: (b) => 
+                        <Tooltip title={b ?'Active':'Inactive'}>
+                        <FaDotCircle  
+                            style={{
+                                color: b ? 'green' : 'red',
+                            }}
+                        />
+                        </Tooltip>
+                    ,
+                    style:{width:2}
+                },
+                {
+                    title: 'Action',
+                    key: 'operation',
+                    fixed: 'right',
+                    // width: 100,
+                    render: (_,record) => <Space>
+                         <Tooltip title={'View full details'}>
+                            <GrView size={21} 
+                                onClick={()=>{
+                                    this.prepareToViewDetail(record.id)
+                                }}
+                            />
+                        </Tooltip>
+                        <Tooltip title={'Schedule'}>
+                            <GrFormSchedule size={27}/>
+                        </Tooltip>
+                        {/* <Tooltip title={'Bookmark'}>
+                            <IoStarOutline size={25}/>
+                        </Tooltip> */}
+                        <Tooltip title={'Edit'}>
+                            <CiEdit size={25}
+                                onClick={()=>{
+                                    this.prepareToEdit(record.id)
+                                }}
+                            />
+                        </Tooltip>
+                        <Tooltip title={'Delete'}>
+                            <Popconfirm 
+                                title="Sure to delete?"  
+                                onConfirm={() => {
+                                    this.prepareToDelete(record.id)
+                                }}>
+                                <MdDeleteForever color="red" size={25}/>
+                            </Popconfirm>
+                        </Tooltip>
+
+                    </Space>,
+                  },
+            ],
+            detail:[
+                'program',
+                'semester',
+                'semester_num',
+                'status',
+                // 'created_at',
+                // 'updated_at',
+            ],
+            edit:[
+                'program',
+                'semester',
+                'semester_num',
+                'status',
+            ]
+        },
+        {
+            name:'semester',
+            apiUrl:'coursesemester',
+            addFields:[
+                'program',
+                'semester',
+                'semester_num',
+                'status',
+                // 'longitude',
+                // 'latitude',
+            ],
+            listFields:[
+                'name',
+            ],
+            listExtraButtons:{
+                prefered:true,
+                viewSchedule:true
+            },
+            columns:[
+                {
+                    title:'Program',
+                    dataIndex:'program',
+                    key:'program',
+                    
+                },
+                {
+                    title:'Semester',
+                    dataIndex:'semester',
+                    key:'semester',
+ 
+                },
+                {
+                    title:'Semester Number',
+                    dataIndex:'semester_num',
+                    key:'semester_num',
+                    render: (text)=><Tag color="blue">{text}</Tag>
+                    
+                },
+                {
+                    title:'status',
+                    dataIndex:'status',
+                    key:'status',
+                    render: (b) => 
+                        <Tooltip title={b ?'Active':'Inactive'}>
+                        <FaDotCircle  
+                            style={{
+                                color: b ? 'green' : 'red',
+                            }}
+                        />
+                        </Tooltip>
+                    ,
+                    style:{width:2}
+                },
+                {
+                    title: 'Action',
+                    key: 'operation',
+                    fixed: 'right',
+                    // width: 100,
+                    render: (_,record) => <Space>
+                         <Tooltip title={'View full details'}>
+                            <GrView size={21} 
+                                onClick={()=>{
+                                    this.prepareToViewDetail(record.id)
+                                }}
+                            />
+                        </Tooltip>
+                        <Tooltip title={'Schedule'}>
+                            <GrFormSchedule size={27}/>
+                        </Tooltip>
+                        {/* <Tooltip title={'Bookmark'}>
+                            <IoStarOutline size={25}/>
+                        </Tooltip> */}
+                        <Tooltip title={'Edit'}>
+                            <CiEdit size={25}
+                                onClick={()=>{
+                                    this.prepareToEdit(record.id)
+                                }}
+                            />
+                        </Tooltip>
+                        <Tooltip title={'Delete'}>
+                            <Popconfirm 
+                                title="Sure to delete?"  
+                                onConfirm={() => {
+                                    this.prepareToDelete(record.id)
+                                }}>
+                                <MdDeleteForever color="red" size={25}/>
+                            </Popconfirm>
+                        </Tooltip>
+
+                    </Space>,
+                  },
+            ],
+            detail:[
+                'program',
+                'semester',
+                'semester_num',
+                'status',
+                // 'created_at',
+                // 'updated_at',
+            ],
+            edit:[
+                'program',
+                'semester',
+                'semester_num',
+                'status',
+            ]
+        },
+        {
+            name:'lecturer',
+            apiUrl:'lecturer',
+            addFields:[
+                'username',
+                'password',
+                'first_name',
+                'last_name',
+                'email',
+                'title',
+                'faculty_m',
+                'department_m',
+                'program_m',
+                'credential',
+                'status',
+                // 'longitude',
+                // 'latitude',
+            ],
+            listFields:[
+                'name',
+            ],
+            listExtraButtons:{
+                prefered:true,
+                viewSchedule:true
+            },
+            columns:[
+                {
+                    title:'First Name',
+                    dataIndex:'first_name',
+                    key:'first_name',
+                    
+                },
+                {
+                    title:'Last Name',
+                    dataIndex:'last_name',
+                    key:'last_name',
+                    
+                },
+                {
+                    title:'Title',
+                    dataIndex:'title',
+                    key:'title',
+                    
+                },
+                {
+                    title:'Program',
+                    dataIndex:'program',
+                    key:'program',
+ 
+                },
+                {
+                    title:'status',
+                    dataIndex:'status',
+                    key:'status',
+                    render: (b) => 
+                        <Tooltip title={b ?'Active':'Inactive'}>
+                        <FaDotCircle  
+                            style={{
+                                color: b ? 'green' : 'red',
+                            }}
+                        />
+                        </Tooltip>
+                    ,
+                    style:{width:2}
+                },
+                {
+                    title: 'Action',
+                    key: 'operation',
+                    fixed: 'right',
+                    // width: 100,
+                    render: (_,record) => <Space>
+                         <Tooltip title={'View full details'}>
+                            <GrView size={21} 
+                                onClick={()=>{
+                                    this.prepareToViewDetail(record.id)
+                                }}
+                            />
+                        </Tooltip>
+                        <Tooltip title={'Schedule'}>
+                            <GrFormSchedule size={27}/>
+                        </Tooltip>
+                        {/* <Tooltip title={'Bookmark'}>
+                            <IoStarOutline size={25}/>
+                        </Tooltip> */}
+                        <Tooltip title={'Edit'}>
+                            <CiEdit size={25}
+                                onClick={()=>{
+                                    this.prepareToEdit(record.id)
+                                }}
+                            />
+                        </Tooltip>
+                        <Tooltip title={'Delete'}>
+                            <Popconfirm 
+                                title="Sure to delete?"  
+                                onConfirm={() => {
+                                    this.prepareToDelete(record.id)
+                                }}>
+                                <MdDeleteForever color="red" size={25}/>
+                            </Popconfirm>
+                        </Tooltip>
+
+                    </Space>,
+                  },
+            ],
+            detail:[
+                'username',
+                'password',
+                'first_name',
+                'last_name',
+                'email',
+                'title',
+                'faculty',
+                'department',
+                'program',
+                'credential',
+                'status',
+                // 'created_at',
+                // 'updated_at',
+            ],
+            edit:[
+                'username',
+                'password',
+                'first_name',
+                'last_name',
+                'email',
+                'title',
+                'faculty',
+                'department',
+                'program',
+                'credential',
+                'status',
+            ]
+        },
+        {
+            name:'course',
+            apiUrl:'course',
+            addFields:[
+                'code',
+                'title',
+                'status',
+                // 'longitude',
+                // 'latitude',
+            ],
+            extraField:[
+                'extra_session_of',
+                'group_number',
+                'lecturer',
+                'assistant',
+                'lecturer_assistant',
+                'merged_with',
+                'duration',
+                'current_capacity',
+                'max_capacity',
+                'activitytype',
+                'prerequisites',
+                'course_semester',
+                'status',
+                'is_elective',
+            ],
+            listFields:[
+                'name',
+            ],
+            listExtraButtons:{
+                prefered:true,
+                viewSchedule:true
+            },
+            columns:[
+                {
+                    title:'Code',
+                    dataIndex:'code',
+                    key:'code',
+                    
+                },
+                {
+                    title:'Title',
+                    dataIndex:'title',
+                    key:'title',
+                    
+                },
+                {
+                    title:'status',
+                    dataIndex:'status',
+                    key:'status',
+                    render: (b) => 
+                        <Tooltip title={b ?'Active':'Inactive'}>
+                        <FaDotCircle  
+                            style={{
+                                color: b ? 'green' : 'red',
+                            }}
+                        />
+                        </Tooltip>
+                    ,
+                    style:{width:2}
+                },
+                {
+                    title: 'Action',
+                    key: 'operation',
+                    fixed: 'right',
+                    // width: 100,
+                    render: (_,record) => <Space>
+                         <Tooltip title={'View full details'}>
+                            <GrView size={21} 
+                                onClick={()=>{
+                                    this.prepareToViewDetail(record.id)
+                                }}
+                            />
+                        </Tooltip>
+                        <Tooltip title={'Schedule'}>
+                            <GrFormSchedule size={27}/>
+                        </Tooltip>
+                        {/* <Tooltip title={'Bookmark'}>
+                            <IoStarOutline size={25}/>
+                        </Tooltip> */}
+                        <Tooltip title={'Edit'}>
+                            <CiEdit size={25}
+                                onClick={()=>{
+                                    this.prepareToEdit(record.id)
+                                }}
+                            />
+                        </Tooltip>
+                        <Tooltip title={'Delete'}>
+                            <Popconfirm 
+                                title="Sure to delete?"  
+                                onConfirm={() => {
+                                    this.prepareToDelete(record.id)
+                                }}>
+                                <MdDeleteForever color="red" size={25}/>
+                            </Popconfirm>
+                        </Tooltip>
+
+                    </Space>,
+                  },
+            ],
+            detail:[
+                'username',
+                'password',
+                'first_name',
+                'last_name',
+                'email',
+                'title',
+                'faculty',
+                'department',
+                'program',
+                'credential',
+                'status',
+                // 'created_at',
+                // 'updated_at',
+            ],
+            edit:[
+                'username',
+                'password',
+                'first_name',
+                'last_name',
+                'email',
+                'title',
+                'faculty',
+                'department',
+                'program',
+                'credential',
+                'status',
+            ]
+        },
+        
         
     ]
     additionallyFetchedData = []

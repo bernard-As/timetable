@@ -15,6 +15,7 @@ import { LiaChalkboardTeacherSolid } from "react-icons/lia";
 import { PiBuilding, PiListStarDuotone,PiStudentThin } from "react-icons/pi";
 import { ImListNumbered } from "react-icons/im";
 import { FaGripLines } from "react-icons/fa6";
+import { FcDepartment } from "react-icons/fc";
 const SideMenu: React.FC = observer(() => {
   const [collapsed, setCollapsed] = useState(false);
   const navigate = useNavigate();
@@ -109,6 +110,17 @@ const SideMenu: React.FC = observer(() => {
         },
         { 
           key: 10, 
+          icon: React.createElement(FcDepartment),
+          label: 'Department',
+          onClick: ()=>{
+            navigate('/holistic-schedule/department')
+          },
+          style:
+              (rootStore.holisticScheduleStore.checkCredentialAllowence('department')
+              &&rootStore.holisticScheduleStore.checkAllowDisplay('department'))?{display:'block'}:{display:'none'}
+        },
+        { 
+          key: 11, 
           icon: React.createElement(RiMiniProgramLine),
           label: 'Program',
           onClick: ()=>{
@@ -119,7 +131,7 @@ const SideMenu: React.FC = observer(() => {
               &&rootStore.holisticScheduleStore.checkAllowDisplay('program'))?{display:'block'}:{display:'none'}
         },
         { 
-          key: 11, 
+          key: 12, 
           icon: React.createElement(SiClickhouse),
           label: 'Faculty',
           onClick: ()=>{
@@ -130,7 +142,7 @@ const SideMenu: React.FC = observer(() => {
               &&rootStore.holisticScheduleStore.checkAllowDisplay('faculty'))?{display:'block'}:{display:'none'}
         },
         { 
-          key: 12, 
+          key: 13, 
           icon: React.createElement(FaGripLines),
           label: 'Floor',
           onClick: ()=>{
@@ -141,7 +153,7 @@ const SideMenu: React.FC = observer(() => {
               &&rootStore.holisticScheduleStore.checkAllowDisplay('floor'))?{display:'block'}:{display:'none'}
         },
         { 
-          key: 13, 
+          key: 14, 
           icon: React.createElement(PiBuilding),
           label: 'Building',
           onClick: ()=>{
@@ -152,7 +164,7 @@ const SideMenu: React.FC = observer(() => {
               &&rootStore.holisticScheduleStore.checkAllowDisplay('building'))?{display:'block'}:{display:'none'}
         },
         { 
-          key: 14, 
+          key: 15, 
           icon: React.createElement(PiListStarDuotone),
           label: 'Complete',
           onClick: ()=>{
@@ -166,17 +178,17 @@ const SideMenu: React.FC = observer(() => {
       
     },
     {
-      key: 15,
+      key: 16,
       icon: React.createElement(UserOutlined),
       label: "Profile",
     },
     {
-      key: 16,
+      key: 17,
       icon: React.createElement(SettingOutlined),
       label: "Settings",
     },
     {
-      key: 17,
+      key: 18,
       icon: React.createElement(MdLogout),
       label: "Logout",
       onClick: () => {

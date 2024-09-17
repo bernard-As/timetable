@@ -237,8 +237,6 @@ class LecturerViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         title=Title.objects.get(id=request.data['title'])
-        faculties = [Faculty.objects.get(id=fac) for fac in request.data['faculty']if fac!='']
-        department = [Department.objects.get(id=dep) for dep in request.data['department']if dep!='']
         program = [Program.objects.get(id=prog) for prog in request.data['program']if prog!='']
         userData = {
             'username':request.data['username'], 
@@ -247,18 +245,15 @@ class LecturerViewSet(viewsets.ModelViewSet):
             'last_name':request.data['last_name'],
             'email':request.data['email'],
             'title':title,
-            'is_active':request.data['is_active']
+            'is_active':request.data['status'],
+            'credential':request.data['credential']
         }
         user_lecturer = Users()
         user_lecturer.__dict__.update(userData)
         user_lecturer.title = title
         user_lecturer.save()
-        user_lecturer.faculty.set(faculties)
-        user_lecturer.department.set(department)
         user_lecturer.program.set(program)
         user_lecturer.save()
-        lecturer_group = Group.objects.get(id=request.data['group'])
-        user_lecturer.groups.add(lecturer_group)
         request.data['user'] = user_lecturer.id # type: ignore
         return super().create(request, *args, **kwargs)
     
@@ -276,18 +271,21 @@ class LecturerViewSet(viewsets.ModelViewSet):
 
     def update(self, request, *args, **kwargs):
         title=Title.objects.get(id=request.data['title'])
-        group = Group.objects.filter(id=request.data['group'])
+        # group = Group.objects.filter(id=request.data['group'])
         permissions  = Permission.objects.filter(id__in=request.data['user_permissions'])
         faculties = [Faculty.objects.get(id=fac) for fac in request.data['faculty']if fac!='']
         department = [Department.objects.get(id=dep) for dep in request.data['department']if dep!='']
         program = [Program.objects.get(id=prog) for prog in request.data['program']if prog!='']
 
         userData = {
+            'username':request.data['username'],
             'first_name':request.data['first_name'],
             'last_name':request.data['last_name'],
             'email':request.data['email'],
             'title':title,
-            'is_active':request.data['is_active']
+            'is_active':request.data['status'],
+            'credential':request.data['credential']
+
             # 'group':group,
             # 'user_permissions':request.data['user_permissions'],
         }
@@ -295,14 +293,10 @@ class LecturerViewSet(viewsets.ModelViewSet):
         for key, value in userData.items():
             setattr(related_user, key, value)
         related_user.user_permissions.clear()
-        related_user.faculty.clear()
-        related_user.department.clear()
         related_user.program.clear()
         related_user.save()
         related_user.groups.set(group)
         related_user.user_permissions.set(permissions)
-        related_user.department.set(department)
-        related_user.faculty.set(faculties)
         related_user.program.set(program)
         related_user.save()
         return super().update(request,*args,**kwargs)
@@ -316,10 +310,8 @@ class LecturerViewSet(viewsets.ModelViewSet):
         title_serializer = TitleSerializer(related_user.title).data
         item['title'] = title_serializer['id'] # type: ignore
         # item['group'] = [GroupSerializer(seri).data for  seri in related_user.groups.all()] # type: ignore
-        item['group'] = GroupSerializer(related_user.groups.all()[0]).data['id'] # type: ignore
+        # item['group'] = GroupSerializer(related_user.groups.all()[0]).data['id'] # type: ignore
         item['user_permissions'] = [GroupSerializer(seri).data for  seri in related_user.user_permissions.all()]
-        item['faculty']=[FacultySerializer(fac).data['id'] for fac in related_user.faculty.all()] # type: ignore
-        item['department']=[DepartmentSerializer(dep).data['id'] for dep in related_user.department.all()] # type: ignore
         item['program']=[ProgramSerializer(prog).data['id'] for prog in related_user.program.all()] # type: ignore
         return item
 
@@ -356,8 +348,6 @@ class StudentViewSet(viewsets.ModelViewSet):
         user_student = Users()
         user_student.__dict__.update(userData)
         user_student.save()
-        user_student.faculty.set(faculties)
-        user_student.department.set(department)
         user_student.program.set(program)
         user_student.save()
         student_group = Group.objects.get(id=request.data['group'])
@@ -396,20 +386,17 @@ class StudentViewSet(viewsets.ModelViewSet):
         for key, value in userData.items():
             setattr(related_user, key, value)
         related_user.user_permissions.clear()
-        related_user.faculty.clear()
-        related_user.department.clear()
         related_user.program.clear()
         related_user.save()
         related_user.groups.set(group)
         related_user.user_permissions.set(permissions)
-        related_user.department.set(department)
-        related_user.faculty.set(faculties)
         related_user.program.set(program)
         related_user.save()
         return super().update(request,*args,**kwargs)
 
     def modify_data(self, item):
         related_user = Users.objects.get(id=item["user"])
+        item['username'] = related_user.username
         item['first_name'] = related_user.first_name
         item['last_name'] = related_user.last_name
         item['email'] = related_user.email
@@ -467,8 +454,6 @@ class OtherStaffViewSet(viewsets.ModelViewSet):
         user_student = Users()
         user_student.__dict__.update(userData)
         user_student.save()
-        user_student.faculty.set(faculties)
-        user_student.department.set(department)
         user_student.program.set(program)
         user_student.save()
         if  request.data['group'] is not None:
@@ -510,14 +495,10 @@ class OtherStaffViewSet(viewsets.ModelViewSet):
         for key, value in userData.items():
             setattr(related_user, key, value)
         related_user.user_permissions.clear()
-        related_user.faculty.clear()
-        related_user.department.clear()
         related_user.program.clear()
         related_user.save()
         related_user.groups.set(group)
         related_user.user_permissions.set(permissions)
-        related_user.department.set(department)
-        related_user.faculty.set(faculties)
         related_user.program.set(program)
         related_user.save()
         return super().update(request,*args,**kwargs)
@@ -552,7 +533,7 @@ class CourseViewSet(viewsets.ModelViewSet):
         try:
             request.data['user'] = Users.objects.get(user=request.user)
             course = Course.objects.get(code = request.data['code'])
-            course.__setattr__(**request)
+            # course.__setattr__(**request)
         except:
             super().create(request,*args,**kwargs)
             course = Course.objects.get(code = request.data['code'])

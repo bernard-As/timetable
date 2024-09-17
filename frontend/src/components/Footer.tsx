@@ -5,7 +5,7 @@ const DynamicFooter:React.FC = ()=>{
         <Footer style={{ textAlign: 'center' }}
             className="footer"
         >
-            RDU ©{new Date().getFullYear()} Created by Bernard Assogba
+            RDU ©{new Date().getFullYear()}
         </Footer>
     )
 }

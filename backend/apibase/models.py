@@ -138,8 +138,8 @@ class Faculty(models.Model):
 
 class Department(models.Model):
     """A department under a faculty at UTD."""
-    name = models.CharField(max_length=1000)
-    shortname = models.CharField(max_length=30)
+    name = models.CharField(max_length=1000, unique=True)
+    shortname = models.CharField(max_length=30,unique=True)
     color = models.CharField(max_length=7, blank=True)
     icon = models.ImageField(upload_to='departements/',null=True,blank=True)
     faculty = models.ForeignKey(Faculty, on_delete=models.CASCADE)
@@ -147,6 +147,9 @@ class Department(models.Model):
     description =  models.CharField(max_length=5000, blank=True)
     created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
+    class Meta:
+        unique_together = ('name', 'shortname')
+        
 
 class Program(models.Model):
     """A program under a department at UTD."""
@@ -167,20 +170,24 @@ class CourseSemester(models.Model):
     semester_num = models.SmallIntegerField()
     description =  models.CharField(max_length=5000, blank=True)
     status = models.BooleanField(default=True)
+    created_at = models.DateField(auto_now_add=True)
+    updated_at = models.DateField(auto_now=True)
+    class Meta:
+        unique_together = ('program', 'semester','semester_num')
 
 class Users(User):
     CRED_TYPE = [
         ("SYSADM", "SystemAdmin"),
         ("PADM", "PlatformAdmin"),
         ("VR", "ViceRector"),
+        ("AD", "Advisor"),
+        ("HOD", "HeadOfDepartment"),
         ("OT","Other")
         ]
     user = models.OneToOneField(User, on_delete=models.CASCADE, parent_link=True, )
     profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True)
     title = models.ForeignKey(Title, null=True, blank=False, on_delete=models.SET_NULL)
     deleted = models.BooleanField(default=False)
-    faculty = models.ManyToManyField(Faculty)
-    department = models.ManyToManyField(Department)
     program = models.ManyToManyField(Program)
     credential = models.CharField(max_length=255,choices=CRED_TYPE, default='OT')
 #***************Second to run**/**************************#
@@ -217,7 +224,7 @@ class ActivityType(models.Model):
 class Course(models.Model):
     """A course offered by the university"""
     code = models.CharField(max_length=30, unique=True)
-    title = models.TextField()
+    name = models.TextField()
     description = models.TextField(blank=True)
     # waitinglist = models.PositiveSmallIntegerField(default=0)# when student passes the course
     other_staff = models.ManyToManyField(OtherStaff, blank=True)

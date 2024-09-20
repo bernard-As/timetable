@@ -16,10 +16,10 @@ import { PiBuilding, PiListStarDuotone,PiStudentThin } from "react-icons/pi";
 import { ImListNumbered } from "react-icons/im";
 import { FaGripLines } from "react-icons/fa6";
 import { FcDepartment } from "react-icons/fc";
+import { FaRegCalendarPlus } from "react-icons/fa";
 const SideMenu: React.FC = observer(() => {
   const [collapsed, setCollapsed] = useState(false);
   const navigate = useNavigate();
-
   const menuItems = [
     {
       key: 0,
@@ -31,12 +31,21 @@ const SideMenu: React.FC = observer(() => {
       key: 1,
       icon: React.createElement(RiHome2Line),
       label: "Home",
-      style: rootStore.mainStore.darkMode?{color:'white'}:{color:'black'}
+      style:  (rootStore.enableManagement&&rootStore.isManager())?{color:'white'}:{color:'black'}
     },
     {
       key: 2,
       icon: React.createElement(GrSchedule),
       label: "My timetable",
+    },
+    {
+      key: 19,
+      icon: React.createElement(FaRegCalendarPlus),
+      label: "Create Schedule",
+      style: (rootStore.enableManagement&&rootStore.isManager())?{display:'block'}:{display:'none'},
+      onClick: ()=>{
+        navigate('/holistic-schedule/create_schedule')
+      }
     },
     {
       key: 3,

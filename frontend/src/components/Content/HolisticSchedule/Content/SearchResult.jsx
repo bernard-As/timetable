@@ -9,7 +9,9 @@ const SearchResult = observer(({results,model})=>{
     useEffect(()=>{setData(results)},[results])
     useEffect(()=>{
         const singleDelete = async(id)=>{
-            await PrivateDefaultApi.delete(`${model.apiUrl}/${id}/`).then((res)=>{
+            let apiUrl = model.apiUrl
+            if(apiUrl==='course')apiUrl='coursegroup'
+            await PrivateDefaultApi.delete(`${apiUrl}/${id}/`).then((res)=>{
                 rootStore.notification.notify({
                     type:'success',
                     text: `${model.name} deleted `,

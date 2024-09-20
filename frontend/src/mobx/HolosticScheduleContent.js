@@ -108,6 +108,14 @@ class HolosticScheduleContentStore{
             add:true,
             delete:true,
             prefered:false,
+        },
+        {
+            name:'create_schedule',
+            search:true,
+            list:true,
+            add:true,
+            delete:true,
+            prefered:false,
         }
     ]
 
@@ -850,113 +858,6 @@ class HolosticScheduleContentStore{
             ]
         },
         {
-            name:'semester',
-            apiUrl:'coursesemester',
-            addFields:[
-                'program',
-                'semester',
-                'semester_num',
-                'status',
-                // 'longitude',
-                // 'latitude',
-            ],
-            listFields:[
-                'name',
-            ],
-            listExtraButtons:{
-                prefered:true,
-                viewSchedule:true
-            },
-            columns:[
-                {
-                    title:'Program',
-                    dataIndex:'program',
-                    key:'program',
-                    
-                },
-                {
-                    title:'Semester',
-                    dataIndex:'semester',
-                    key:'semester',
- 
-                },
-                {
-                    title:'Semester Number',
-                    dataIndex:'semester_num',
-                    key:'semester_num',
-                    render: (text)=><Tag color="blue">{text}</Tag>
-                    
-                },
-                {
-                    title:'status',
-                    dataIndex:'status',
-                    key:'status',
-                    render: (b) => 
-                        <Tooltip title={b ?'Active':'Inactive'}>
-                        <FaDotCircle  
-                            style={{
-                                color: b ? 'green' : 'red',
-                            }}
-                        />
-                        </Tooltip>
-                    ,
-                    style:{width:2}
-                },
-                {
-                    title: 'Action',
-                    key: 'operation',
-                    fixed: 'right',
-                    // width: 100,
-                    render: (_,record) => <Space>
-                         <Tooltip title={'View full details'}>
-                            <GrView size={21} 
-                                onClick={()=>{
-                                    this.prepareToViewDetail(record.id)
-                                }}
-                            />
-                        </Tooltip>
-                        <Tooltip title={'Schedule'}>
-                            <GrFormSchedule size={27}/>
-                        </Tooltip>
-                        {/* <Tooltip title={'Bookmark'}>
-                            <IoStarOutline size={25}/>
-                        </Tooltip> */}
-                        <Tooltip title={'Edit'}>
-                            <CiEdit size={25}
-                                onClick={()=>{
-                                    this.prepareToEdit(record.id)
-                                }}
-                            />
-                        </Tooltip>
-                        <Tooltip title={'Delete'}>
-                            <Popconfirm 
-                                title="Sure to delete?"  
-                                onConfirm={() => {
-                                    this.prepareToDelete(record.id)
-                                }}>
-                                <MdDeleteForever color="red" size={25}/>
-                            </Popconfirm>
-                        </Tooltip>
-
-                    </Space>,
-                  },
-            ],
-            detail:[
-                'program',
-                'semester',
-                'semester_num',
-                'status',
-                // 'created_at',
-                // 'updated_at',
-            ],
-            edit:[
-                'program',
-                'semester',
-                'semester_num',
-                'status',
-            ]
-        },
-        {
             name:'lecturer',
             apiUrl:'lecturer',
             addFields:[
@@ -1082,9 +983,9 @@ class HolosticScheduleContentStore{
                 'last_name',
                 'email',
                 'title',
-                'faculty',
-                'department',
-                'program',
+                'faculty_m',
+                'department_m',
+                'program_m',
                 'credential',
                 'status',
             ]
@@ -1094,22 +995,22 @@ class HolosticScheduleContentStore{
             apiUrl:'course',
             addFields:[
                 'code',
-                'title',
+                'name',
                 'status',
                 // 'longitude',
                 // 'latitude',
             ],
             extraField:[
-                'extra_session_of',
                 'group_number',
+                'duration',
+                'max_capacity',
                 'lecturer',
                 'assistant',
-                'lecturer_assistant',
-                'merged_with',
-                'duration',
-                'current_capacity',
-                'max_capacity',
+                // 'lecturer_assistant',
                 'activitytype',
+                'merged_with',
+                'extra_session_of',
+                // 'current_capacity',
                 'prerequisites',
                 'course_semester',
                 'status',
@@ -1190,38 +1091,145 @@ class HolosticScheduleContentStore{
                   },
             ],
             detail:[
-                'username',
-                'password',
-                'first_name',
-                'last_name',
-                'email',
-                'title',
-                'faculty',
-                'department',
-                'program',
-                'credential',
+                'code',
+                'name',
                 'status',
+            ],
+            edit:[
+                'code',
+                'name',
+                'status',
+            ]
+        },
+        {
+            name:'create_schedule',
+            apiUrl:'schedule',
+            addFields:[
+                'type',
+                'day',
+                'date',
+                'start',
+                'coursegroup_s',
+                'room_s'
+            ],
+            listFields:[
+                'name',
+            ],
+            listExtraButtons:{
+                prefered:true,
+                viewSchedule:true
+            },
+            columns:[
+                {
+                    title:'First Name',
+                    dataIndex:'first_name',
+                    key:'first_name',
+                    
+                },
+                {
+                    title:'Last Name',
+                    dataIndex:'last_name',
+                    key:'last_name',
+                    
+                },
+                {
+                    title:'Title',
+                    dataIndex:'title',
+                    key:'title',
+                    
+                },
+                {
+                    title:'Program',
+                    dataIndex:'program',
+                    key:'program',
+ 
+                },
+                {
+                    title:'status',
+                    dataIndex:'status',
+                    key:'status',
+                    render: (b) => 
+                        <Tooltip title={b ?'Active':'Inactive'}>
+                        <FaDotCircle  
+                            style={{
+                                color: b ? 'green' : 'red',
+                            }}
+                        />
+                        </Tooltip>
+                    ,
+                    style:{width:2}
+                },
+                {
+                    title: 'Action',
+                    key: 'operation',
+                    fixed: 'right',
+                    // width: 100,
+                    render: (_,record) => <Space>
+                         <Tooltip title={'View full details'}>
+                            <GrView size={21} 
+                                onClick={()=>{
+                                    this.prepareToViewDetail(record.id)
+                                }}
+                            />
+                        </Tooltip>
+                        <Tooltip title={'Schedule'}>
+                            <GrFormSchedule size={27}/>
+                        </Tooltip>
+                        {/* <Tooltip title={'Bookmark'}>
+                            <IoStarOutline size={25}/>
+                        </Tooltip> */}
+                        <Tooltip title={'Edit'}>
+                            <CiEdit size={25}
+                                onClick={()=>{
+                                    this.prepareToEdit(record.id)
+                                }}
+                            />
+                        </Tooltip>
+                        <Tooltip title={'Delete'}>
+                            <Popconfirm 
+                                title="Sure to delete?"  
+                                onConfirm={() => {
+                                    this.prepareToDelete(record.id)
+                                }}>
+                                <MdDeleteForever color="red" size={25}/>
+                            </Popconfirm>
+                        </Tooltip>
+
+                    </Space>,
+                  },
+            ],
+            detail:[
+                'type',
+                'day',
+                'date',
+                'start',
+                'coursegroup_s',
+                'room_s'
                 // 'created_at',
                 // 'updated_at',
             ],
             edit:[
-                'username',
-                'password',
-                'first_name',
-                'last_name',
-                'email',
-                'title',
-                'faculty',
-                'department',
-                'program',
-                'credential',
-                'status',
+                'type',
+                'day',
+                'date',
+                'start',
+                'coursegroup_s',
+                'room_s'
             ]
         },
         
         
     ]
     additionallyFetchedData = []
+
+    daysIndex = [
+        { id: 1, name: 'Monday' },
+        { id: 2, name: 'Tuesday' },
+        { id: 3, name: 'Wednesday' },
+        { id: 4, name: 'Thursday' },
+        { id: 5, name: 'Friday' },
+        { id: 6, name: 'Saturday' },
+    ]
     constructor() {
         makeAutoObservable(this);
     }

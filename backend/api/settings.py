@@ -161,7 +161,7 @@ CSRF_TRUSTED_ORIGINS = [
     # Add other domains if needed
 ]
 CORS_ALLOW_CREDENTIALS = True
-STATIC_URL = '/static/'  # URL to serve static files
+STATIC_URL = '/static__django/'  # URL to serve static files
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Directory where static files will be collected
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

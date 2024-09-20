@@ -37,6 +37,7 @@ router.register(r'activitytype', siteManagement.ActivityTypeViewSet, basename='a
 router.register(r'coursegroup', siteManagement.CourseGroupViewSet, basename='coursegroup')
 router.register(r'preference', siteManagement.PreferenceViewSet, basename='preference')
 router.register(r'eventtime', siteManagement.EventTimeViewSet, basename='eventtime')
+router.register(r'schedule', siteManagement.ScheduleViewSet, basename='schedule')
 urlpatterns = [
     path('login/', ObtainAuthToken.as_view()),
     path('renewStore/',StoreRenew.as_view(), name='renewStore'),
@@ -45,6 +46,7 @@ urlpatterns = [
     path('GP/',siteManagement.UserGroupPermission.getGP, name='User Groups and permissions user based'),
     path('AllGP/',siteManagement.UserGroupPermission.get_groups_and_permissions, name='All User Group'),
     path('student_list/',siteManagement.StudentViewSet.get_short_list, name='Student select list'),
+    path('assistant/',siteManagement.AssistantView.as_view(), name='Assistant View')
     # path('start/',start_main,name='main')
 ]
 

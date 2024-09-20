@@ -134,3 +134,10 @@ class EventTimeSerializer(serializers.ModelSerializer):
     class Meta:
         model = EventTime
         fields = '__all__'
+
+class ScheduleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Schedule
+        fields = '__all__'
+        read_only_fields = ['user']
+

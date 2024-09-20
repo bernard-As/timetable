@@ -222,6 +222,36 @@ class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
 
+class AssistantView(APIView):
+    authentication_classes = ([TokenAuthentication])
+    permission_classes = ([IsAuthenticated]) 
+    queryset = Group.objects.all()
+    serializer_class = GroupSerializer
+    def post(self,request):
+        id = request.data['id']
+        try:
+            assistant = Student.objects.get(pk=id)
+        except:
+            return Response({'error': 'assistant not found'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({
+            'first_name': assistant.user.user.first_name,
+            'last_name': assistant.user.user.last_name,
+            'studentId': assistant.studentId,
+            'program':assistant.user.program
+        },200)
+    def get(self,request):
+        asss = Student.objects.all()
+        res = []
+        for a in asss:
+            res.append({
+                'first_name':a.user.user.first_name,
+                'last_name':a.user.user.last_name,
+                'studentId':a.studentId,
+                'program':a.user.program
+            })
+        return Response(res,200)
+
+
 class LecturerViewSet(viewsets.ModelViewSet):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
@@ -311,7 +341,7 @@ class LecturerViewSet(viewsets.ModelViewSet):
         item['title'] = title_serializer['id'] # type: ignore
         # item['group'] = [GroupSerializer(seri).data for  seri in related_user.groups.all()] # type: ignore
         # item['group'] = GroupSerializer(related_user.groups.all()[0]).data['id'] # type: ignore
-        item['user_permissions'] = [GroupSerializer(seri).data for  seri in related_user.user_permissions.all()]
+        # item['user_permissions'] = [GroupSerializer(seri).data for  seri in related_user.user_permissions.all()]
         item['program']=[ProgramSerializer(prog).data['id'] for prog in related_user.program.all()] # type: ignore
         return item
 
@@ -531,7 +561,7 @@ class CourseViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         try:
-            request.data['user'] = Users.objects.get(user=request.user)
+            request.data['user'] = Users.objects.get(user=request.user.id)
             course = Course.objects.get(code = request.data['code'])
             # course.__setattr__(**request)
         except:
@@ -565,12 +595,30 @@ class CourseViewSet(viewsets.ModelViewSet):
             }
             
             course_group = Coursegroup.objects.create(**group)
-            course_group.extra_session_of.set([Coursegroup.objects.get(id=c).id for c in  groupInt.pop('extra_session_of','')])
-            course_group.merged_with.set([Coursegroup.objects.get(id=c) for c in  groupInt.pop('merged_with','')])
-            course_group.activitytype.set([ActivityType.objects.get(id=ac) for ac in groupInt['activitytype']])
-            course_group.prerequisites.set([Course.objects.get(id=c) for c in  groupInt.pop('prerequisites','')])
-            course_group.course_semester.set([CourseSemester.objects.get(id=c) for c in  groupInt.pop('course_semester', '')])
-            return Response(200)
+            try:
+                course_group.extra_session_of.set([Coursegroup.objects.get(id=c).id for c in  groupInt.pop('extra_session_of','')])
+            except:
+                print()
+            try:
+                course_group.merged_with.set([Coursegroup.objects.get(id=c) for c in  groupInt.pop('merged_with')])
+            except:
+                print()
+            try:
+                course_group.activitytype.set([ActivityType.objects.get(id=ac) for ac in groupInt['activitytype']])
+            except:
+                print()
+                
+            try:
+                course_group.prerequisites.set([Course.objects.get(id=c) for c in  groupInt.pop('prerequisites','')])
+            except:
+                print()
+                
+            try:
+                course_group.course_semester.set([CourseSemester.objects.get(id=c) for c in  groupInt.pop('course_semester', '')])
+            except:
+                print()
+                
+        return Response({'message':'course group created successfully '},200)
 
     def update(self, request, *args, **kwargs):
         try:
@@ -663,7 +711,7 @@ class CourseGroupViewSet(viewsets.ModelViewSet):
         'current_capacity',
         'max_capacity',
         'group_number',
-        'course__title',
+        'course__name',
         'course__code',
         'course__description',
         'course__created_at',
@@ -677,10 +725,6 @@ class CourseGroupViewSet(viewsets.ModelViewSet):
         'course_semester__semester__season',
         'course_semester__program__name',
         'course_semester__program__shortname',
-        'course_semester__department__name',
-        'course_semester__department__shortname',
-        'course_semester__faculty__name',
-        'course_semester__faculty__shortname',
     ] 
 
     # search_fields = ['*'] 
@@ -699,7 +743,7 @@ class CourseGroupViewSet(viewsets.ModelViewSet):
     def modify_data(self, item):
         course = Course.objects.get(pk=item['course'])
         item['code'] = course.code
-        item['title'] = course.title
+        item['name'] = course.name
         return item
     
 class PreferenceViewSet(viewsets.ModelViewSet):
@@ -803,3 +847,27 @@ class EventTimeViewSet(viewsets.ModelViewSet):
         'end',
         'date',
     ]
+
+class ScheduleViewSet(viewsets.ModelViewSet):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    queryset = Schedule.objects.all().order_by('id')
+    serializer_class = ScheduleSerializer
+    filter_backends = (filters.SearchFilter, filters.OrderingFilter)
+    search_fields = [
+        'room__code',
+        'coursegroup__course__name',
+        'start',
+        'end',
+        'date',
+        'day',
+    ]
+    def perform_create(self, serializer):
+        # Attach the current user (from the request) to the schedule
+        user = Users.objects.get(user=self.request.user.id)
+        serializer.save(user=user)
+
+    def perform_update(self, serializer):
+        user = Users.objects.get(user=self.request.user.id)
+        # If you want to update the user as well (for updates)
+        serializer.save(user=user)

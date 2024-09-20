@@ -8,6 +8,8 @@ from django.dispatch import receiver
 from django.apps import apps
 from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
+from django.db.models import Q
+from django.core.exceptions import ValidationError
 
 
 class Title(models.Model):
@@ -182,6 +184,7 @@ class Users(User):
         ("VR", "ViceRector"),
         ("AD", "Advisor"),
         ("HOD", "HeadOfDepartment"),
+        ("ASS", "Assistant"),
         ("OT","Other")
         ]
     user = models.OneToOneField(User, on_delete=models.CASCADE, parent_link=True, )
@@ -235,18 +238,18 @@ class Course(models.Model):
 class Coursegroup(models.Model):
     """Groups for each course """
     course = models.ForeignKey(Course, on_delete=models.CASCADE,related_name='groups')
-    extra_session_of = models.ManyToManyField('self')# when there are some extra session that should be linked to the main session
+    extra_session_of = models.ManyToManyField('self',blank=True)# when there are some extra session that should be linked to the main session
     group_number = models.PositiveSmallIntegerField(default=1)
     lecturer = models.ForeignKey(Lecturer,on_delete=models.SET_NULL,null=True)
     assistant = models.ForeignKey(Student,blank=True,on_delete=models.SET_NULL,null=True)
     lecturer_assistant = models.ForeignKey(Lecturer,blank=True,related_name="Lecturer_Assisting",on_delete=models.SET_NULL,null=True)
-    merged_with = models.ManyToManyField('self') # foreign key of the main course where it is merged
+    merged_with = models.ManyToManyField('self',blank=True) # foreign key of the main course where it is merged
     duration = models.TextField(null=True)
     current_capacity = models.PositiveSmallIntegerField(default=0)
     max_capacity = models.SmallIntegerField(default=0)
     activitytype = models.ManyToManyField(ActivityType)
     # registeredstudents = models.ManyToManyField(Student, through='Enrollment')
-    prerequisites = models.ManyToManyField(Course, related_name='requiredCourse')
+    prerequisites = models.ManyToManyField(Course, related_name='requiredCourse', blank=True)
     course_semester = models.ManyToManyField(CourseSemester)
     status = models.BooleanField(default=True)
     is_elective = models.BooleanField(default=False)
@@ -315,6 +318,45 @@ class Preference(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+
+class Schedule(models.Model):
+    """Schedule set """
+    user = models.ForeignKey(Users, on_delete=models.CASCADE, null=True, blank=True)
+    room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name='schedule_room')
+    coursegroup = models.ForeignKey(Coursegroup, on_delete=models.CASCADE, related_name='schedule_coursegroup')
+    start = models.TimeField()
+    end = models.TimeField()
+    day = models.SmallIntegerField(blank=True,null=True)
+    date = models.DateField(blank=True, null=True)
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['room', 'start', 'end', 'day'],
+                name='unique_room_day_time'
+            )
+        ]
+
+    def clean(self):
+        # Ensure the end time is after the start time
+        if self.end <= self.start:
+            return Response
+            raise ValidationError('End time must be after the start time')
+
+        # Check if the lecture overlaps with any other lecture in the same room
+        overlapping_schedule = Schedule.objects.filter(
+            room=self.room
+        ).filter(
+            Q(day=self.day) & Q(date=self.date) if self.date else Q(day=self.day)
+        ).filter(
+            Q(start__lt=self.end) & Q(end__gt=self.start)
+        ).exclude(id=self.id)  # Exclude the current instance if updating
+
+        if overlapping_schedule.exists():
+            raise ValidationError('The schedule overlaps with another lecture in the same room.')
+
+    def save(self, *args, **kwargs):
+        self.clean()  # Run validation before saving
+        super(Schedule, self).save(*args, **kwargs)
 class AdminOperations(models.Model):
     class Meta:
         permissions = [

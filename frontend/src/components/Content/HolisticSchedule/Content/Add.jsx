@@ -1,4 +1,4 @@
-import { Button, Checkbox, Form, Input, Select, Space } from "antd";
+import { Button, Card, Checkbox, DatePicker, Divider, Form, Input, InputNumber, Segmented, Select, Space, TimePicker, Tooltip } from "antd";
 import rootStore from "../../../../mobx";
 import { PrivateDefaultApi } from "../../../../utils/AxiosInstance";
 import { observer } from "mobx-react";
@@ -13,6 +13,10 @@ const Add  = observer(({model})=>{
   const [selectedProgram,setselectedProgram] = useState([])
   const [selectedBuilding,setselectedBuilding] = useState([])
   const [selectFloor,setselectFloor] = useState([])
+  const [typeSelected, setTypeSElected] = useState()
+  const [data,setData] = useState([])
+  const [dataRoom,setDataRoom] = useState([])
+
     const normalAdd = (values)=>{
       if(values['email']!==undefined&&values.email.split('@')[1]!==(undefined||'rdu.edu.tr')){
         if(values.email.split('@')[1]!==undefined){
@@ -22,6 +26,10 @@ const Add  = observer(({model})=>{
           values.email = values.email+'@rdu.edu.tr'
         }
       }
+      if(values.date!==undefined)values.date=values.date.format('YYYY-MM-DD')
+        if(values.day!==undefined)values.day=rootStore.holosticScheduleContentStore.daysIndex.find(p=>p.name===values.day).id
+        if(values.start!==undefined)values.end =  values.start[1].format('HH:mm')
+        if(values.start!==undefined)values.start =  values.start[0].format('HH:mm')
       PrivateDefaultApi.post(`${model.apiUrl}/`,values).then((res)=>{
           rootStore.holisticScheduleStore.deleteLocalStorageItemWith(`${model.name}_`)
           rootStore.notification.notify({
@@ -31,13 +39,18 @@ const Add  = observer(({model})=>{
           form.resetFields()
       }).catch((error)=>{
         console.log(error);
+        if(model.name==='create_schedule')
+          rootStore.notification.notify({
+            type:'An Error occur it might be a clash ',
+            text:`${model.name.toUpperCase() } created `
+          })
       })
     }
     const onFinishFailed = (errorInfo) => {
         rootStore.notification.notify({
             type: 'error',
-            title:'Fail to add a new '+model.name,
-            text:'Fail to add a new '+model.name,
+            title:'Fail to add a new '+model.name+' Please check the fields',
+            text:'Fail to add a new '+model.name+' Please check the fields',
             timeout:1500
         })
         console.log('Failed:', errorInfo);
@@ -48,7 +61,6 @@ const Add  = observer(({model})=>{
       if(id)
         url = url+id+'/'
       PrivateDefaultApi.get(url).then((res)=>{
-        console.log('hello')
         rootStore.holosticScheduleContentStore.addadditionallyFetchedData({
           target:targetModel,
           data:res.data
@@ -59,6 +71,22 @@ const Add  = observer(({model})=>{
         console.log(error);
       })
     }
+
+    const onSearch= (value)=>{
+      PrivateDefaultApi.get('coursegroup/?search='+value).then((res)=>{
+          setData(res.data)
+      }).catch((error)=>{
+          console.error(error)
+      })
+  }
+  const onSearchRoom= (value)=>{
+      PrivateDefaultApi.get('room/?search='+value).then((res)=>{
+          setDataRoom(res.data)
+      }).catch((error)=>{
+          console.error(error)
+      })
+  }
+
     useEffect(()=>{
       rootStore.holosticScheduleContentStore.additionallyFetchedData = []
       fetchAdditional('building')
@@ -68,6 +96,12 @@ const Add  = observer(({model})=>{
       fetchAdditional('program')
       fetchAdditional('semester')
       fetchAdditional('title')
+      fetchAdditional('lecturer')
+      fetchAdditional('course')
+      fetchAdditional('assistant')
+      fetchAdditional('activitytype')
+      fetchAdditional('coursegroup')
+      fetchAdditional('coursesemester')
     },[])
     useEffect(()=>{
       setadditionalData(rootStore.holosticScheduleContentStore.additionallyFetchedData)
@@ -258,9 +292,8 @@ const Add  = observer(({model})=>{
                   ]}
                 initialValue={localStorage.getItem(`${model.name}_floor_number`)}
                 >
-                    <Input 
+                    <InputNumber
                       onKeyUp={(event)=>localStorage.setItem(`${model.name}_floor_number`,event.target.value)}
-                      type="number"
                       defaultValue={0}
                     />
                 </Form.Item>
@@ -392,39 +425,7 @@ const Add  = observer(({model})=>{
 
                 </Form.Item>
             }
-            {
-              model.addFields.includes('title')&&
-              additionalData.find(ad=>ad.target==='title')&&
-              <Form.Item
-                label="Title"
-                name="title"
-                rules={[
-                    {
-                      required: true,
-                      message: `Please select a title for ${model.name}!`,
-                    },
-                  ]}
-                >
-                    <Select
-                      onSelect={(event)=>{
-                        localStorage.setItem(`${model.name}_title`,event)
-                      }}
-                      filterOption={(input, option) =>
-                        (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
-                      }
-                      allowClear
-                      initialValue={localStorage.getItem(`${model.name}_title`)}
-                    >
-                      {additionalData.find(ad=>ad.target==='title').data.map(b=>{
-                        return b.status&&<Select.Option key={b.id} value={b.id}>{b.name}</Select.Option>
-                      })
-
-                      }
-
-                    </Select>
-
-                </Form.Item>
-            }
+            
             {
               model.addFields.includes('faculty')&&
               additionalData.find(ad=>ad.target==='faculty')&&
@@ -692,10 +693,9 @@ const Add  = observer(({model})=>{
                   ]}
                 initialValue={localStorage.getItem(`${model.name}_capacity`)}
                 >
-                    <Input 
+                    <InputNumber
                       onKeyUp={(event)=>localStorage.setItem(`${model.name}_capacity`,event.target.value)}
-                      type="number"
-                      defaultValue={0}
+                      defaultValue={25}
                     />
                 </Form.Item>
             }
@@ -706,9 +706,8 @@ const Add  = observer(({model})=>{
                 name="exm_capacity"
                 initialValue={localStorage.getItem(`${model.name}_exm_capacity`)}
                 >
-                    <Input 
+                    <InputNumber
                       onKeyUp={(event)=>localStorage.setItem(`${model.name}_exm_capacity`,event.target.value)}
-                      type="number"
                       defaultValue={0}
                     />
                 </Form.Item>
@@ -827,29 +826,6 @@ const Add  = observer(({model})=>{
 
                 </Form.Item>
             }
-            {model.extraField !== undefined&&
-              model.extraField.includes('group_number')&&
-              <Form.Item
-                label="Group number"
-                name="group_number"
-                rules={[
-                    {
-                      required: true,
-                      message: `Please input a group number for ${model.name}!`,
-                    },
-                  ]}
-                initialValue={localStorage.getItem(`${model.name}_group_number`)}
-              >
-                <Input 
-                  onKeyUp={(event)=>localStorage.setItem(`${model.name}_group_number`,event.target.value)}
-                  type="number"
-                  defaultValue={0}
-                />
-              </Form.Item>
-
-              
-
-            }
             {model.addFields.includes('status')&&
                 <Form.Item
                   name="status"
@@ -862,8 +838,417 @@ const Add  = observer(({model})=>{
                   <Checkbox>Enable</Checkbox>
                 </Form.Item>
             }
-            
-            
+            {model.extraField!==undefined&&<Form.List name="groups">
+                {(fields,{add,remove}) =>(
+                    <>
+                    {fields.map((field,index)=>{
+                      return(
+                        <>
+                        <Card>
+                          Group {index+1}
+                        </Card>
+                          {model.extraField.includes('group_number')&&<Form.Item
+                            label="Group number"
+                            name={[field.name,"group_number"]}
+                            initialValue={index+1}
+                          >
+                            <InputNumber
+                              onKeyUp={(event)=>localStorage.setItem(`${model.name}_group_number_${index+1}`,event.target.value)}
+                              defaultValue={index+1}
+                              min={1}
+                            />
+                          </Form.Item>}
+                          {model.extraField.includes('duration')&&<Form.Item
+                            label="Duration"
+                            name={[field.name,"duration"]}
+                            initialValue={2}
+                          >
+                            <InputNumber 
+                              onKeyUp={(event)=>localStorage.setItem(`${model.name}_duration_${index+1}`,event.target.value)}
+                              defaultValue={2}
+                            />
+                          </Form.Item>}
+                          {model.extraField.includes('max_capacity')&&<Form.Item
+                            label="Max Capacity"
+                            name={[field.name,"max_capacity"]}
+                            initialValue={30}
+                          >
+                            <InputNumber
+                              onKeyUp={(event)=>localStorage.setItem(`${model.name}_max_capacity_${index+1}`,event.target.value)}
+                              defaultValue={30}
+                              min={0}
+                            />
+                          </Form.Item>}
+                          {model.extraField.includes('lecturer')&&<Form.Item
+                            label="Lecturer"
+                            name={[field.name,"lecturer"]}
+                            rules={[
+                                {
+                                  required: true,
+                                  message: `Please input a lecturer for ${model.name} group ${index+1}!`,
+                                },
+                              ]}
+                            initialValue={localStorage.getItem(`${model.name}_lecturer_${index+1}`)}
+                          >
+                            <Select
+                              onSelect={(event)=>{
+                                localStorage.setItem(`${model.name}_lecturer_${index+1}`,event)
+                              }}
+                              filterOption={(input, option) =>
+                                (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                              }
+                              allowClear
+                              initialValue={localStorage.getItem(`${model.name}_lecturer_${index+1}`)}
+                            >
+                              {additionalData.find(ad=>ad.target==='lecturer')?.data.map(l=>{
+                                return l.status&&<Select.Option key={l.id} value={l.id}>
+                                  <Tooltip title={l.email}>
+                                    {`${l.first_name}  ${l.last_name}`}
+                                  </Tooltip>
+                                </Select.Option>
+                              })
+                              }
+                            </Select>
+                          </Form.Item>}
+                          {model.extraField.includes('assistant')&&<Form.Item
+                            label="Assistant"
+                            name={[field.name,"assistant"]}
+                            initialValue={localStorage.getItem(`${model.name}_assistant_${index+1}`)}
+                          >
+                            <Select
+                              onSelect={(event)=>{
+                                localStorage.setItem(`${model.name}_assistant_${index+1}`,event)
+                              }}
+                              filterOption={(input, option) =>
+                                (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                              }
+                              allowClear
+                              initialValue={localStorage.getItem(`${model.name}_assistant_${index+1}`)}
+                            >
+                              {additionalData['assistant']!==undefined&&
+                                additionalData.find(ad=>ad.target==='assistant').data.map(l=>{
+                                return l.status&&<Select.Option key={l.id} value={l.id}>
+                                  <Tooltip title={l.studentId}>
+                                    {`${l.first_name}  ${l.last_name}`}
+                                  </Tooltip>
+                                </Select.Option>
+                              })
+                              }
+                            </Select>
+                          </Form.Item>}
+                          {model.extraField.includes('activitytype')&&<Form.Item
+                            label="Activity Type"
+                            name={[field.name,"activitytype"]}
+                            initialValue={localStorage.getItem(`${model.name}_activitytype_${index+1}`)}
+                          >
+                            <Select
+                              onSelect={(event)=>{
+                                localStorage.setItem(`${model.name}_activitytype_${index+1}`,event)
+                              }}
+                              filterOption={(input, option) =>
+                                (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                              }
+                              allowClear
+                              initialValue={localStorage.getItem(`${model.name}_activitytype_${index+1}`)}
+                              mode="multiple"
+                            >
+                              {
+                                additionalData.find(ad=>ad.target==='activitytype').data.map(a=>{
+                                return a.status&&<Select.Option key={a.id} value={a.id}>
+                                  <Tooltip title={a.description}>
+                                    {`${a.name}`}
+                                  </Tooltip>
+                                </Select.Option>
+                              })
+                              }
+                            </Select>
+                          </Form.Item>}
+                          {model.extraField.includes('merged_with')&&<Form.Item
+                            label="Merged with"
+                            name={[field.name,"merged_with"]}
+                            initialValue={localStorage.getItem(`${model.name}_merged_with_${index+1}`)}
+                          >
+                            <Select
+                              onSelect={(event)=>{
+                                localStorage.setItem(`${model.name}_merged_with_${index+1}`,event)
+                              }}
+                              filterOption={(input, option) =>
+                                (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                              }
+                              allowClear
+                              initialValue={localStorage.getItem(`${model.name}_merged_with_${index+1}`)}
+                              mode="multiple"
+                            >
+                              {
+                                additionalData.find(ad=>ad.target==='coursegroup').data.map(a=>{
+                                return a.status&&<Select.Option key={a.id} value={a.id}>
+                                  <Tooltip title={
+                                    <div>
+                                      <span>By {additionalData.find(d=>d.target==='lecturer')
+                                      ?.data.find(c=>c.id===a.lecturer).email}</span>
+                                      <Divider orientation="horizontal" style={{color:'whitesmoke'}}/>
+                                      {a.is_elective&&<span>Is Elective</span>}
+                                    </div>
+                                  }>
+                                    {`${a.code} G${a.group_number}: ${a.name} Group ${a.group_number}`}
+                                  </Tooltip>
+                                </Select.Option>
+                              })
+                              }
+                            </Select>
+                          </Form.Item>}
+                          {model.extraField.includes('extra_session_of')&&<Form.Item
+                            label="Extra Session "
+                            name={[field.name,"extra_session_of"]}
+                            initialValue={localStorage.getItem(`${model.name}_extra_session_of_${index+1}`)}
+                          >
+                            <Select
+                              onSelect={(event)=>{
+                                localStorage.setItem(`${model.name}_extra_session_of_${index+1}`,event)
+                              }}
+                              filterOption={(input, option) =>
+                                (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                              }
+                              allowClear
+                              initialValue={localStorage.getItem(`${model.name}_extra_session_of_${index+1}`)}
+                              mode="multiple"
+                              maxTagCount={'resposive'}
+                            >
+                              {
+                                additionalData.find(ad=>ad.target==='coursegroup').data.map(a=>{
+                                return a.status&&<Select.Option key={a.id} value={a.id}>
+                                  <Tooltip title={
+                                    <div>
+                                      <span>By {additionalData.find(d=>d.target==='lecturer')
+                                      ?.data.find(c=>c.id===a.lecturer).email}</span>
+                                      <Divider orientation="horizontal" style={{color:'whitesmoke'}}/>
+                                      {a.is_elective&&<span>Is Elective</span>}
+                                    </div>
+                                  }>
+                                    {`${a.code} G${a.group_number}: ${a.name} Group ${a.group_number}`}
+                                  </Tooltip>
+                                </Select.Option>
+                              })
+                              }
+                            </Select>
+                          </Form.Item>}
+                          {model.extraField.includes('prerequisites')&&<Form.Item
+                            label="Prerequisite (s)"
+                            name={[field.name,"prerequisites"]}
+                            initialValue={localStorage.getItem(`${model.name}_prerequisites_${index+1}`)}
+                          >
+                            <Select
+                              onSelect={(event)=>{
+                                localStorage.setItem(`${model.name}_prerequisites_${index+1}`,event)
+                              }}
+                              filterOption={(input, option) =>
+                                (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                              }
+                              allowClear
+                              initialValue={localStorage.getItem(`${model.name}_prerequisites_${index+1}`)}
+                              mode="multiple"
+                              maxTagCount={'resposive'}
+                            >
+                              {
+                                additionalData.find(ad=>ad.target==='coursegroup').data.map(a=>{
+                                return a.status&&<Select.Option key={a.id} value={a.id}>
+                                  <Tooltip title={
+                                    <div>
+                                      <span>By {additionalData.find(d=>d.target==='lecturer')
+                                      ?.data.find(c=>c.id===a.lecturer).email}</span>
+                                      <Divider orientation="horizontal" style={{color:'whitesmoke'}}/>
+                                      {a.is_elective&&<span>Is Elective</span>}
+                                    </div>
+                                  }>
+                                    {`${a.code} G${a.group_number}: ${a.name} Group ${a.group_number}`}
+                                  </Tooltip>
+                                </Select.Option>
+                              })
+                              }
+                            </Select>
+                          </Form.Item>}
+                          {model.extraField.includes('course_semester')&&<Form.Item
+                            label="Semester Program (s)"
+                            name={[field.name,"course_semester"]}
+                            initialValue={localStorage.getItem(`${model.name}_course_semester_${index+1}`)}
+                          >
+                            <Select
+                              onSelect={(event)=>{
+                                localStorage.setItem(`${model.name}_course_semester_${index+1}`,event)
+                              }}
+                              filterOption={(input, option) =>
+                                (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                              }
+                              allowClear
+                              initialValue={localStorage.getItem(`${model.name}_course_semester_${index+1}`)}
+                              mode="multiple"
+                              maxTagCount={'resposive'}
+                              rules={[
+                                {
+                                  required: true,
+                                  message: `Please input a Course Semester for ${model.name} group ${index+1}!`,
+                                },
+                              ]}
+                            >
+                              {
+                                additionalData.find(ad=>ad.target==='coursesemester').data.map(a=>{
+                                return a.status&&<Select.Option key={a.id} value={a.id}>
+                                  <Tooltip title={'Craeted at '+a.created_at}>
+                                    {`Semester ${a.semester_num} - ${additionalData.find(ad=>ad.target==='program')?.data.find(d=>d.id===a.program)?.shortname} - ${additionalData.find(ad=>ad.target==='semester')?.data.find(d=>d.id===a.semester)?.season} ${additionalData.find(ad=>ad.target==='semester')?.data.find(d=>d.id===a.semester)?.year}`}
+                                  </Tooltip>
+                                </Select.Option>
+                              })
+                              }
+                            </Select>
+                          </Form.Item>}
+                          {model.extraField.includes('status')&&
+                            <Form.Item
+                              name={[field.name,"status"]}
+                              valuePropName="checked"
+                              wrapperCol={{
+                                offset: 8,
+                                span: 16,
+                              }}
+                            >
+                              <Checkbox>Enable</Checkbox>
+                            </Form.Item>
+                          }
+                          {model.extraField.includes('is_elective')&&
+                            <Form.Item
+                              name={[field.name,"is_elective"]}
+                              valuePropName="checked"
+                              wrapperCol={{
+                                offset: 8,
+                                span: 16,
+                              }}
+                            >
+                              <Checkbox>Is Elective</Checkbox>
+                            </Form.Item>
+                          }
+
+                        </>)
+                      })}
+                     <Button type="dashed" onClick={() => add()} block style={{
+                      maxWidth:'150px',
+                      right:0
+                     }}>
+                        + Add a group
+                      </Button>
+                    </>
+                     
+                    )}
+                    
+            </Form.List>}
+            {model.addFields.includes('type')&&
+                <Form.Item
+                  label="Type"
+                >
+                  <Segmented
+                  options={['Weekly','Daily']}
+                  onChange={(value) => {
+                    setTypeSElected(value)
+                  }}
+                />
+                </Form.Item>
+            }
+            {model.addFields.includes('day')&&typeSelected==='Weekly'&&
+                <Form.Item
+                  label="Select a day"
+                  name={'day'}
+                  rules={[
+                    {
+                      required: true,
+                      message: `Need to select a day!`,
+                    },
+                  ]}
+                >
+                 <Segmented
+                    options={['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']}
+                  />
+                </Form.Item>
+            }
+            {model.addFields.includes('date')&&typeSelected==='Daily'&&
+                <Form.Item
+                name="date"
+                label='Select a date'
+                rules={[
+                    {
+                      required: true,
+                      message: `Need to select a date!`,
+                    },
+                  ]}
+                >
+                  <DatePicker/>
+                </Form.Item>
+            }
+            {model.addFields.includes('start')&&
+                <Form.Item
+                name="start"
+                label='Select a timerange'
+                rules={[
+                    {
+                      required: true,
+                      message: `Need to select a timerange!`,
+                    },
+                  ]}
+            >
+                <TimePicker.RangePicker  minuteStep={15} format={'HH:mm'} />
+                </Form.Item>
+            }
+            {model.addFields.includes('coursegroup_s')&&
+               <Form.Item
+               name="coursegroup"
+               label="Select the course"
+               rules={[
+                   {
+                     required: true,
+                     message: `Need to select at least one course!`,
+                   },
+                 ]}
+               initialValue={localStorage.getItem(`create_courseId`)}
+           >
+               <Select
+                 showSearch
+                 placeholder={'Search for a course'}
+                 defaultActiveFirstOption={false}
+                 suffixIcon={null}
+                 filterOption={false}
+                 onSearch={onSearch}
+                 notFoundContent={null}
+                 options={(data || []).map((d) => ({
+                   value: d.id,
+                   label: d.code+ ' '+d.name,
+                 }))}
+               />
+           </Form.Item>
+            }
+            {model.addFields.includes('room_s')&&
+               <Form.Item
+               name="room"
+               label="Select the classroom"
+               rules={[
+                   {
+                     required: true,
+                     message: `Need to select at least one room!`,
+                   },
+                 ]}
+               initialValue={localStorage.getItem(`create_courseId`)}
+           >
+               <Select
+                 showSearch
+                 placeholder={'Search for a room'}
+                 defaultActiveFirstOption={false}
+                 suffixIcon={null}
+                 filterOption={false}
+                 onSearch={onSearchRoom}
+                 notFoundContent={null}
+                 options={(dataRoom || []).map((d) => ({
+                   value: d.id,
+                   label: d.code,
+                 }))}
+               />
+           </Form.Item>
+            }
             <Form.Item
                 wrapperCol={{
                   offset: 8,

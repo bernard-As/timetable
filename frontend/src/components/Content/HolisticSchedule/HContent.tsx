@@ -30,7 +30,9 @@ const HContent:React.FC<{stopLoadingf:any,toDisplay:any,setToDisplay:any,searchD
         }else
         setNothingToDisplay(false)
         if(toDisplay==='list'){
-            PrivateDefaultApi.get(`${modelContent?.apiUrl}/`).then((res)=>{
+            let apiUrl = modelContent?.apiUrl
+            if(apiUrl==='course')apiUrl='coursegroup'
+            PrivateDefaultApi.get(`${apiUrl}/`).then((res)=>{
                 setResults(res.data);
             }).catch((error)=>{
                 console.log(error);
@@ -41,7 +43,9 @@ const HContent:React.FC<{stopLoadingf:any,toDisplay:any,setToDisplay:any,searchD
 
         const handleSearch = async()=>{
             if(searchData.length>0){
-                const response = await PrivateApi.post(`${modelContent?.apiUrl}/search`,searchData);
+                let apiUrl = modelContent?.apiUrl
+                if(apiUrl==='course')apiUrl='coursegroup'
+                const response = await PrivateApi.post(`${apiUrl}/search`,searchData);
                 setResult(response.data);
             }
         }
@@ -65,13 +69,17 @@ const HContent:React.FC<{stopLoadingf:any,toDisplay:any,setToDisplay:any,searchD
 
     const getModelContent = async(target=null)=>{
         if(target){
-            await PrivateApi.get(`${modelContent?.apiUrl}/${target}/`).then((res)=>{
+            let apiUrl = modelContent?.apiUrl
+            if(apiUrl==='course')apiUrl='coursegroup'
+            await PrivateApi.get(`${apiUrl}/${target}/`).then((res)=>{
                 // console.log(res.data)
             }).catch((error)=>{
                 console.error(error)
             })
         }else{
-            await PrivateApi.get(`${modelContent?.apiUrl}/`).then((res)=>{
+            let apiUrl = modelContent?.apiUrl
+            if(apiUrl==='course')apiUrl='coursegroup'
+            await PrivateApi.get(`${apiUrl}/`).then((res)=>{
                 setResults(res.data)
                 // console.log(res.data)
             }).catch((error)=>{

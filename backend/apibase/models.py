@@ -17,7 +17,8 @@ class Title(models.Model):
     name = models.CharField(max_length=101)
     shortname = models.CharField(max_length=20,null=True)
     status = models.BooleanField(default=True)
-    
+    def __str__(self):
+        return self.name + " - " + self.shortname
 class General(models.Model):
     """General information about the system."""
     description = models.TextField(null=True)
@@ -25,7 +26,8 @@ class General(models.Model):
     state_description = models.TextField(null=True, help_text= 'Reason for the status to be true or false')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
+    def __str__(self):
+        return self.description
 class Start(models.Model):
     """Start Time"""
     data = models.SmallIntegerField(null=False)
@@ -66,7 +68,8 @@ class Semester(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     class Meta:
         unique_together = ("year", "season")
-
+    def __str__(self):
+        return self.season+ " - "+self.year
 class Building(models.Model):
     """Building """
     name = models.CharField(max_length=500)
@@ -77,7 +80,8 @@ class Building(models.Model):
     state_description = models.TextField(null=True,blank=True)
     class Meta:
         unique_together = ("name", "code")
-        
+    def __str__(self):
+        return self.name+ " - "+self.code
 
 class Floor(models.Model):
     """Floors in a building."""
@@ -90,6 +94,9 @@ class Floor(models.Model):
 
     class Meta:
         unique_together = ('building', 'floor_number')
+
+    def __str__(self):
+        return "Floor: " + self.floor_number+ " - "+self.building.code
 class RoomFeatures(models.Model):
     """Room Features"""   
     name = models.CharField(max_length=500)
@@ -97,6 +104,8 @@ class RoomFeatures(models.Model):
     state_description = models.TextField(null=True,blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    def __str__(self):
+        return self.name
 
 class Room(models.Model):
     """Room in a floor of a building."""
@@ -123,6 +132,9 @@ class Room(models.Model):
     state_description = models.TextField(blank=True, null = True)
     created_at = models.DateTimeField(auto_created=True, default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
+    def __str__(self):
+        return self.code + ' ' + self.floor.floor_number + 'Capacity: '+ self.capacity 
+
     # def room_timetable(self,room):
     #         """Get the room timetable in the runtime"""
     #         timetable = Slot.objects.filter(Room_runtime=room,status=True)
@@ -137,7 +149,8 @@ class Faculty(models.Model):
     description =  models.CharField(max_length=5000, blank=True)
     created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
-
+    def __str__(self):
+        return self.name + ' ' + self.shortname 
 class Department(models.Model):
     """A department under a faculty at UTD."""
     name = models.CharField(max_length=1000, unique=True)
@@ -151,7 +164,8 @@ class Department(models.Model):
     updated_at = models.DateField(auto_now=True)
     class Meta:
         unique_together = ('name', 'shortname')
-        
+    def __str__(self):
+        return self.name + ' ' + self.shortname 
 
 class Program(models.Model):
     """A program under a department at UTD."""
@@ -164,7 +178,8 @@ class Program(models.Model):
     description =  models.CharField(max_length=5000, blank=True)
     created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
-
+    def __str__(self):
+        return self.name + ' ' + self.shortname 
 class CourseSemester(models.Model):
     """Semesters from programs"""
     program = models.ForeignKey(Program, on_delete=models.CASCADE,blank=True)
@@ -176,7 +191,8 @@ class CourseSemester(models.Model):
     updated_at = models.DateField(auto_now=True)
     class Meta:
         unique_together = ('program', 'semester','semester_num')
-
+    def __str__(self):
+        return 'Semester: '+self.semester_num+ ' Program: '+ self.program.shortname + 'Department: ' + self.program.department.shortname
 class Users(User):
     CRED_TYPE = [
         ("SYSADM", "SystemAdmin"),
@@ -193,6 +209,8 @@ class Users(User):
     deleted = models.BooleanField(default=False)
     program = models.ManyToManyField(Program)
     credential = models.CharField(max_length=255,choices=CRED_TYPE, default='OT')
+    def __str__(self):
+        return self.user.email+ '_ '+ self.credential
 #***************Second to run**/**************************#
     
 
@@ -202,6 +220,8 @@ class Lecturer(models.Model):
     user = models.OneToOneField(Users,on_delete=models.SET_NULL,null=True,parent_link=True)# type: ignore
     lecturerid = models.CharField(max_length=20,unique=True,null=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+        return self.user.user.email+ '_ '+ self.lecturerid
     # @property
     # def get_lecture(self):
         # return self.user.first_name+ " "+self.user.last_name #type: ignore
@@ -210,7 +230,8 @@ class Student(models.Model):
     user = models.OneToOneField(Users,on_delete=models.SET_NULL, null=True,parent_link=True)  # type: ignore
     studentId = models.CharField(max_length=255,unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
-
+    def __str__(self):
+        return self.user.user.email+ '_ '+ self.studentId
 class OtherStaff(models.Model):
     """Other Staff (not students or lectures)"""
     user = models.OneToOneField(Users, on_delete=models.SET_NULL, null=True,parent_link=True)
@@ -223,7 +244,8 @@ class ActivityType(models.Model):
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     status = models.BooleanField(default=True)
-
+    def __str__(self):
+        return self.name
 class Course(models.Model):
     """A course offered by the university"""
     code = models.CharField(max_length=30, unique=True)
@@ -234,7 +256,8 @@ class Course(models.Model):
     status = models.BooleanField(default=True)
     user = models.ForeignKey(Users, on_delete = models.SET_NULL, blank=True,null=True)
     created_at = models.DateTimeField(auto_now_add=True)
-
+    def __str__(self):
+        return self.code + ' '+ self.name
 class Coursegroup(models.Model):
     """Groups for each course """
     course = models.ForeignKey(Course, on_delete=models.CASCADE,related_name='groups')
@@ -255,14 +278,14 @@ class Coursegroup(models.Model):
     is_elective = models.BooleanField(default=False)
     description = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
-
+    def __str__(self):
+        return self.course.code + ' Group: '+ self.group_number+' by: '+self.lecturer.user.email
 
 class StudentGroup(models.Model):
     student = models.ManyToManyField(Student, )
     coursegroup = models.ManyToManyField(Coursegroup, related_name='studentgroups')
     timespan = models.DateTimeField(auto_now_add=True)
     status = models.BooleanField()
-
 class Day(models.Model):
     """Day of week (0-6 is Monday - Sunday) or full date as int"""
     data = models.IntegerField(null=False)

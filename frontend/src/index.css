@@ -113,3 +113,11 @@ code {
   margin-top: 15px;
   background-color: transparent;
 }
+.sys-news{
+  margin: 50px;
+  max-width: 1000px;
+}
+
+.news-2{
+  max-width: 600px;
+}

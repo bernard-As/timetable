@@ -1,7 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import CompleteSchedule from './Complete';
 import HolisticScheduleD from './HolisticScheduleD';
-import CreateSchedule from './CreateSchedule';
 
 const HolisticSchedule:React.FC =()=>{
     return(

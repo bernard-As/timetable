@@ -1,0 +1,74 @@
+import { Menu, Space } from "antd";
+import { Header } from "antd/es/layout/layout";
+import { observer } from "mobx-react";
+import React, { useEffect, useState } from "react";
+import { RiHome2Line } from "react-icons/ri";
+import rootStore from "../../mobx";
+
+const LandHeader = observer(()=>{
+    const [isLogin,setisLogin] = useState(false)
+    useEffect(()=>{
+       setisLogin( rootStore.checkTokenValidity2())
+    },[])
+    const menuItems = [
+        {
+          key: 1,
+          icon: isLogin?React.createElement(RiHome2Line):'Login',
+          label: isLogin?"Home":'Login',
+        },
+        // {
+        //   key: 2,
+        //   icon: React.createElement(IoNotificationsOutline),
+        //   label: "Notification",
+        //   style: rootStore.mainStore.darkMode?{color:'white'}:{color:'black'}
+        // },
+        // {
+        //   key: 3,
+        //   icon: React.createElement(BiMessageRounded),
+        //   label: "Message",
+        //   style: rootStore.mainStore.darkMode?{color:'white'}:{color:'black'}
+        // },
+        // {
+        //   key: 4,
+        //   icon: React.createElement(TbMessageChatbot),
+        //   label: "Ai Chatbot",
+        //   style: rootStore.mainStore.darkMode?{color:'white'}:{color:'black'}
+        // },
+      ];
+    return (
+        <Header>
+            <Space
+                direction="horizontal"
+            >
+                <Header
+            style={{display:'flex'}}
+            className="head-menu-container"
+        >
+            <div
+                className='logo'
+            >
+                <img src="./rdu_logo.png" alt="Rauf Denktaş Üniversite" />
+            </div>
+            <Menu
+                mode="horizontal"
+                style={{flex:1,minWidth:0}}
+                className="head-menu"
+            >
+              {menuItems.map((menuItem) => (
+                <Menu.Item
+                key={menuItem.key}
+                icon={<span style={{fontSize:20}}>
+                        {menuItem.icon}
+                      </span> }
+                style={menuItem.style}
+                >
+                  {!rootStore.mainStore.sideMenuCollapse&&<span>{menuItem.label}</span>}
+                </Menu.Item>
+              ))}
+            </Menu>
+        </Header>
+            </Space>
+        </Header>
+    )
+})
+export default LandHeader;

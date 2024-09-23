@@ -7,6 +7,28 @@ import { MdDeleteForever } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { IoStar,IoStarOutline } from "react-icons/io5";
 import { FaGripLines } from "react-icons/fa6";
+import { PrivateDefaultApi } from "../utils/AxiosInstance";
+import rootStore from ".";
+import { useEffect, useState } from "react";
+const LecturerDisplay = ({ id, getAdditional }) => {
+    const [lecturer, setLecturer] = useState(undefined);
+  
+    useEffect(() => {
+      const fetchLecturer = async () => {
+        const lect = await getAdditional('lecturer', id);  // Await the result
+        if (lect) {
+          setLecturer(lect);  // Set the lecturer state when data is retrieved
+        }
+      };
+      fetchLecturer();  // Call the async function
+    }, [id, getAdditional]);  // Run the effect when id or getAdditional changes
+  
+    return (
+      <span>
+        {lecturer ? lecturer.email : 'Loading...'}
+      </span>
+    );
+  };
 class HolosticScheduleContentStore{
     delete = {
         targetModel: null,
@@ -1031,11 +1053,25 @@ class HolosticScheduleContentStore{
                     
                 },
                 {
-                    title:'Title',
-                    dataIndex:'title',
-                    key:'title',
+                    title:'Name',
+                    dataIndex:'name',
+                    key:'name',
                     
                 },
+                {
+                    title:'Group Number',
+                    dataIndex:'group_number',
+                    key:'group_number',
+                    
+                },
+                {
+                    title: 'Lecturer',
+                    dataIndex: 'lecturer',
+                    key: 'lecturer',
+                    render: (id) => {
+                      return <LecturerDisplay id={id} getAdditional={this.getAdditional} />;
+                    }
+                  },
                 {
                     title:'status',
                     dataIndex:'status',
@@ -1247,6 +1283,21 @@ class HolosticScheduleContentStore{
     }
     addadditionallyFetchedData(data){
         this.additionallyFetchedData.push(data);
+    }
+    async getAdditional(targetModel, id) {
+        let url = `${targetModel}/`;
+        if (id) {
+            url = `${url}${id}/`;
+        }
+    
+        return PrivateDefaultApi.get(url)  // Return the promise
+            .then((res) => {
+                return res.data;  // Return the data from the response
+            })
+            .catch((error) => {
+                console.error(error);
+                return null;  // Return null or handle the error appropriately
+            });
     }
 }
 

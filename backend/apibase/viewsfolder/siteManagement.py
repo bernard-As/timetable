@@ -600,6 +600,8 @@ class CourseViewSet(viewsets.ModelViewSet):
             except:
                 print()
             try:
+                for m in groupInt['merged_with']:
+                    cm = Coursegroup.objects.get(pk=m).merged_with.add(course_group.pk)
                 course_group.merged_with.set([Coursegroup.objects.get(id=c) for c in  groupInt.pop('merged_with')])
             except:
                 print()

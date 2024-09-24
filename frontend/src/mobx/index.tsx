@@ -49,7 +49,7 @@ class RootStore {
   }
 
   isManager(){
-    if(this.credential===('SYSADM'||'PADM')){
+    if(this.credential==='PADM' || this.credential==='SYSADM'){
       return true
     }
     return false

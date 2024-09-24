@@ -59,17 +59,18 @@ const LoginForm: React.FC = () => {
           }, 500);
         } else {
           rootStore.notification.notify({
-            title: 'Could not login',
-            text: 'Please try again',
+            title: 'Could not login. Failed to connect to server',
+            text: 'Please try again. Failed to connect to server',
             type: 'error',
             timeout: 2500,
           });
         }
       })
       .catch((err) => {
+        console.error(err)
         rootStore.notification.notify({
           title: 'Could not login',
-          text: 'Please try again',
+          text: 'Could not login',
           type: 'error',
           timeout: 2500,
         });
@@ -78,8 +79,8 @@ const LoginForm: React.FC = () => {
 
   const onFinishFailed: FormProps<FieldType>['onFinishFailed'] = () => {
     rootStore.notification.notify({
-      title: 'Could not login',
-      text: 'Please try again',
+      title: 'Please check the fields again',
+      text: 'Please check the fields again',
       type: 'error',
       timeout: 2500,
     });

@@ -96,7 +96,7 @@ class Floor(models.Model):
         unique_together = ('building', 'floor_number')
 
     def __str__(self):
-        return "Floor: " + self.floor_number+ " - "+self.building.code
+        return "Floor: " + str(self.floor_number)+ " - "+self.building.code
 class RoomFeatures(models.Model):
     """Room Features"""   
     name = models.CharField(max_length=500)
@@ -133,7 +133,7 @@ class Room(models.Model):
     created_at = models.DateTimeField(auto_created=True, default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
     def __str__(self):
-        return self.code + ' ' + self.floor.floor_number + 'Capacity: '+ self.capacity 
+        return self.code + ' ' + str(self.floor.floor_number) + 'Capacity: '+ str(self.capacity) 
 
     # def room_timetable(self,room):
     #         """Get the room timetable in the runtime"""
@@ -192,7 +192,7 @@ class CourseSemester(models.Model):
     class Meta:
         unique_together = ('program', 'semester','semester_num')
     def __str__(self):
-        return 'Semester: '+self.semester_num+ ' Program: '+ self.program.shortname + 'Department: ' + self.program.department.shortname
+        return 'Semester: '+str(self.semester_num)+ ' Program: '+ self.program.shortname + 'Department: ' + self.program.department.shortname
 class Users(User):
     CRED_TYPE = [
         ("SYSADM", "SystemAdmin"),
@@ -217,11 +217,11 @@ class Users(User):
 class Lecturer(models.Model):
     """Lecturers under faculties"""
     # user = models.OneToOneField(User, on_delete=models.CASCADE, parent_link=True)
-    user = models.OneToOneField(Users,on_delete=models.SET_NULL,null=True,parent_link=True)# type: ignore
+    user = models.OneToOneField(Users,on_delete=models.CASCADE)# type: ignore
     lecturerid = models.CharField(max_length=20,unique=True,null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     def __str__(self):
-        return self.user.user.email+ '_ '+ self.lecturerid
+        return self.user.user.email+ '_ '+ str(self.lecturerid)
     # @property
     # def get_lecture(self):
         # return self.user.first_name+ " "+self.user.last_name #type: ignore
@@ -279,7 +279,7 @@ class Coursegroup(models.Model):
     description = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     def __str__(self):
-        return self.course.code + ' Group: '+ self.group_number+' by: '+self.lecturer.user.email
+        return self.course.code + ' Group: '+ str(self.group_number)+' by: '+self.lecturer.user.email
 
 class StudentGroup(models.Model):
     student = models.ManyToManyField(Student, )

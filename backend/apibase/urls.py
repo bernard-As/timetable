@@ -4,6 +4,7 @@ from apibase.viewsfolder.storeRenew import StoreRenew
 from rest_framework.routers import DefaultRouter
 
 from apibase.viewsfolder.auths import VerifyToken
+from apibase.viewsfolder.mainApi import *
 from .viewsfolder import siteManagement
 from rest_framework.authtoken.views import ObtainAuthToken
 
@@ -46,7 +47,8 @@ urlpatterns = [
     path('GP/',siteManagement.UserGroupPermission.getGP, name='User Groups and permissions user based'),
     path('AllGP/',siteManagement.UserGroupPermission.get_groups_and_permissions, name='All User Group'),
     path('student_list/',siteManagement.StudentViewSet.get_short_list, name='Student select list'),
-    path('assistant/',siteManagement.AssistantView.as_view(), name='Assistant View')
+    path('assistant/',siteManagement.AssistantView.as_view(), name='Assistant View'),
+    path('view_schedule/',ViewSchedule.as_view(), name='Schedule view View')
     # path('start/',start_main,name='main')
 ]
 

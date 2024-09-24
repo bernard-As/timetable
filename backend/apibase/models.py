@@ -351,6 +351,10 @@ class Schedule(models.Model):
     end = models.TimeField()
     day = models.SmallIntegerField(blank=True,null=True)
     date = models.DateField(blank=True, null=True)
+    status = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
     class Meta:
         constraints = [
             models.UniqueConstraint(

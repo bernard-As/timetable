@@ -8,8 +8,8 @@ import SearchResult from "./Content/SearchResult";
 import Add from "./Content/Add";
 import Details from "./Content/Details";
 import Edit from "./Content/Edit";
+import Schedule from "./Content/Schedule";
 
- 
 const HContent:React.FC<{stopLoadingf:any,toDisplay:any,setToDisplay:any,searchData:any}> =observer(({stopLoadingf,toDisplay,setToDisplay,searchData})=>{
     const navigate = useNavigate()
     const location = useLocation();
@@ -17,7 +17,7 @@ const HContent:React.FC<{stopLoadingf:any,toDisplay:any,setToDisplay:any,searchD
     const modelContent = rootStore.holosticScheduleContentStore.content.find(c=>c.name===model)
     rootStore.holosticScheduleContentStore.currentModel = modelContent
     const [results, setResults] = useState([])
-    const [result, setResult]  = useState({})
+    const [idInHold, setidInHold]  = useState({})
     const [nothingToDisplay,setNothingToDisplay] = useState(true);
 
     useEffect(()=>{
@@ -42,13 +42,16 @@ const HContent:React.FC<{stopLoadingf:any,toDisplay:any,setToDisplay:any,searchD
     useEffect(()=>{
 
         const handleSearch = async()=>{
-            if(searchData.length>0){
+            console.log('Hello')
+            if(searchData?.length>0){
                 let apiUrl = modelContent?.apiUrl
                 if(apiUrl==='course')apiUrl='coursegroup'
-                const response = await PrivateApi.post(`${apiUrl}/search`,searchData);
-                setResult(response.data);
+                const response = await PrivateDefaultApi.get(`${apiUrl}/?search=${searchData}`);
+                setResults(response.data);
+                setToDisplay('search');
             }
         }
+        handleSearch()
     },[searchData])
 
     useEffect(()=>{
@@ -57,7 +60,7 @@ const HContent:React.FC<{stopLoadingf:any,toDisplay:any,setToDisplay:any,searchD
             rootStore.holosticScheduleContentStore.viewDetail.targetModel=null
         }
 
-    },[rootStore.holosticScheduleContentStore.viewDetail.targetModel])
+    },[rootStore.holosticScheduleContentStore.viewDetail.recordToView])
 
     useEffect(()=>{
         if(rootStore.holosticScheduleContentStore.edit.targetModel===modelContent?.name){
@@ -65,8 +68,17 @@ const HContent:React.FC<{stopLoadingf:any,toDisplay:any,setToDisplay:any,searchD
             rootStore.holosticScheduleContentStore.edit.targetModel=null
         }
 
-    },[rootStore.holosticScheduleContentStore.edit.targetModel])
+    },[rootStore.holosticScheduleContentStore.edit.recordToEdit])
 
+    useEffect(()=>{
+        const id = rootStore.holosticScheduleContentStore.schedule.recordToSchedule;
+        if(id!==null && id!==undefined && id!==''){
+            setToDisplay('schedule');
+            setidInHold(id);
+            rootStore.holosticScheduleContentStore.schedule.recordToSchedule=null
+            rootStore.holosticScheduleContentStore.schedule.targetModel=null
+        }
+    },[rootStore.holosticScheduleContentStore.schedule.recordToSchedule])
     const getModelContent = async(target=null)=>{
         if(target){
             let apiUrl = modelContent?.apiUrl
@@ -93,6 +105,8 @@ const HContent:React.FC<{stopLoadingf:any,toDisplay:any,setToDisplay:any,searchD
 
         }
     },[navigate])
+
+
     return(
         <Content
             className="H-content"
@@ -118,12 +132,16 @@ const HContent:React.FC<{stopLoadingf:any,toDisplay:any,setToDisplay:any,searchD
                     <Add model={modelContent}/>
                 }
                 {
-                    toDisplay==='detail'&&rootStore.enableManagement&&rootStore.isManager()&&
+                    toDisplay==='detail'&&rootStore.enableManagement&&
                     <Details/>
                 }
                 {
                     toDisplay==='edit'&&rootStore.enableManagement&&rootStore.isManager()&&
                     <Edit/>
+                }
+                {
+                    toDisplay==='schedule'&&rootStore.enableManagement&&
+                    <Schedule id={idInHold} model={modelContent}/>
                 }
             </div>
             }

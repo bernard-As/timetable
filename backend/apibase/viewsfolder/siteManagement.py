@@ -206,13 +206,12 @@ class CourseSemesterViewSet(viewsets.ModelViewSet):
         'program__shortname',
         'program__color',
         'program__description',
-        'faculty__name',
-        'faculty__shortname',
-        'faculty__color',
-        'department__name',
-        'department__shortname',
-        'department__color'
-        # 'faculty__shortname',
+        'program__department__faculty__name',
+        'program__department__faculty__shortname',
+        'program__department__faculty__color',
+        'program__department__name',
+        'program__department__shortname',
+        'program__department__color'
     ]
 
 
@@ -262,7 +261,8 @@ class LecturerViewSet(viewsets.ModelViewSet):
         'user__first_name',
         'user__last_name',
         'user__email',
-        'user__title',
+        'user__title__name',
+        'user__title__shortname',
     ]
 
     def create(self, request, *args, **kwargs):
@@ -719,6 +719,7 @@ class CourseGroupViewSet(viewsets.ModelViewSet):
         'course__created_at',
         'lecturer__user__first_name',
         'lecturer__user__last_name',
+        'lecturer__user__email',
         'assistant__user__first_name',
         'assistant__user__last_name',
         'lecturer_assistant__user__first_name',

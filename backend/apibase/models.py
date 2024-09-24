@@ -263,7 +263,7 @@ class Coursegroup(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE,related_name='groups')
     extra_session_of = models.ManyToManyField('self',blank=True)# when there are some extra session that should be linked to the main session
     group_number = models.PositiveSmallIntegerField(default=1)
-    lecturer = models.ForeignKey(Lecturer,on_delete=models.SET_NULL,null=True)
+    lecturer = models.ForeignKey(Lecturer,on_delete=models.SET_NULL,null=True,related_name='course_lecturer')
     assistant = models.ForeignKey(Student,blank=True,on_delete=models.SET_NULL,null=True)
     lecturer_assistant = models.ForeignKey(Lecturer,blank=True,related_name="Lecturer_Assisting",on_delete=models.SET_NULL,null=True)
     merged_with = models.ManyToManyField('self',blank=True) # foreign key of the main course where it is merged

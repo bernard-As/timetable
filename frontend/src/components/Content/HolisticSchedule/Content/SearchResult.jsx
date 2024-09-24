@@ -6,7 +6,7 @@ import { PrivateDefaultApi } from "../../../../utils/AxiosInstance";
 
 const SearchResult = observer(({results,model})=>{
     const [data,setData] = useState([]);
-    useEffect(()=>{setData(results)},[results])
+    useEffect(()=>{console.log(results);setData(results)},[results])
     useEffect(()=>{
         const singleDelete = async(id)=>{
             let apiUrl = model.apiUrl
@@ -58,7 +58,6 @@ const SearchResult = observer(({results,model})=>{
             <Table 
                 dataSource={data} 
                 columns={model.columns}
-                pagination={{pageSize:7}}
                 rowSelection={rowSelection}
             />
             :

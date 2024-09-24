@@ -45,6 +45,10 @@ class HolosticScheduleContentStore{
         targetModel: null,
         recordToEdit: null
     }
+    schedule = {
+        targetModel: null,
+        recordToSchedule: null
+    }
     selectedRows = {
         targetModel: null,
         selectedRows:[]
@@ -1101,7 +1105,11 @@ class HolosticScheduleContentStore{
                             />
                         </Tooltip>
                         <Tooltip title={'Schedule'}>
-                            <GrFormSchedule size={27}/>
+                            <GrFormSchedule size={27}
+                                onClick={()=>{
+                                    this.prepareToSchedule(record.id)
+                                }}
+                            />
                         </Tooltip>
                         {/* <Tooltip title={'Bookmark'}>
                             <IoStarOutline size={25}/>
@@ -1298,6 +1306,10 @@ class HolosticScheduleContentStore{
                 console.error(error);
                 return null;  // Return null or handle the error appropriately
             });
+    }
+    prepareToSchedule(id){
+        this.schedule.targetModel = this.currentModel.name !== 'course'?this.currentModel.name :'coursegroup'
+        this.schedule.recordToSchedule = id
     }
 }
 

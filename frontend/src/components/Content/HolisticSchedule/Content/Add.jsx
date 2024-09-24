@@ -13,7 +13,7 @@ const Add  = observer(({model})=>{
   const [selectedProgram,setselectedProgram] = useState([])
   const [selectedBuilding,setselectedBuilding] = useState([])
   const [selectFloor,setselectFloor] = useState([])
-  const [typeSelected, setTypeSElected] = useState()
+  const [typeSelected, setTypeSElected] = useState('Weekly')
   const [data,setData] = useState([])
   const [dataRoom,setDataRoom] = useState([])
 

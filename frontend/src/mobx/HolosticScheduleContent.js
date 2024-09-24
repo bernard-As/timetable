@@ -206,7 +206,11 @@ class HolosticScheduleContentStore{
                             />
                         </Tooltip>
                         <Tooltip title={'Schedule'}>
-                            <GrFormSchedule size={27}/>
+                            <GrFormSchedule size={27}
+                                onClick={()=>{
+                                    this.prepareToSchedule(record.id)
+                                }}
+                            />
                         </Tooltip>
                         {/* <Tooltip title={'Bookmark'}>
                             <IoStarOutline size={25}/>
@@ -304,7 +308,11 @@ class HolosticScheduleContentStore{
                             />
                         </Tooltip>
                         <Tooltip title={'Schedule'}>
-                            <GrFormSchedule size={27}/>
+                            <GrFormSchedule size={27}
+                                onClick={()=>{
+                                    this.prepareToSchedule(record.id)
+                                }}
+                            />
                         </Tooltip>
                         {/* <Tooltip title={'Bookmark'}>
                             <IoStarOutline size={25}/>
@@ -418,7 +426,11 @@ class HolosticScheduleContentStore{
                             />
                         </Tooltip>
                         <Tooltip title={'Schedule'}>
-                            <GrFormSchedule size={27}/>
+                            <GrFormSchedule size={27}
+                                onClick={()=>{
+                                    this.prepareToSchedule(record.id)
+                                }}
+                            />
                         </Tooltip>
                         {/* <Tooltip title={'Bookmark'}>
                             <IoStarOutline size={25}/>
@@ -524,7 +536,11 @@ class HolosticScheduleContentStore{
                             />
                         </Tooltip>
                         <Tooltip title={'Schedule'}>
-                            <GrFormSchedule size={27}/>
+                            <GrFormSchedule size={27}
+                                onClick={()=>{
+                                    this.prepareToSchedule(record.id)
+                                }}
+                            />
                         </Tooltip>
                         {/* <Tooltip title={'Bookmark'}>
                             <IoStarOutline size={25}/>
@@ -629,7 +645,11 @@ class HolosticScheduleContentStore{
                             />
                         </Tooltip>
                         <Tooltip title={'Schedule'}>
-                            <GrFormSchedule size={27}/>
+                            <GrFormSchedule size={27}
+                                onClick={()=>{
+                                    this.prepareToSchedule(record.id)
+                                }}
+                            />
                         </Tooltip>
                         {/* <Tooltip title={'Bookmark'}>
                             <IoStarOutline size={25}/>
@@ -736,7 +756,11 @@ class HolosticScheduleContentStore{
                             />
                         </Tooltip>
                         <Tooltip title={'Schedule'}>
-                            <GrFormSchedule size={27}/>
+                            <GrFormSchedule size={27}
+                                onClick={()=>{
+                                    this.prepareToSchedule(record.id)
+                                }}
+                            />
                         </Tooltip>
                         {/* <Tooltip title={'Bookmark'}>
                             <IoStarOutline size={25}/>
@@ -843,7 +867,11 @@ class HolosticScheduleContentStore{
                             />
                         </Tooltip>
                         <Tooltip title={'Schedule'}>
-                            <GrFormSchedule size={27}/>
+                            <GrFormSchedule size={27}
+                                onClick={()=>{
+                                    this.prepareToSchedule(record.id)
+                                }}
+                            />
                         </Tooltip>
                         {/* <Tooltip title={'Bookmark'}>
                             <IoStarOutline size={25}/>
@@ -962,7 +990,11 @@ class HolosticScheduleContentStore{
                             />
                         </Tooltip>
                         <Tooltip title={'Schedule'}>
-                            <GrFormSchedule size={27}/>
+                            <GrFormSchedule size={27}
+                                onClick={()=>{
+                                    this.prepareToSchedule(record.id)
+                                }}
+                            />
                         </Tooltip>
                         {/* <Tooltip title={'Bookmark'}>
                             <IoStarOutline size={25}/>
@@ -1217,7 +1249,11 @@ class HolosticScheduleContentStore{
                             />
                         </Tooltip>
                         <Tooltip title={'Schedule'}>
-                            <GrFormSchedule size={27}/>
+                            <GrFormSchedule size={27}
+                                onClick={()=>{
+                                    this.prepareToSchedule(record.id)
+                                }}
+                            />
                         </Tooltip>
                         {/* <Tooltip title={'Bookmark'}>
                             <IoStarOutline size={25}/>
@@ -1273,6 +1309,7 @@ class HolosticScheduleContentStore{
         { id: 4, name: 'Thursday' },
         { id: 5, name: 'Friday' },
         { id: 6, name: 'Saturday' },
+        // { id: 7, name: 'Sunday' },
     ]
     constructor() {
         makeAutoObservable(this);

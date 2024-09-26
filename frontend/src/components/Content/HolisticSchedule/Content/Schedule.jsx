@@ -5,6 +5,13 @@ import { observer } from "mobx-react";
 import { Table } from "antd";
 import { ScheduleCell } from "./AdditionalRendering";
 import dayjs from "dayjs";
+import isBetween from 'dayjs/plugin/isBetween';
+import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
+import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
+
+dayjs.extend(isBetween);
+dayjs.extend(isSameOrAfter);
+dayjs.extend(isSameOrBefore);
 
 const Schedule = observer(({id,model})=>{
     const [timeInterval, setTimeInterval] = useState(60); // Default 1 hour interval
@@ -70,47 +77,62 @@ const Schedule = observer(({id,model})=>{
     },[id,model.name,timeInterval])
     
     useEffect(()=>{
-        const compareTimeSlots = (timeSlot, courseStart, courseEnd)=>{
-            const start = dayjs(courseStart, "HH:mm:ss").format("HH:mm");
-            const end = dayjs(courseEnd, "HH:mm:ss").format("HH:mm");
-            if(start<=timeSlot.start&&end>timeSlot.start)
-                return true;
-            // else if (timeSlot.start)
-            // if(timeSlot===`${start - end}`)
-            //     return true;
-            return true;
-        }
+        const compareTimeSlots = (timeSlot, courseStart, courseEnd) => {
+            const slotStartTime = dayjs(timeSlot.start, 'HH:mm');
+            const slotEndTime = dayjs(timeSlot.end, 'HH:mm'); // corrected to timeSlot.end
+            const dataStartTime = dayjs(courseStart, 'HH:mm:ss');
+            const dataEndTime = dayjs(courseEnd, 'HH:mm:ss');
+          
+            // Check if the slot is exactly the same as the course time
+            if (slotStartTime.isSame(dataStartTime) && slotEndTime.isSame(dataEndTime)) {
+              return true;
+            }
+          
+            // Check if the slot overlaps or fits within the course time
+            const overlaps =
+              (slotStartTime.isBetween(dataStartTime, dataEndTime, null, '[)') || 
+               slotStartTime.isSameOrAfter(dataStartTime)) &&
+              (slotEndTime.isBetween(dataStartTime, dataEndTime, null, '(]') || 
+               slotEndTime.isSameOrBefore(dataEndTime));
+            // overlaps&&console.log(overlaps)
+            return overlaps;
+          };
+          
         const convertDateToDayOfWeekId = (date) => {
 
             const dayOfWeek = dayjs(date).format('dddd');
             return rootStore.holosticScheduleContentStore.daysIndex.find(d=>d.name===dayOfWeek)?.id
-            return dayOfWeek;
           
           };
-        
+        const getDayData = (timeSlot,day,data)=>{
+            let isDay = false
+            if(data.day!==(null||undefined)&&day===data.day)
+                isDay = true
+            else if(data.date!==(null||undefined)&&day===convertDateToDayOfWeekId(data.date))
+                isDay = true
+            if(!isDay)
+                return false
+            else if(compareTimeSlots(timeSlot,data.start,data.end))
+                return true
+            return false
+        }
         const convertToData= ()=>{
             let newSh = [];
-            console.log(data.filter(d=>convertDateToDayOfWeekId(d.date)===1))
             timeSlots.map(timeSlot=>{
-            console.log(data.filter(d=>convertDateToDayOfWeekId(d.date)===1))
-                     
-
-                //Monday
                 const sc = {
                     timeslot:`${timeSlot.start} - ${timeSlot.end}`,
-                    Monday:data?.filter(d=>(d.day===1||convertDateToDayOfWeekId(d.date)===1)&&compareTimeSlots(timeSlot,d.start,d.end)),
-                    Tuesday:data?.filter(d=>(d.day===2||convertDateToDayOfWeekId(d.date)===2)&&compareTimeSlots(timeSlot,d.start,d.end)),
-                    Wednesday:data?.filter(d=>(d.day===3||convertDateToDayOfWeekId(d.date)===3)&&compareTimeSlots(timeSlot,d.start,d.end)),
-                    Thursday:data?.filter(d=>(d.day===4||convertDateToDayOfWeekId(d.date)===4)&&compareTimeSlots(timeSlot,d.start,d.end)),
-                    Friday:data?.filter(d=>(d.day===5||convertDateToDayOfWeekId(d.date)===5)&&compareTimeSlots(timeSlot,d.start,d.end)),
-                    Saturday:data?.filter(d=>(d.day===6||convertDateToDayOfWeekId(d.date)===6)&&compareTimeSlots(timeSlot,d.start,d.end)),
+                    Monday:data?.filter(d=>(getDayData(timeSlot,1,d))),
+                    Tuesday:data?.filter(d=>(getDayData(timeSlot,2,d))),
+                    Wednesday:data?.filter(d=>(getDayData(timeSlot,3,d))),
+                    Thursday:data?.filter(d=>(getDayData(timeSlot,4,d))),
+                    Friday:data?.filter(d=>(getDayData(timeSlot,5,d))),
+                    Saturday:data?.filter(d=>(getDayData(timeSlot,6,d))),
                 }
                 newSh = [...newSh.filter(n=>n.timeslot!==sc.timeslot),sc]
-                // newSh.push(sc)
             })
             setTableData(newSh)
         }
-        convertToData()
+        data.length>0&&convertToData()
     },[timeSlots,data])
     return (<>
        {timeSlots.length>0&&data.length>0&& <Table 

@@ -1,28 +1,56 @@
-import { Modal, Spin } from "antd"
+import { Divider, Modal, Spin, Tooltip } from "antd"
 import { useEffect, useState } from "react"
 import Add from "./Add"
 import rootStore from "../../../../mobx"
+import { FiPlus } from "react-icons/fi";
+import { PrivateDefaultApi } from "../../../../utils/AxiosInstance";
 
 export const ScheduleCell = ({record})=>{
     const [loaded,setLoaded] = useState(false)
     const [showSetScheduleModal,setshowSetScheduleModal]  =useState(false)
+    const [isRecord,setIsRecord] = useState(false)
+    const [showAdd,setshowAdd]  = useState(false)
+
+    
     useEffect(()=>{
         setLoaded(true)
-        console.log(record)
-    },[])
+        if(record.length>0)
+            setIsRecord(true)
+    },[record])
+
     return (
         <>        
         {
             loaded?
             <div
-                onClick={()=>{
-                    setshowSetScheduleModal(true)
+                
+                onMouseOver={()=>{
+                    setshowAdd(true)
                 }}
+                onMouseOut={()=>{
+                    setshowAdd(false)
+
+                }}
+                style={{minHeight:'20px', minWidth:'15px'}}
             >
-                {
-                    record.timeslot
+                {record.map(r=>{
+                    
+                    return (
+                        <CourseDisplayInCell cId={r.coursegroup} rId={r.room} start={r.start} end={r.end}/>
+                    )
+                })
+
                 }
-                ececrcec
+                {!isRecord&&
+                    <span
+                    onClick={()=>{
+                        setshowSetScheduleModal(true)
+                    }}
+                    >
+                        {showAdd&&<FiPlus size={25}/>}
+                    </span>
+
+                }
             </div>:
             '...'
             }
@@ -33,5 +61,37 @@ export const ScheduleCell = ({record})=>{
             </Modal>
         </>
 
+    )
+}
+
+export const CourseDisplayInCell = ({cId,rId,start,end})=>{
+    const [courseData,setcourseData] = useState();
+    const [roomData,setroomData] = useState()
+    useEffect(()=>{
+        const getDeatils = (id)=>{
+            PrivateDefaultApi.get('coursegroup/'+cId+'/').then(res=>{
+                setcourseData(res.data)
+            }).catch(error=>{
+                // console.log(error)
+            })
+            PrivateDefaultApi.get('room/'+rId+'/').then(res=>{
+                setroomData(res.data)
+            }).catch(error=>{
+                // console.log(error)
+            })
+        }
+        getDeatils()
+    },[cId,rId])
+    return (
+        <>{courseData!==undefined&&
+            <Tooltip title={courseData.name}>
+            <span>
+                {courseData.code}
+                <Divider/>
+            </span>
+        </Tooltip>
+        }
+        </>
+        
     )
 }

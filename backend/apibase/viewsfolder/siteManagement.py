@@ -14,6 +14,8 @@ from django.core.serializers import serialize
 from rest_framework.renderers import JSONRenderer, BrowsableAPIRenderer
 from rest_framework import status
 from rest_framework.decorators import api_view, renderer_classes
+import copy
+
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 
@@ -602,9 +604,10 @@ class CourseViewSet(viewsets.ModelViewSet):
             try:
                 for m in groupInt['merged_with']:
                     cm = Coursegroup.objects.get(pk=m).merged_with.add(course_group.pk)
+                    # cm.save()
                 course_group.merged_with.set([Coursegroup.objects.get(id=c) for c in  groupInt.pop('merged_with')])
             except:
-                print()
+                print('fail with the merge')
             try:
                 course_group.activitytype.set([ActivityType.objects.get(id=ac) for ac in groupInt['activitytype']])
             except:
@@ -865,10 +868,29 @@ class ScheduleViewSet(viewsets.ModelViewSet):
         'date',
         'day',
     ]
+
     def perform_create(self, serializer):
         # Attach the current user (from the request) to the schedule
         user = Users.objects.get(user=self.request.user.id)
-        serializer.save(user=user)
+
+        # Get the main coursegroup and the list of merged courses
+        coursegroup = self.request.data['coursegroup']
+        merged_courses = Coursegroup.objects.get(pk=coursegroup).merged_with.all()
+
+        # Save the main coursegroup entry
+        serializer.save(user=user, coursegroup=Coursegroup.objects.get(pk=coursegroup))
+
+        # Loop through merged courses and create entries for each merged coursegroup
+        for mc in merged_courses:
+            # Create a deep copy of request data
+            data_copy = copy.deepcopy(self.request.data)
+
+            # Update the coursegroup in the copied data
+            data_copy['coursegroup'] = mc.id
+
+            # Use the updated data to save the serializer
+            serializer.save(user=user, coursegroup=Coursegroup.objects.get(pk=data_copy['coursegroup']))
+
 
     def perform_update(self, serializer):
         user = Users.objects.get(user=self.request.user.id)

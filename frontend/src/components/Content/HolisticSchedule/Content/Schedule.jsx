@@ -134,8 +134,24 @@ const Schedule = observer(({id,model})=>{
         }
         data.length>0&&convertToData()
     },[timeSlots,data])
+    useEffect(()=>{
+        let newSh = [];
+            timeSlots.map(timeSlot=>{
+                const sc = {
+                    timeslot:`${timeSlot.start} - ${timeSlot.end}`,
+                    Monday:[],
+                    Tuesday:[],
+                    Wednesday:[],
+                    Thursday:[],
+                    Friday:[],
+                    Saturday:[],
+                }
+                newSh = [...newSh.filter(n=>n.timeslot!==sc.timeslot),sc]
+            })
+            setTableData(newSh)
+    },[timeSlots])
     return (<>
-       {timeSlots.length>0&&data.length>0&& <Table 
+       {timeSlots.length>0&& <Table 
             columns={columns} 
             dataSource={tableData}
             rowKey="timeslot"

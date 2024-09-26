@@ -83,10 +83,10 @@ export const CourseDisplayInCell = ({cId,rId,start,end})=>{
         getDeatils()
     },[cId,rId])
     return (
-        <>{courseData!==undefined&&
+        <>{courseData!==undefined&&roomData!==undefined&&
             <Tooltip title={courseData.name}>
             <span>
-                {courseData.code}
+                {`${courseData.name} G${courseData.group_number} ~Room: ${roomData.code}`}
                 <Divider/>
             </span>
         </Tooltip>

@@ -20,7 +20,7 @@ const HeadMenu:React.FC = ()=>{
           label: "Home",
           style: rootStore.mainStore.darkMode?{color:'white'}:{color:'black'},
           onClick:()=>{
-            navigate('')
+            navigate('/')
           }
         },
         // {

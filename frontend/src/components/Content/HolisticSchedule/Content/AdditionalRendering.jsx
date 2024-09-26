@@ -1,4 +1,4 @@
-import { Divider, Modal, Spin, Tooltip } from "antd"
+import { Divider, Modal, Space, Spin, Tooltip } from "antd"
 import { useEffect, useState } from "react"
 import Add from "./Add"
 import rootStore from "../../../../mobx"
@@ -52,7 +52,7 @@ export const CourseGroupDipslay = ({id})=>{
     const [data, setData] = useState();
     const [loading,setLoading] = useState(false)
     useEffect(()=>{
-        PrivateDefaultApi.get('room/'+id+'/').then((res)=>{
+        PrivateDefaultApi.get('coursegroup/'+id+'/').then((res)=>{
             setData(res.data);
             console.log(res.data)
             setLoading(false)
@@ -134,7 +134,11 @@ export const ScheduleCell = ({record})=>{
     )
 }
 
-export const CourseDisplayInCell = ({cId,rId,start,end})=>{
+export const CourseDisplayInCell = ({data})=>{
+    const cId = data.coursegroup;
+    const rId = data.room;
+    const start = data.start;
+    const end = data.end;
     const [courseData,setcourseData] = useState();
     const [roomData,setroomData] = useState()
     useEffect(()=>{
@@ -155,7 +159,10 @@ export const CourseDisplayInCell = ({cId,rId,start,end})=>{
     const TooltipRender = ()=>{
         return(
             <div>
-                
+                <Space>
+
+                    Start: {start} - End {end}
+                </Space>
             </div>
         )
     }

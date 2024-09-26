@@ -60,13 +60,15 @@ const Schedule = observer(({id,model})=>{
         
         const computeSchedule = ()=>{
             getSchedule();
+
             generateTimeSlots('09:00:00','20:00:00',timeInterval);
+
             
             // convertToData();
         }
         computeSchedule();
     },[id,model.name,timeInterval])
-
+    
     useEffect(()=>{
         const compareTimeSlots = (timeSlot, courseStart, courseEnd)=>{
             const start = dayjs(courseStart, "HH:mm:ss").format("HH:mm");
@@ -76,7 +78,7 @@ const Schedule = observer(({id,model})=>{
             // else if (timeSlot.start)
             // if(timeSlot===`${start - end}`)
             //     return true;
-            return false;
+            return true;
         }
         const convertDateToDayOfWeekId = (date) => {
 
@@ -88,8 +90,10 @@ const Schedule = observer(({id,model})=>{
         
         const convertToData= ()=>{
             let newSh = [];
+            console.log(data.filter(d=>convertDateToDayOfWeekId(d.date)===1))
             timeSlots.map(timeSlot=>{
-                    console.log(timeSlots)
+            console.log(data.filter(d=>convertDateToDayOfWeekId(d.date)===1))
+                     
 
                 //Monday
                 const sc = {
@@ -107,16 +111,17 @@ const Schedule = observer(({id,model})=>{
             setTableData(newSh)
         }
         convertToData()
-    },[timeSlots])
-    return (
-        <Table 
+    },[timeSlots,data])
+    return (<>
+       {timeSlots.length>0&&data.length>0&& <Table 
             columns={columns} 
             dataSource={tableData}
             rowKey="timeslot"
             pagination={false}
             scroll={{ x: 1000 }}
             bordered 
-        />
+        />}
+        </>
     )
 })
 export default Schedule;

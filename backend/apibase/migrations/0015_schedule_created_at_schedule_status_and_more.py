@@ -10,6 +10,7 @@ class Migration(migrations.Migration):
         ('apibase', '0014_alter_coursegroup_lecturer'),
     ]
 
+   
     operations = [
         migrations.AddField(
             model_name='schedule',

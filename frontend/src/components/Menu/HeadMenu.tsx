@@ -8,16 +8,20 @@ import { Menu } from "antd";
 import Cookies from "js-cookie";
 import rootStore from "../../mobx";
 import { observer } from "mobx-react";
+import { useNavigate } from "react-router-dom";
 
 const HeadMenu:React.FC = ()=>{
     const { Header } = Layout;
-
+    const navigate = useNavigate()
     const menuItems = [
         {
           key: 1,
           icon: React.createElement(RiHome2Line),
           label: "Home",
-          style: rootStore.mainStore.darkMode?{color:'white'}:{color:'black'}
+          style: rootStore.mainStore.darkMode?{color:'white'}:{color:'black'},
+          onClick:()=>{
+            navigate('')
+          }
         },
         // {
         //   key: 2,

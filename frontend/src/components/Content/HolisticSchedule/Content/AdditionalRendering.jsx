@@ -5,6 +5,75 @@ import rootStore from "../../../../mobx"
 import { FiPlus } from "react-icons/fi";
 import { PrivateDefaultApi } from "../../../../utils/AxiosInstance";
 
+export const LecturerDisplay = ({ id, getAdditional }) => {
+    const [lecturer, setLecturer] = useState(undefined);
+  
+    useEffect(() => {
+      const fetchLecturer = async () => {
+        const lect = await getAdditional('lecturer', id);  // Await the result
+        if (lect) {
+          setLecturer(lect);  // Set the lecturer state when data is retrieved
+        }
+      };
+      fetchLecturer();  // Call the async function
+    }, [id, getAdditional]);  // Run the effect when id or getAdditional changes
+  
+    return (
+      <span>
+        {lecturer ? lecturer.email : 'Loading...'}
+      </span>
+    );
+  };
+
+export const RoomCodeDipslay = ({id})=>{
+    const [roomData, setRoomData] = useState();
+    const [loading,setLoading] = useState(false)
+    useEffect(()=>{
+        PrivateDefaultApi.get('room/'+id+'/').then((res)=>{
+            setRoomData(res.data);
+            setLoading(true)
+        }).catch(error=>{
+            console.log(error);
+        })
+    },[id])
+    return (<>
+        {loading?
+        <Spin spinning={loading} size="large"/>
+        :
+        <span>{roomData!==undefined&&roomData.code}</span>
+
+        }
+    </>
+
+    )
+}
+
+export const CourseGroupDipslay = ({id})=>{
+    const [data, setData] = useState();
+    const [loading,setLoading] = useState(false)
+    useEffect(()=>{
+        PrivateDefaultApi.get('room/'+id+'/').then((res)=>{
+            setData(res.data);
+            setLoading(true)
+        }).catch(error=>{
+            console.log(error);
+        })
+    },[id])
+    return (<>
+        {loading?
+        <Spin spinning={loading} size="large"/>
+        :
+        <span>{data!==undefined&&
+            <span>
+                {data.name} - G{data.group_number}
+            </span>
+        }</span>
+
+        }
+    </>
+
+    )
+}
 export const ScheduleCell = ({record})=>{
     const [loaded,setLoaded] = useState(false)
     const [showSetScheduleModal,setshowSetScheduleModal]  =useState(false)

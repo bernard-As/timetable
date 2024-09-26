@@ -10,25 +10,8 @@ import { FaGripLines } from "react-icons/fa6";
 import { PrivateDefaultApi } from "../utils/AxiosInstance";
 import rootStore from ".";
 import { useEffect, useState } from "react";
-const LecturerDisplay = ({ id, getAdditional }) => {
-    const [lecturer, setLecturer] = useState(undefined);
-  
-    useEffect(() => {
-      const fetchLecturer = async () => {
-        const lect = await getAdditional('lecturer', id);  // Await the result
-        if (lect) {
-          setLecturer(lect);  // Set the lecturer state when data is retrieved
-        }
-      };
-      fetchLecturer();  // Call the async function
-    }, [id, getAdditional]);  // Run the effect when id or getAdditional changes
-  
-    return (
-      <span>
-        {lecturer ? lecturer.email : 'Loading...'}
-      </span>
-    );
-  };
+import { LecturerDisplay, RoomCodeDipslay } from "../components/Content/HolisticSchedule/Content/AdditionalRendering";
+
 class HolosticScheduleContentStore{
     delete = {
         targetModel: null,
@@ -1197,28 +1180,40 @@ class HolosticScheduleContentStore{
             },
             columns:[
                 {
-                    title:'First Name',
-                    dataIndex:'first_name',
-                    key:'first_name',
-                    
-                },
-                {
-                    title:'Last Name',
-                    dataIndex:'last_name',
-                    key:'last_name',
-                    
-                },
-                {
-                    title:'Title',
-                    dataIndex:'title',
-                    key:'title',
-                    
-                },
-                {
-                    title:'Program',
-                    dataIndex:'program',
-                    key:'program',
+                    title:'Course',
+                    dataIndex:'coursegroup',
+                    key:'coursegroup',
  
+                },
+                {
+                    title:'Room',
+                    dataIndex:'room',
+                    key:'room',
+                    render: (_,record)=><RoomCodeDipslay id={record.room}/>
+                },
+                {
+                    title:'Date',
+                    dataIndex:'date',
+                    key:'date',
+                    
+                },
+                {
+                    title:'Day',
+                    dataIndex:'day',
+                    key:'day',
+                    
+                },
+                {
+                    title:'Start',
+                    dataIndex:'start',
+                    key:'start',
+                    
+                },
+                {
+                    title:'End',
+                    dataIndex:'end',
+                    key:'end',
+                    
                 },
                 {
                     title:'status',

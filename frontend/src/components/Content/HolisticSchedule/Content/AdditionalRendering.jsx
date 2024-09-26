@@ -31,7 +31,7 @@ export const RoomCodeDipslay = ({id})=>{
     useEffect(()=>{
         PrivateDefaultApi.get('room/'+id+'/').then((res)=>{
             setRoomData(res.data);
-            setLoading(true)
+            setLoading(false)
         }).catch(error=>{
             console.log(error);
         })
@@ -54,7 +54,8 @@ export const CourseGroupDipslay = ({id})=>{
     useEffect(()=>{
         PrivateDefaultApi.get('room/'+id+'/').then((res)=>{
             setData(res.data);
-            setLoading(true)
+            console.log(res.data)
+            setLoading(false)
         }).catch(error=>{
             console.log(error);
         })
@@ -65,7 +66,7 @@ export const CourseGroupDipslay = ({id})=>{
         :
         <span>{data!==undefined&&
             <span>
-                {data.name} - G{data.group_number}
+                {data.code} - G{data.group_number}
             </span>
         }</span>
 
@@ -151,6 +152,13 @@ export const CourseDisplayInCell = ({cId,rId,start,end})=>{
         }
         getDeatils()
     },[cId,rId])
+    const TooltipRender = ()=>{
+        return(
+            <div>
+                
+            </div>
+        )
+    }
     return (
         <>{courseData!==undefined&&roomData!==undefined&&
             <Tooltip title={courseData.code}>

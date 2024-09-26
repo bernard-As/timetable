@@ -9,8 +9,8 @@ import Cookies from "js-cookie";
 import rootStore from "../../mobx";
 import { observer } from "mobx-react";
 import { useNavigate } from "react-router-dom";
-
-const HeadMenu:React.FC = ()=>{
+import { SiWelcometothejungle } from "react-icons/si";
+const HeadMenu:React.FC = observer(()=>{
     const { Header } = Layout;
     const navigate = useNavigate()
     const menuItems = [
@@ -19,8 +19,17 @@ const HeadMenu:React.FC = ()=>{
           icon: React.createElement(RiHome2Line),
           label: "Home",
           style: rootStore.mainStore.darkMode?{color:'white'}:{color:'black'},
-          onClick:()=>{
+          onclick : ()=>{
             navigate('/')
+          }
+        },
+        {
+          key: 2,
+          icon: React.createElement(SiWelcometothejungle),
+          label: "Welcome",
+          style: rootStore.mainStore.darkMode?{color:'white'}:{color:'black'},
+          onclick : ()=>{
+            navigate('/welcome')
           }
         },
         // {
@@ -65,6 +74,8 @@ const HeadMenu:React.FC = ()=>{
                         {menuItem.icon}
                       </span> }
                 style={menuItem.style}
+                onClick={()=>menuItem.onclick()}
+                
                 >
                   {!rootStore.mainStore.sideMenuCollapse&&<span>{menuItem.label}</span>}
                 </Menu.Item>
@@ -72,6 +83,6 @@ const HeadMenu:React.FC = ()=>{
             </Menu>
         </Header>
     )
-}
+})
 
-export default observer( HeadMenu);
+export default HeadMenu;

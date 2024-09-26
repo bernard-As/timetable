@@ -1,10 +1,12 @@
-import { Divider, Modal, Space, Spin, Tooltip } from "antd"
+import { Divider, Modal, Popconfirm, Space, Spin, Tooltip } from "antd"
 import { useEffect, useState } from "react"
 import Add from "./Add"
 import rootStore from "../../../../mobx"
 import { FiPlus } from "react-icons/fi";
 import { PrivateDefaultApi } from "../../../../utils/AxiosInstance";
-
+import { AiOutlinePlus } from "react-icons/ai";
+import { MdDeleteForever } from "react-icons/md";
+import { MdEdit } from "react-icons/md";
 export const LecturerDisplay = ({ id, getAdditional }) => {
     const [lecturer, setLecturer] = useState(undefined);
   
@@ -106,16 +108,18 @@ export const ScheduleCell = ({record})=>{
                 {record.map(r=>{
                     
                     return (
-                        <CourseDisplayInCell data={r}/>
+                        <CourseDisplayInCell data={r}
+                        setshowSetScheduleModal={setshowSetScheduleModal}
+                        />
                     )
                 })
 
                 }
                 {!isRecord&&
                     <span
-                    onClick={()=>{
-                        setshowSetScheduleModal(true)
-                    }}
+                        onClick={()=>{
+                            setshowSetScheduleModal(true)
+                        }}
                     >
                         {showAdd&&<FiPlus size={25}/>}
                     </span>
@@ -134,7 +138,7 @@ export const ScheduleCell = ({record})=>{
     )
 }
 
-export const CourseDisplayInCell = ({data})=>{
+export const CourseDisplayInCell = ({data,setshowSetScheduleModal})=>{
     const cId = data.coursegroup;
     const rId = data.room;
     const start = data.start;
@@ -157,23 +161,78 @@ export const CourseDisplayInCell = ({data})=>{
         getDeatils()
     },[cId,rId])
     const TooltipRender = ()=>{
+        const deleteConfirm = (e) => {
+            PrivateDefaultApi.delete('schedule/'+data.id+'/').then((res)=>{
+                rootStore.notification.notify({
+                    type:'success',
+                    text:'Course deleted successfully',
+                    title:'Course deleted successfully',
+                    timeout: 3000
+                })
+                rootStore.holosticScheduleContentStore.refreshSchedule = true
+            })
+          };
         return(
             <div>
-                <Space>
-                    {data.day!==(undefined||null)?`${rootStore.holosticScheduleContentStore.daysIndex.find(d=>d.id===data.day)?.name}`:
-                    data.date
+               {courseData!==undefined&& 
+               <div>
+               <Space
+                    direction="horizontal"
+                >
+                    Day: {data.day!==(undefined||null)?`${rootStore.holosticScheduleContentStore.daysIndex.find(d=>d.id===data.day)?.name}`:
+                        data.date
                     }
+                </Space>
+                <Space
+                    direction="horizontal"
+                >
                     Start: {start} - End {end}
                 </Space>
+                <Space
+                    direction="horizontal"
+                >
+                    <div>Name: {courseData.name}</div>
+                </Space><br/>
+                <Space
+                    direction="horizontal"
+                >
+                    <div>Code: {courseData.code}</div>
+                </Space><br/>
+                {rootStore.enableManagement&&rootStore.isManager()&&<Space.Compact
+                    direction="horizontal"
+                    align="end"
+                >
+                    <Popconfirm
+                        title='Are you sure to delete this schedle'
+                        okText="Yes"
+                        cancelText="No"
+                        onConfirm={deleteConfirm}
+                    >
+                        <MdDeleteForever size={23} style={{margin:'7px'}} color="red"/>
+
+                    </Popconfirm>
+                    {/* <MdEdit size={23} style={{margin:'7px'}} color="blue"/> */}
+                    <Tooltip
+                        title="Add a new Schedule"
+                    >
+                        <AiOutlinePlus size={23} style={{margin:'7px'}} color="green"
+                            onClick={()=>{
+                                setshowSetScheduleModal(true)
+                            }}
+                        />
+                    </Tooltip>
+                </Space.Compact>}
+                </div>}
+
             </div>
         )
     }
     return (
         <>{courseData!==undefined&&roomData!==undefined&&
-            <Tooltip title={courseData.code}>
+            <Tooltip title={<TooltipRender/>}>
             <span>
-                {`${courseData.name} G${courseData.group_number} ~Room: ${roomData.code}`}
-                <Divider/>
+                {`${courseData.code} G${courseData.group_number} ~Room: ${roomData.code}`}
+                <Divider style={{padding:0}}/>
             </span>
         </Tooltip>
         }

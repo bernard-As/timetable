@@ -4,17 +4,21 @@ import { observer } from "mobx-react";
 import React, { useEffect, useState } from "react";
 import { RiHome2Line } from "react-icons/ri";
 import rootStore from "../../mobx";
-
+import { useNavigate } from "react-router-dom";
+import { IoLogIn } from "react-icons/io5";
 const LandHeader = observer(()=>{
     const [isLogin,setisLogin] = useState(false)
+    const navigate = useNavigate()
     useEffect(()=>{
        setisLogin( rootStore.checkTokenValidity2())
+       console.log(rootStore.checkTokenValidity2())
     },[])
     const menuItems = [
         {
           key: 1,
-          icon: isLogin?React.createElement(RiHome2Line):'Login',
+          icon: React.createElement(isLogin?RiHome2Line:IoLogIn),
           label: isLogin?"Home":'Login',
+          onclick:()=>navigate(isLogin?'/home':'/login')
         },
         // {
         //   key: 2,
@@ -61,6 +65,7 @@ const LandHeader = observer(()=>{
                         {menuItem.icon}
                       </span> }
                 style={menuItem.style}
+                onClick={()=>menuItem.onclick()}
                 >
                   {!rootStore.mainStore.sideMenuCollapse&&<span>{menuItem.label}</span>}
                 </Menu.Item>

@@ -1309,6 +1309,9 @@ class HolosticScheduleContentStore{
         { id: 6, name: 'Saturday' },
         // { id: 7, name: 'Sunday' },
     ]
+
+    refreshSchedule = true
+
     constructor() {
         makeAutoObservable(this);
     }

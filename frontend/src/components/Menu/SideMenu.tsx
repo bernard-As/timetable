@@ -31,7 +31,10 @@ const SideMenu: React.FC = observer(() => {
       key: 1,
       icon: React.createElement(RiHome2Line),
       label: "Home",
-      style:  (rootStore.enableManagement&&rootStore.isManager())?{color:'white'}:{color:'black'}
+      // style:  (rootStore.enableManagement&&rootStore.isManager())?{color:'white'}:{color:'black'},
+      onClick:()=>{
+        navigate('/')
+      }
     },
     {
       key: 2,

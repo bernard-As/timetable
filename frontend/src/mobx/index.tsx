@@ -32,9 +32,9 @@ class RootStore {
     :window.location.href=  process.env.REACT_APP_BASE_URL + 'login'
   }
 
-  checkTokenValidity2 () {
+  async checkTokenValidity2 () {
     Cookies.get('token') !==null  &&
-    PrivateDefaultApi.post('verify_token').then((res)=>{
+    await PrivateDefaultApi.post('verify_token').then((res)=>{
         if(res.status === 401){
             return false;
         }else{

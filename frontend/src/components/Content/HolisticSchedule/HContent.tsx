@@ -38,7 +38,7 @@ const HContent:React.FC<{stopLoadingf:any,toDisplay:any,setToDisplay:any,searchD
                 console.log(error);
             })
         }
-    },[toDisplay])
+    },[toDisplay,modelContent?.apiUrl])
     useEffect(()=>{
 
         const handleSearch = async()=>{

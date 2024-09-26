@@ -106,7 +106,7 @@ export const ScheduleCell = ({record})=>{
                 {record.map(r=>{
                     
                     return (
-                        <CourseDisplayInCell cId={r.coursegroup} rId={r.room} start={r.start} end={r.end}/>
+                        <CourseDisplayInCell data={r}/>
                     )
                 })
 
@@ -160,7 +160,9 @@ export const CourseDisplayInCell = ({data})=>{
         return(
             <div>
                 <Space>
-
+                    {data.day!==(undefined||null)?`${rootStore.holosticScheduleContentStore.daysIndex.find(d=>d.id===data.day)?.name}`:
+                    data.date
+                    }
                     Start: {start} - End {end}
                 </Space>
             </div>

@@ -84,7 +84,7 @@ export const CourseDisplayInCell = ({cId,rId,start,end})=>{
     },[cId,rId])
     return (
         <>{courseData!==undefined&&roomData!==undefined&&
-            <Tooltip title={courseData.name}>
+            <Tooltip title={courseData.code}>
             <span>
                 {`${courseData.name} G${courseData.group_number} ~Room: ${roomData.code}`}
                 <Divider/>

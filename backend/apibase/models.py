@@ -366,7 +366,7 @@ class Schedule(models.Model):
     def clean(self):
         # Ensure the end time is after the start time
         if self.end <= self.start:
-            return Response
+            # return Response
             raise ValidationError('End time must be after the start time')
 
         # Check if the lecture overlaps with any other lecture in the same room

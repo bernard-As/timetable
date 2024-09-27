@@ -7,6 +7,8 @@ import { PrivateDefaultApi } from "../../../../utils/AxiosInstance";
 import { AiOutlinePlus } from "react-icons/ai";
 import { MdDeleteForever } from "react-icons/md";
 import { MdEdit } from "react-icons/md";
+import { FcInfo } from "react-icons/fc";
+import dayjs from "dayjs";
 export const LecturerDisplay = ({ id, getAdditional }) => {
     const [lecturer, setLecturer] = useState(undefined);
   
@@ -115,7 +117,7 @@ export const ScheduleCell = ({record})=>{
                 })
 
                 }
-                {!isRecord&&
+                {!isRecord&&rootStore.enableManagement&&rootStore.isManager()&&
                     <span
                         onClick={()=>{
                             setshowSetScheduleModal(true)
@@ -182,12 +184,12 @@ export const CourseDisplayInCell = ({data,setshowSetScheduleModal})=>{
                     Day: {data.day!==(undefined||null)?`${rootStore.holosticScheduleContentStore.daysIndex.find(d=>d.id===data.day)?.name}`:
                         data.date
                     }
-                </Space>
+                </Space><br/>
                 <Space
                     direction="horizontal"
                 >
                     Start: {start} - End {end}
-                </Space>
+                </Space><br/>
                 <Space
                     direction="horizontal"
                 >
@@ -229,14 +231,153 @@ export const CourseDisplayInCell = ({data,setshowSetScheduleModal})=>{
     }
     return (
         <>{courseData!==undefined&&roomData!==undefined&&
-            <Tooltip title={<TooltipRender/>}>
+            <Popconfirm
+                title={null}
+                description={<TooltipRender/>}
+                footer={null}
+                icon={<FcInfo size={25}/>}
+                showCancel={false}
+            >
+            <Tooltip title={<span>{courseData.name}<br/>
+                To view more details click
+            </span>}>
             <span>
                 {`${courseData.code} G${courseData.group_number} ~Room: ${roomData.code}`}
                 <Divider style={{padding:0}}/>
             </span>
         </Tooltip>
+        </Popconfirm>
         }
         </>
         
+    )
+}
+export const generateTimeSlots = (start='09:00:00', end='20:00:00', interval) => {
+    const startTime = dayjs(start, "HH:mm:ss");
+    const endTime = dayjs(end, "HH:mm:ss");
+    const slots = [];
+  
+    let currentTime = startTime;
+    while (currentTime.isBefore(endTime)) {
+      const nextTime = currentTime.add(interval, 'minute');
+    //   slots.push(`${currentTime.format("HH:mm")} - ${nextTime.format("HH:mm")}`);
+    slots.push({start:currentTime.format("HH:mm"),end:nextTime.format("HH:mm")})
+      currentTime = nextTime;
+    }
+  
+    return slots
+  };
+
+  export const compareTimeSlots = (timeSlot, courseStart, courseEnd) => {
+    const slotStartTime = dayjs(timeSlot.start, 'HH:mm');
+    const slotEndTime = dayjs(timeSlot.end, 'HH:mm'); // corrected to timeSlot.end
+    const dataStartTime = dayjs(courseStart, 'HH:mm:ss');
+    const dataEndTime = dayjs(courseEnd, 'HH:mm:ss');
+  
+    // Check if the slot is exactly the same as the course time
+    if (slotStartTime.isSame(dataStartTime) && slotEndTime.isSame(dataEndTime)) {
+      return true;
+    }
+  
+    // Check if the slot overlaps or fits within the course time
+    const overlaps =
+      (slotStartTime.isBetween(dataStartTime, dataEndTime, null, '[)') || 
+       slotStartTime.isSameOrAfter(dataStartTime)) &&
+      (slotEndTime.isBetween(dataStartTime, dataEndTime, null, '(]') || 
+       slotEndTime.isSameOrBefore(dataEndTime));
+    // overlaps&&console.log(overlaps)
+    return overlaps;
+  };
+  
+export const convertDateToDayOfWeekId = (date) => {
+
+    const dayOfWeek = dayjs(date).format('dddd');
+    return rootStore.holosticScheduleContentStore.daysIndex.find(d=>d.name===dayOfWeek)?.id
+  
+  };
+export const getDayData = (timeSlot,day,data)=>{
+    let isDay = false
+    if(data.day!==(null||undefined)&&day===data.day)
+        isDay = true
+    else if(data.date!==(null||undefined)&&day===convertDateToDayOfWeekId(data.date))
+        isDay = true
+    if(!isDay)
+        return false
+    else if(compareTimeSlots(timeSlot,data.start,data.end))
+        return true
+    return false
+}
+
+export const RenderTableViewDapartment = ({id})=>{
+    const [data, setData] = useState();
+    const [loading,setLoading] = useState(true)
+    useEffect(()=>{
+        PrivateDefaultApi.get('department/'+id+'/').then((res)=>{
+            setData(res.data);
+        }).catch(error=>{
+            console.log(error);
+        })
+    },[id])
+    useEffect(()=>{
+        setLoading(false)
+    },[data])
+    return (<>
+        {loading?
+        <Spin spinning={loading} size="medium"/>
+        :
+        <span>{data!==undefined&&data.name}</span>
+
+        }
+    </>
+
+    )
+}
+
+export const RenderTableViewFaculty = ({id})=>{
+    const [data, setData] = useState();
+    const [loading,setLoading] = useState(true)
+    useEffect(()=>{
+        PrivateDefaultApi.get('faculty/'+id+'/').then((res)=>{
+            setData(res.data);
+        }).catch(error=>{
+            console.log(error);
+        })
+    },[id])
+    useEffect(()=>{
+        setLoading(false)
+    },[data])
+    return (<>
+        {loading?
+        <Spin spinning={loading} size="medium"/>
+        :
+        <span>{data!==undefined&&data.name}</span>
+
+        }
+    </>
+
+    )
+}
+export const RenderTableViewProgram = ({id})=>{
+    const [data, setData] = useState();
+    const [loading,setLoading] = useState(true)
+    useEffect(()=>{
+        PrivateDefaultApi.get('program/'+id+'/').then((res)=>{
+            setData(res.data);
+        }).catch(error=>{
+            console.log(error);
+        })
+    },[id])
+    useEffect(()=>{
+        setLoading(false)
+    },[data])
+    return (<>
+        {loading?
+        <Spin spinning={loading} size="medium"/>
+        :
+        <span>{data!==undefined&&data.name}</span>
+
+        }
+    </>
+
     )
 }

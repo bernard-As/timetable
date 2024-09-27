@@ -9,7 +9,8 @@ import Add from "./Content/Add";
 import Details from "./Content/Details";
 import Edit from "./Content/Edit";
 import Schedule from "./Content/Schedule";
-
+import { BiSearchAlt } from "react-icons/bi";
+import { Tooltip } from "antd";
 const HContent:React.FC<{stopLoadingf:any,toDisplay:any,setToDisplay:any,searchData:any}> =observer(({stopLoadingf,toDisplay,setToDisplay,searchData})=>{
     const navigate = useNavigate()
     const location = useLocation();
@@ -113,9 +114,13 @@ const HContent:React.FC<{stopLoadingf:any,toDisplay:any,setToDisplay:any,searchD
         >
             {
                 nothingToDisplay&&
-                <div className="no-content">
-                    <p>No content to display</p>
+                <center>
+                  <Tooltip title={'Use the header bar to search of a '+modelContent?.name}>  
+                <div className="no-content" >
+                    <BiSearchAlt  size={170} color="grey"/>
                 </div>
+                </Tooltip>
+                </center>
             }
             {!nothingToDisplay&&
             <div>

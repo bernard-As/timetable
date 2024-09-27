@@ -10,7 +10,7 @@ import { FaGripLines } from "react-icons/fa6";
 import { PrivateDefaultApi } from "../utils/AxiosInstance";
 import rootStore from ".";
 import { useEffect, useState } from "react";
-import { CourseGroupDipslay, LecturerDisplay, RenderTableViewDapartment, RenderTableViewFaculty, RenderTableViewProgram, RoomCodeDipslay } from "../components/Content/HolisticSchedule/Content/AdditionalRendering";
+import { CourseGroupDipslay, LecturerDisplay, RenderTableViewDapartment, RenderTableViewFaculty, RenderTableViewProgram, RenderTableViewSemester, RoomCodeDipslay } from "../components/Content/HolisticSchedule/Content/AdditionalRendering";
 
 class HolosticScheduleContentStore{
     delete = {
@@ -814,6 +814,7 @@ class HolosticScheduleContentStore{
                     title:'Semester',
                     dataIndex:'semester',
                     key:'semester',
+                    render: (_,record)=><RenderTableViewSemester id={record.semester} />
  
                 },
                 {

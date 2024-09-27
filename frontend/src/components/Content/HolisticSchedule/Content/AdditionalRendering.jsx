@@ -381,3 +381,27 @@ export const RenderTableViewProgram = ({id})=>{
 
     )
 }
+export const RenderTableViewSemester = ({id})=>{
+    const [data, setData] = useState();
+    const [loading,setLoading] = useState(true)
+    useEffect(()=>{
+        PrivateDefaultApi.get('semester/'+id+'/').then((res)=>{
+            setData(res.data);
+        }).catch(error=>{
+            console.log(error);
+        })
+    },[id])
+    useEffect(()=>{
+        setLoading(false)
+    },[data])
+    return (<>
+        {loading?
+        <Spin spinning={loading} size="medium"/>
+        :
+    <span>{data!==undefined&&`${data.season} - ${data.year}`}</span>
+
+        }
+    </>
+
+    )
+}

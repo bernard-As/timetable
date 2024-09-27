@@ -21,13 +21,35 @@ class ViewSchedule(APIView):
         toReturn = []
         if model == 'room':
             toReturn = Schedule.objects.filter(room=id)
+
         elif model == 'lecturer':
             lectCourses = Coursegroup.objects.filter(lecturer=id)
             for c in lectCourses:
                 schedules = Schedule.objects.filter(coursegroup=c.id)
                 toReturn.extend(schedules)  # Extend the list with schedules
+        
         elif model == 'course':
             toReturn = Schedule.objects.filter(coursegroup=id)
+
+        elif model == 'my_shedule':
+            user = request.user
+            try:
+                lecturer = Lecturer.objects.filter(user=user.pk)
+                isLecturer = True
+            except:
+                isLecturer = False
+
+            if(isLecturer):
+                lectCourses = Coursegroup.objects.filter(lecturer = user.id)
+                toReturn = Schedule.objects.filter(coursegroup__in=lectCourses)
+        elif model == 'faculty':
+            toReturn = Schedule.objects.filter(coursegroup__course_semester__program__department__faculty=request.data['id'])
+        elif model == 'department':
+            toReturn = Schedule.objects.filter(coursegroup__course_semester__program__department=request.data['id'])
+        elif model == 'program':
+            toReturn = Schedule.objects.filter(coursegroup__course_semester__program=request.data['id'])
+        elif model == 'semester':
+            toReturn = Schedule.objects.filter(coursegroup__course_semester=request.data['id'])
         else:
             return Response({'error': 'Invalid request'}, status=400)
 

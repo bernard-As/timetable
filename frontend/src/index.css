@@ -121,3 +121,7 @@ code {
 .news-2{
   max-width: 600px;
 }
+
+.no-content{
+  margin-top: 10%;
+}

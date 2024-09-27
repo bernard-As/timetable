@@ -40,6 +40,9 @@ const SideMenu: React.FC = observer(() => {
       key: 2,
       icon: React.createElement(GrSchedule),
       label: "My timetable",
+      onClick: ()=>{
+        navigate('/timetable')
+      }
     },
     {
       key: 19,

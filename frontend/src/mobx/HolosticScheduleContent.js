@@ -10,7 +10,7 @@ import { FaGripLines } from "react-icons/fa6";
 import { PrivateDefaultApi } from "../utils/AxiosInstance";
 import rootStore from ".";
 import { useEffect, useState } from "react";
-import { CourseGroupDipslay, LecturerDisplay, RoomCodeDipslay } from "../components/Content/HolisticSchedule/Content/AdditionalRendering";
+import { CourseGroupDipslay, LecturerDisplay, RenderTableViewDapartment, RenderTableViewFaculty, RenderTableViewProgram, RoomCodeDipslay } from "../components/Content/HolisticSchedule/Content/AdditionalRendering";
 
 class HolosticScheduleContentStore{
     delete = {
@@ -597,6 +597,7 @@ class HolosticScheduleContentStore{
                     title:'Faculty',
                     dataIndex:'faculty',
                     key:'faculty',
+                    render: (_,record)=><RenderTableViewFaculty id={record.faculty} />
                     
                 },
                 {
@@ -708,7 +709,7 @@ class HolosticScheduleContentStore{
                     title:'Department',
                     dataIndex:'department',
                     key:'department',
-                    
+                    render: (_,record)=><RenderTableViewDapartment id={record.department} />
                 },
                 {
                     title:'status',
@@ -806,7 +807,8 @@ class HolosticScheduleContentStore{
                     title:'Program',
                     dataIndex:'program',
                     key:'program',
-                    
+                    render: (_,record)=><RenderTableViewProgram id={record.program} />
+
                 },
                 {
                     title:'Semester',
@@ -1311,7 +1313,7 @@ class HolosticScheduleContentStore{
     ]
 
     refreshSchedule = true
-
+    focusSearch = false
     constructor() {
         makeAutoObservable(this);
     }

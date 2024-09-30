@@ -68,9 +68,10 @@ const LoginForm: React.FC = () => {
       })
       .catch((err) => {
         console.error(err)
+        alert(err)
         rootStore.notification.notify({
-          title: 'Could not login',
-          text: 'Could not login',
+          title: 'Could not login. Please check the fields',
+          text: 'Could not login. Please check the fields',
           type: 'error',
           timeout: 2500,
         });

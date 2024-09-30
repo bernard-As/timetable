@@ -1,7 +1,14 @@
+import { SlHome } from "react-icons/sl";
 
 const Main:React.FC = ()=>{
     return (
-        <div>This should display the main content655</div>
+        <>
+            <center
+                style={{marginTop:'20%'}}
+            >
+                <SlHome size={200} color="grey"/>
+            </center>
+        </>
     )
 }
 export default Main;

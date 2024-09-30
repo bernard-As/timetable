@@ -75,7 +75,7 @@ const HHeader:React.FC<{setToDisplay:any,setsearchData:any}> = observer(({setToD
                         </Col>
                     }
                     {   rootStore.holosticScheduleContentStore.header.find(h=>h.name===model)?.list&&
-                        rootStore.enableManagement&&rootStore.isManager()&&
+                        ((rootStore.enableManagement&&rootStore.isManager())||(model==='student'&&rootStore.isAdvisor()))&&
                         <Col span={1}>
                         <Tooltip 
                             title="List"
@@ -87,7 +87,7 @@ const HHeader:React.FC<{setToDisplay:any,setsearchData:any}> = observer(({setToD
                         </Tooltip>
                     </Col>}
                     { rootStore.holosticScheduleContentStore.header.find(h=>h.name===model)?.add&&
-                    rootStore.enableManagement&&rootStore.isManager()&&
+                    ((rootStore.enableManagement&&rootStore.isManager())||(model==='student'&&rootStore.isAdvisor()))&&
                     <Col span={1}>
                         <Tooltip 
                             title="Add"

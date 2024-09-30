@@ -1,9 +1,9 @@
 import Layout from "antd/es/layout/layout";
 import LandHeader from "./header";
-import SystNewsNotification from "./SysNotifications";
 import { Col, Row } from "antd";
 import CoursesModNews from "./CoursesModNews";
-import UpComingLectures from "./UpComingLectures";
+import SysNotificationsPreView from "../SysNotifications/preview";
+import UpComingLecturesPreview from "../upcomingLectures/preview";
 
 const LandingPage = ()=>{
     return (
@@ -15,18 +15,30 @@ const LandingPage = ()=>{
                     style={{backgroundColor:'transparent'}}
                 />
                 <Layout.Content
-                    style={{backgroundColor:'transparent'}}
+                    style={{backgroundColor:'transparent',
+                        padding:'20px'
+                    }}
                 >
-                    <SystNewsNotification/>
                     <Row
-                        justify={'space-evenly'}
-
+                        justify={'center'}
+                        style={{padding:'20px'}}
                     >
                         <Col span={12}>
-                            <CoursesModNews/>
+                            <SysNotificationsPreView/>
+                        
                         </Col>
-                        <Col span={12}>
-                            <UpComingLectures/>
+                    </Row>
+
+                    <Row
+                        justify={'space-evenly'}
+                        style={{padding:'20px'}}
+                        wrap
+                    >
+                        <Col span={12} style={{minWidth:'450px'}}>
+                            {/* <CoursesModNews /> */}
+                        </Col>
+                        <Col span={12} style={{minWidth:'450px'}}>
+                            <UpComingLecturesPreview/>
                         </Col>
                     </Row>
                 </Layout.Content>

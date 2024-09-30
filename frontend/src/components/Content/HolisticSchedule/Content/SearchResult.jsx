@@ -54,7 +54,7 @@ const SearchResult = observer(({results,model})=>{
         {data.length===0&&
             <div>Nothing to display yet</div>
         }
-        {(data.length!==0&&rootStore.enableManagement&&rootStore.isManager())?
+        {(data.length!==0&&((rootStore.enableManagement&&rootStore.isManager())||(model.name==='student'&&rootStore.isAdvisor())))?
             <Table 
                 dataSource={data} 
                 columns={model.columns}

@@ -141,3 +141,8 @@ class ScheduleSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ['user']
 
+class SystemNewsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SystemNews
+        fields = '__all__'
+        

@@ -225,13 +225,16 @@ class Lecturer(models.Model):
     # @property
     # def get_lecture(self):
         # return self.user.first_name+ " "+self.user.last_name #type: ignore
-class Student(models.Model):
-    """Students"""
-    user = models.OneToOneField(Users,on_delete=models.SET_NULL, null=True,parent_link=True)  # type: ignore
-    studentId = models.CharField(max_length=255,unique=True)
+
+class Advisor(models.Model):
+    """Advisors under faculties"""
+    user = models.ForeignKey(Users,on_delete=models.CASCADE, related_name='advisor')
+    program = models.ManyToManyField(Program)
     created_at = models.DateTimeField(auto_now_add=True)
     def __str__(self):
-        return self.user.user.email+ '_ '+ self.studentId
+        return self.user.user.email+ '_ '
+                                                        
+
 class OtherStaff(models.Model):
     """Other Staff (not students or lectures)"""
     user = models.OneToOneField(Users, on_delete=models.SET_NULL, null=True,parent_link=True)
@@ -264,7 +267,7 @@ class Coursegroup(models.Model):
     extra_session_of = models.ManyToManyField('self',blank=True)# when there are some extra session that should be linked to the main session
     group_number = models.PositiveSmallIntegerField(default=1)
     lecturer = models.ForeignKey(Lecturer,on_delete=models.SET_NULL,null=True,related_name='course_lecturer')
-    assistant = models.ForeignKey(Student,blank=True,on_delete=models.SET_NULL,null=True)
+    assistant = models.ForeignKey(Users,blank=True,on_delete=models.SET_NULL,null=True)
     lecturer_assistant = models.ForeignKey(Lecturer,blank=True,related_name="Lecturer_Assisting",on_delete=models.SET_NULL,null=True)
     merged_with = models.ManyToManyField('self',blank=True) # foreign key of the main course where it is merged
     duration = models.TextField(null=True)
@@ -280,7 +283,16 @@ class Coursegroup(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     def __str__(self):
         return self.course.code + ' Group: '+ str(self.group_number)+' by: '+self.lecturer.user.email
-
+class Student(models.Model):
+    """Students"""
+    user = models.OneToOneField(Users,on_delete=models.SET_NULL, null=True,parent_link=True)  # type: ignore
+    studentId = models.CharField(max_length=255,unique=True)
+    advisor = models.ForeignKey(Advisor,on_delete=models.SET_NULL, null=True)
+    coursegroup = models.ManyToManyField(Coursegroup,null=True,blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+        return self.user.user.first_name+ '_ '+ str(self.studentId)
+    
 class StudentGroup(models.Model):
     student = models.ManyToManyField(Student, )
     coursegroup = models.ManyToManyField(Coursegroup, related_name='studentgroups')
@@ -384,6 +396,15 @@ class Schedule(models.Model):
     def save(self, *args, **kwargs):
         self.clean()  # Run validation before saving
         super(Schedule, self).save(*args, **kwargs)
+
+class SystemNews(models.Model):
+    """System news """
+    title = models.CharField(max_length=255)
+    content = models.TextField()
+    created_by = models.ForeignKey(Users, on_delete=models.SET_NULL, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
 class AdminOperations(models.Model):
     class Meta:
         permissions = [

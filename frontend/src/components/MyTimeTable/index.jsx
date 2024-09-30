@@ -27,10 +27,7 @@ const MyTimetable = ()=>{
     useEffect(()=>{
         setTimeSlots()
         const getMyData = async () =>{
-            await PrivateDefaultApi.post('view_schedule/',{
-                model:'my_shedule',
-                id:'ed'
-            }).then((res)=>{
+            await PrivateDefaultApi.get('my_schedule/').then((res)=>{
                 setData(res.data)
             }).catch((error)=>{
                 console.log(error);

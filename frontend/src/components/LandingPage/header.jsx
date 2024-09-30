@@ -12,7 +12,7 @@ const LandHeader = observer(()=>{
     useEffect(()=>{
        setisLogin( rootStore.checkTokenValidity2())
        console.log(rootStore.checkTokenValidity2())
-    },[])
+    },[navigate])
     const menuItems = [
         {
           key: 1,

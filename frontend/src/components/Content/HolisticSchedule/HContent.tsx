@@ -133,7 +133,7 @@ const HContent:React.FC<{stopLoadingf:any,toDisplay:any,setToDisplay:any,searchD
                     <SearchResult results={results} model={modelContent}/>
                 }
                 {
-                    toDisplay==='add'&&rootStore.enableManagement&&rootStore.isManager()&&
+                    toDisplay==='add'&&((rootStore.enableManagement&&rootStore.isManager())||(model==='student'&&rootStore.isAdvisor()))&&
                     <Add model={modelContent}/>
                 }
                 {
@@ -145,7 +145,7 @@ const HContent:React.FC<{stopLoadingf:any,toDisplay:any,setToDisplay:any,searchD
                     <Edit/>
                 }
                 {
-                    toDisplay==='schedule'&&rootStore.enableManagement&&
+                    toDisplay==='schedule'&&((rootStore.enableManagement)||(model==='student'&&rootStore.isAdvisor()))&&
                     <Schedule id={idInHold} model={modelContent}/>
                 }
             </div>

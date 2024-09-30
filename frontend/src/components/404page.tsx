@@ -1,12 +1,14 @@
 import Alert from './alerts/normalAlert';
-
+import { TbError404 } from "react-icons/tb";
 const NotFound = () => {
   return (
-    <div>
+    <center>
+    <div style={{marginTop:'15%'}}>
         <Alert title='Page Not found' icon='warning'/>
-      <h1>404 Not Found</h1>
-      <p>Sorry, the page you are looking for does not exist.</p>
+        <TbError404 size={100}/>
+      <h1>Page Not Found</h1>
     </div>
+    </center>
   );
 };
 

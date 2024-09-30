@@ -6,7 +6,7 @@ class HolisticScheduleStore {
         {name:'course',status:true},
         {name:'room',status:true},
         {name:'lecturer',status:true},
-        {name:'assistant',status:true},
+        {name:'assistant',status:false},
         {name:'student',status:true},
         {name:'semester',status:true},
         {name:'program',status:true},
@@ -14,7 +14,7 @@ class HolisticScheduleStore {
         {name:'faculty',status:true},
         {name:'floor',status:true},
         {name:'building',status:true},
-        {name:'complete',status:true},
+        {name:'complete',status:false},
         {name:'create_schedule',status:true},
     ]
     credentDisplay = [
@@ -23,18 +23,10 @@ class HolisticScheduleStore {
             status:true,
             content:[
                 'course',
-                'room',
-                'lecturer',
-                'student',
-                'assistant',
                 'semester',
                 'program',
                 'department',
                 'faculty',
-                'floor',
-                'building',
-                'complete',
-                'create_schedule'
             ],
 
         },
@@ -91,9 +83,40 @@ class HolisticScheduleStore {
                 'floor',
                 'building',
                 'complete',
-                'create_schedule'
+            ]
+        },{
+            name:'HOD',
+            status:true,
+            content:[
+                'course',
+                'room',
+                'lecturer', 
+                'assistant',
+                'student',
+                'semester',
+                'program',
+                'department',
+                'faculty',
+                'floor',
+                'building',
+                'complete',
             ]
         }
+        ,{
+            name:'AD',
+            status:true,
+            content:[
+                'course',
+                'lecturer', 
+                'assistant',
+                'student',
+                'semester',
+                'program',
+                'department',
+                'faculty',
+                'complete',
+            ]
+        },
     ]
     constructor() {
         makeAutoObservable(this);

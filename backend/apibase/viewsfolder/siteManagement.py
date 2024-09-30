@@ -361,16 +361,15 @@ class StudentViewSet(viewsets.ModelViewSet):
     ]
 
     def create(self, request, *args, **kwargs):
-        faculties = [Faculty.objects.get(id=fac) for fac in request.data['faculty']if fac!='']
-        department = [Department.objects.get(id=dep) for dep in request.data['department']if dep!='']
-        program = [Program.objects.get(id=prog) for prog in request.data['program']if prog!='']
+        program = Program.objects.get(id=request.data['program'])
         userData = {
-            'username':request.data['username'], 
-            'password':make_password(request.data['password']),
+            'username':request.data['email'], 
+            'password':make_password(str(request.data['studentId'])),
             'first_name':request.data['first_name'],
             'last_name':request.data['last_name'],
             'email':request.data['email'],
-            'is_active':request.data['status']
+            'is_active':request.data['status'],
+            'program':request.data['program']
         }
         try:
             if(User.objects.get(username=request.data['username'])):
@@ -380,12 +379,22 @@ class StudentViewSet(viewsets.ModelViewSet):
         user_student = Users()
         user_student.__dict__.update(userData)
         user_student.save()
-        user_student.program.set(program)
+        # user_student.program = program
         user_student.save()
-        student_group = Group.objects.get(id=request.data['group'])
-        user_student.groups.add(student_group)
-        request.data['user'] = user_student.id # type: ignore
-        return super().create(request, *args, **kwargs)
+        # student_group = Group.objects.get(id=request.data['group'])
+        # user_student.groups.add(student_group)
+        studentData  ={
+            'user':user_student,
+            'studentId':request.data['studentId'],
+            'advisor':Advisor.objects.get(user=request.user.pk),
+        }
+        request.data['user'] = user_student # type: ignore
+        std = Student.objects.create(**studentData)
+        # std = super().create(request, *args, **kwargs)
+        std.coursegroup.set([Coursegroup.objects.get(id=prog) for prog in request.data['coursegroup']if prog!='']
+)
+        print(std)
+        return Response({'message':'created'},201)
     
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
@@ -433,10 +442,10 @@ class StudentViewSet(viewsets.ModelViewSet):
         item['last_name'] = related_user.last_name
         item['email'] = related_user.email
         item['status'] = related_user.is_active
-        item['group'] = GroupSerializer(related_user.groups.all()[0]).data['id'] # type: ignore
-        item['user_permissions'] = [GroupSerializer(seri).data for  seri in related_user.user_permissions.all()]
-        item['faculty']=[FacultySerializer(fac).data['id'] for fac in related_user.faculty.all()] # type: ignore
-        item['department']=[DepartmentSerializer(dep).data['id'] for dep in related_user.department.all()] # type: ignore
+        # item['group'] = GroupSerializer(related_user.groups.all()[0]).data['id'] # type: ignore
+        # item['user_permissions'] = [GroupSerializer(seri).data for  seri in related_user.user_permissions.all()]
+        # item['faculty']=[FacultySerializer(fac).data['id'] for fac in related_user.faculty.all()] # type: ignore
+        # item['department']=[DepartmentSerializer(dep).data['id'] for dep in related_user.department.all()] # type: ignore
         item['program']=[ProgramSerializer(prog).data['id'] for prog in related_user.program.all()] # type: ignore
         return item
 
@@ -723,8 +732,8 @@ class CourseGroupViewSet(viewsets.ModelViewSet):
         'lecturer__user__first_name',
         'lecturer__user__last_name',
         'lecturer__user__email',
-        'assistant__user__first_name',
-        'assistant__user__last_name',
+        # 'assistant__user__first_name',
+        # 'assistant__user__last_name',
         'lecturer_assistant__user__first_name',
         'lecturer_assistant__user__last_name',
         'course_semester__semester__year',

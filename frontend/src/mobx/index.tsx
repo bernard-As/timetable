@@ -54,6 +54,12 @@ class RootStore {
     }
     return false
   }
+  isAdvisor(){
+    if(this.credential==='AD'){
+      return true
+    }
+    return false
+  }
 }
 
 const rootStore = new RootStore();

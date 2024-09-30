@@ -63,6 +63,14 @@ class HolosticScheduleContentStore{
             prefered:false,
         },
         {
+            name:'student',
+            search:true,
+            list:true,
+            add:true,
+            delete:true,
+            prefered:false,
+        },
+        {
             name:'assistant',
             search:true,
             list:true,
@@ -1298,7 +1306,150 @@ class HolosticScheduleContentStore{
                 'room_s'
             ]
         },
-        
+        {
+            name:'student',
+            apiUrl:'student',
+            addFields:[
+                // 'username',
+                // 'password',
+                'first_name',
+                'last_name',
+                'studentId',
+                'email',
+                'faculty',
+                'department',
+                'program',
+                'coursegroup_m',
+                'status',
+                'coursesPreview'
+                // 'longitude',
+                // 'latitude',
+            ],
+            listFields:[
+                'name',
+            ],
+            listExtraButtons:{
+                prefered:true,
+                viewSchedule:true
+            },
+            columns:[
+                {
+                    title:'First Name',
+                    dataIndex:'first_name',
+                    key:'first_name',
+                    
+                },
+                {
+                    title:'Last Name',
+                    dataIndex:'last_name',
+                    key:'last_name',
+                    
+                },
+                {
+                    title:'Student Id',
+                    dataIndex:'studentId',
+                    key:'studentId',
+                    
+                },
+                {
+                    title:'Courses',
+                    dataIndex:'coursegroup',
+                    key:'coursegroup',
+                    
+                },
+                {
+                    title:'Program',
+                    dataIndex:'program',
+                    key:'program',
+                    render: (_,render)=><RenderTableViewProgram id={render.program}/>
+                },
+                {
+                    title:'status',
+                    dataIndex:'status',
+                    key:'status',
+                    render: (b) => 
+                        <Tooltip title={b ?'Active':'Inactive'}>
+                        <FaDotCircle  
+                            style={{
+                                color: b ? 'green' : 'red',
+                            }}
+                        />
+                        </Tooltip>
+                    ,
+                    style:{width:2}
+                },
+                {
+                    title: 'Action',
+                    key: 'operation',
+                    fixed: 'right',
+                    // width: 100,
+                    render: (_,record) => <Space>
+                         <Tooltip title={'View full details'}>
+                            <GrView size={21} 
+                                onClick={()=>{
+                                    this.prepareToViewDetail(record.id)
+                                }}
+                            />
+                        </Tooltip>
+                        <Tooltip title={'Schedule'}>
+                            <GrFormSchedule size={27}
+                                onClick={()=>{
+                                    this.prepareToSchedule(record.id)
+                                }}
+                            />
+                        </Tooltip>
+                        {/* <Tooltip title={'Bookmark'}>
+                            <IoStarOutline size={25}/>
+                        </Tooltip> */}
+                        <Tooltip title={'Edit'}>
+                            <CiEdit size={25}
+                                onClick={()=>{
+                                    this.prepareToEdit(record.id)
+                                }}
+                            />
+                        </Tooltip>
+                        <Tooltip title={'Delete'}>
+                            <Popconfirm 
+                                title="Sure to delete?"  
+                                onConfirm={() => {
+                                    this.prepareToDelete(record.id)
+                                }}>
+                                <MdDeleteForever color="red" size={25}/>
+                            </Popconfirm>
+                        </Tooltip>
+
+                    </Space>,
+                  },
+            ],
+            detail:[
+                'username',
+                'password',
+                'first_name',
+                'last_name',
+                'email',
+                'title',
+                'faculty',
+                'department',
+                'program',
+                'credential',
+                'status',
+                // 'created_at',
+                // 'updated_at',
+            ],
+            edit:[
+                'username',
+                'password',
+                'first_name',
+                'last_name',
+                'email',
+                'title',
+                'faculty_m',
+                'department_m',
+                'program_m',
+                'credential',
+                'status',
+            ]
+        },
         
     ]
     additionallyFetchedData = []

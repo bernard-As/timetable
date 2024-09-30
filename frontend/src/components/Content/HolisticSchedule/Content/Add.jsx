@@ -1,8 +1,9 @@
-import { Button, Card, Checkbox, DatePicker, Divider, Form, Input, InputNumber, Segmented, Select, Space, TimePicker, Tooltip } from "antd";
+import { Button, Card, Checkbox, DatePicker, Divider, Form, Input, InputNumber, Segmented, Select, Space, Table, TimePicker, Tooltip } from "antd";
 import rootStore from "../../../../mobx";
 import { PrivateDefaultApi } from "../../../../utils/AxiosInstance";
 import { observer } from "mobx-react";
 import { useEffect, useState } from "react";
+import { generateTimeSlots, getDayData, ScheduleCell } from "./AdditionalRendering";
 
 const Add  = observer(({model})=>{
   const [form] = Form.useForm();
@@ -16,6 +17,24 @@ const Add  = observer(({model})=>{
   const [typeSelected, setTypeSElected] = useState('Weekly')
   const [data,setData] = useState([])
   const [dataRoom,setDataRoom] = useState([])
+  const [selectedCourseGroupM,setselectedCourseGroupM] = useState([])
+  const [timeSlots,setTimeSlots] = useState([0])
+  const [tableData, setTableData] = useState([])
+  const [timeInterval, settimeInterval] = useState(60)
+  const [courseData,setCourseData] = useState([])
+  const columns = [ {
+    title:'TimeSlot',
+    dataIndex: 'timeslot',
+    key:'timeslot'
+},
+...rootStore.holosticScheduleContentStore.daysIndex.map(({id,name, ...rest})=>(
+    {
+    title:name,
+    dataIndex:id,
+    key:id,
+    render: (_,record) => <ScheduleCell record={record[name]}/>,
+    rest
+}))]
 
     const normalAdd = (values)=>{
       if(values['email']!==undefined&&values.email.split('@')[1]!==(undefined||'rdu.edu.tr')){
@@ -75,6 +94,10 @@ const Add  = observer(({model})=>{
     const onSearch= (value)=>{
       PrivateDefaultApi.get('coursegroup/?search='+value).then((res)=>{
           setData(res.data)
+          setadditionalData([...additionalData.filter(a=>a.target!=='coursegroup'),{
+            target:'coursegroup',
+            data:res.data
+          }])
       }).catch((error)=>{
           console.error(error)
       })
@@ -86,6 +109,56 @@ const Add  = observer(({model})=>{
           console.error(error)
       })
   }
+  useEffect(()=>{
+    setTimeSlots()
+    setTimeSlots(generateTimeSlots('09:00:00','20:00:00',timeInterval))
+},[timeInterval])
+    useEffect(()=>{
+      const toReturn = []
+      selectedCourseGroupM.map(s=>{
+        PrivateDefaultApi.post('view_schedule/',{
+          model:'course',
+          id:s,
+        }).then(res=>{
+          toReturn.push(res.data)
+        }).catch(err=>{
+          console.error(err)
+        })
+      })
+      setCourseData(toReturn)
+    },[selectedCourseGroupM])
+    useEffect(()=>{
+      let newSh = [];
+        timeSlots.map(timeSlot=>{
+            const sc = {
+                timeslot:`${timeSlot.start} - ${timeSlot.end}`,
+                Monday:courseData?.filter(d=>(getDayData(timeSlot,1,d))),
+                Tuesday:courseData?.filter(d=>(getDayData(timeSlot,2,d))),
+                Wednesday:courseData?.filter(d=>(getDayData(timeSlot,3,d))),
+                Thursday:courseData?.filter(d=>(getDayData(timeSlot,4,d))),
+                Friday:courseData?.filter(d=>(getDayData(timeSlot,5,d))),
+                Saturday:courseData?.filter(d=>(getDayData(timeSlot,6,d))),
+            }
+            newSh = [...newSh.filter(n=>n.timeslot!==sc.timeslot),sc]
+        })
+        setTableData(newSh)
+    },[timeSlots,courseData])
+    useEffect(()=>{
+      let newSh = [];
+          timeSlots.map(timeSlot=>{
+              const sc = {
+                  timeslot:`${timeSlot.start} - ${timeSlot.end}`,
+                  Monday:[],
+                  Tuesday:[],
+                  Wednesday:[],
+                  Thursday:[],
+                  Friday:[],
+                  Saturday:[],
+              }
+              newSh = [...newSh.filter(n=>n.timeslot!==sc.timeslot),sc]
+          })
+          setTableData(newSh)
+  },[timeSlots])
 
     useEffect(()=>{
       rootStore.holosticScheduleContentStore.additionallyFetchedData = []
@@ -215,6 +288,24 @@ const Add  = observer(({model})=>{
               <Input 
                 onKeyUp={(event)=>localStorage.setItem(`${model.name}_email`,event.target.value)}
                 addonAfter="@rdu.edu.tr"
+              />
+            </Form.Item>
+            }
+            { model.addFields.includes('studentId')&&
+            <Form.Item
+              name="studentId"
+              label="Student Number"
+              rules={[
+                {
+                  required: true,
+                  message: 'Please input your Student Number!',
+                },
+              ]}
+              initialValue={localStorage.getItem(`${model.name}_studentId`)}
+
+            >
+              <InputNumber
+                onKeyUp={(event)=>localStorage.setItem(`${model.name}_studentId`,event.target.value)}
               />
             </Form.Item>
             }
@@ -672,6 +763,47 @@ const Add  = observer(({model})=>{
                         return p.status&&
                         (selectedDepartment.length===0||selectedDepartment.includes(p.department))&&
                         <Select.Option key={p.id} value={p.id}>{p.name}</Select.Option>
+                      })
+
+                      }
+
+                    </Select>
+
+                </Form.Item>
+            }
+            {
+              model.addFields.includes('coursegroup_m')&&
+              additionalData.find(ad=>ad.target==='coursegroup')&&
+              <Form.Item
+                label="Courses"
+                name="coursegroup"
+                rules={[
+                    {
+                      required: true,
+                      message: `Please select the courses for ${model.name}!`,
+                    },
+                  ]}
+                >
+                    <Select
+                    onSearch={onSearch}
+                    // showSearch
+                    // optionFilterProp="children"
+                    // filterOption={(input, option) =>
+                    //   option.children.toLowerCase().includes(input.toLowerCase())
+                    // }
+                      onSelect={(event)=>{
+                        localStorage.setItem(`${model.name}_coursegroup_m`,event)
+                        setselectedCourseGroupM([...selectedCourseGroupM.filter(p=>p!==event),event])
+                      }}
+                      maxTagCount={'resposive'}
+                      mode="multiple"
+                      allowClear
+                      filterOption={false} 
+                      // initialValue={localStorage.getItem(`${model.name}_coursegroup_m`)}
+                    >
+                      {additionalData.find(ad=>ad.target==='coursegroup').data.map(p=>{
+                        return p.status&&
+                        <Select.Option key={p.id} value={p.id}>{p.code} G{p.group_number} ~ {p.name}</Select.Option>
                       })
 
                       }
@@ -1248,6 +1380,19 @@ const Add  = observer(({model})=>{
                  }))}
                />
            </Form.Item>
+            }
+
+            {
+              model.addFields.includes('coursesPreview')&&
+              timeSlots.length>0&& <Table
+                columns={columns} 
+                dataSource={tableData}
+                rowKey="timeslot"
+                pagination={false}
+                scroll={{ x: 1000 }}
+                bordered 
+            />
+              
             }
             <Form.Item
                 wrapperCol={{

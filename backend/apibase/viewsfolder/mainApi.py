@@ -1,8 +1,15 @@
 from rest_framework.response import Response 
 from rest_framework.views import APIView
+from rest_framework import viewsets, filters
+from rest_framework import generics
+from rest_framework.response import Response
+from django.utils import timezone
+from django.db.models import Q
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.authentication import TokenAuthentication
 
 from apibase.models import *
-from apibase.serializers import ScheduleSerializer
+from apibase.serializers import *
 
 # generics
 class ViewSchedule(APIView):
@@ -41,7 +48,8 @@ class ViewSchedule(APIView):
 
             if(isLecturer):
                 lectCourses = Coursegroup.objects.filter(lecturer = user.id)
-                toReturn = Schedule.objects.filter(coursegroup__in=lectCourses)
+                toReturn = Schedule.objects.filter(coursegroup__lecturer__user=user)
+            print (toReturn)
         elif model == 'faculty':
             toReturn = Schedule.objects.filter(coursegroup__course_semester__program__department__faculty=request.data['id'])
         elif model == 'department':
@@ -56,4 +64,54 @@ class ViewSchedule(APIView):
         # Serialize the data
         serializer = ScheduleSerializer(toReturn, many=True)
         # Return serialized data
+        return Response(serializer.data)
+
+class MySchedule(APIView):
+    authentication_classes = ([TokenAuthentication])
+    permission_classes = ([IsAuthenticated]) 
+
+    def get(self, request):
+        user = request.user
+        try:
+            lecturer = Lecturer.objects.filter(user=user.pk)
+            isLecturer = True
+        except:
+            isLecturer = False
+        if(isLecturer):
+            toReturn = Schedule.objects.filter(coursegroup__lecturer__user=user.pk)
+            print (user)
+        serializer = ScheduleSerializer(toReturn, many=True)
+        # Return serialized data
+        return Response(serializer.data)
+
+
+class SysytemNewsView(viewsets.ModelViewSet):
+    authentication_classes = []
+    permission_classes = []
+    queryset = SystemNews.objects.all()
+    serializer_class = SystemNewsSerializer
+    
+
+class UpcomingScheduleView(generics.ListAPIView):
+    serializer_class = ScheduleSerializer
+
+    def get_queryset(self):
+        # Get the current date and time
+        now = timezone.now()
+
+        # Get the current day of the week (1=Monday, 7=Sunday)
+        current_day = now.weekday() + 1  # weekday() returns 0 for Monday, so we add 1
+
+        # Filter schedules that:
+        # 1. Have a future date OR
+        # 2. Are scheduled for today or in the future based on the `day` field (Mon=1, Sun=7)
+        return Schedule.objects.filter(
+            Q(date__gt=now.date()) |  # Future dates
+            Q(date=now.date(), start__gte=now.time()) |  # Today's schedules after the current time
+            Q(day__gte=current_day)  # Schedules based on the day field (today or future days)
+        ).order_by('date', 'day', 'start')[:10]
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)

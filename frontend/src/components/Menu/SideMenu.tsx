@@ -109,8 +109,8 @@ const SideMenu: React.FC = observer(() => {
             navigate('/holistic-schedule/student')
           },
           style:
-              (rootStore.holisticScheduleStore.checkCredentialAllowence('assistant')
-              &&rootStore.holisticScheduleStore.checkAllowDisplay('assistant'))?{display:'block'}:{display:'none'}
+              (rootStore.holisticScheduleStore.checkCredentialAllowence('student')
+              &&rootStore.holisticScheduleStore.checkAllowDisplay('student'))?{display:'block'}:{display:'none'}
         },
         { 
           key: 9, 
@@ -192,16 +192,16 @@ const SideMenu: React.FC = observer(() => {
       ],
       
     },
-    {
-      key: 16,
-      icon: React.createElement(UserOutlined),
-      label: "Profile",
-    },
-    {
-      key: 17,
-      icon: React.createElement(SettingOutlined),
-      label: "Settings",
-    },
+    // {
+    //   key: 16,
+    //   icon: React.createElement(UserOutlined),
+    //   label: "Profile",
+    // },
+    // {
+    //   key: 17,
+    //   icon: React.createElement(SettingOutlined),
+    //   label: "Settings",
+    // },
     {
       key: 18,
       icon: React.createElement(MdLogout),

@@ -125,3 +125,6 @@ code {
 .no-content{
   margin-top: 10%;
 }
+.new-preview{
+  min-width: 100%;
+}

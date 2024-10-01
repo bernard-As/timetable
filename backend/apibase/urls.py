@@ -3,7 +3,7 @@ from django.urls import path,include
 from apibase.viewsfolder.storeRenew import StoreRenew
 from rest_framework.routers import DefaultRouter
 
-from apibase.viewsfolder.auths import VerifyToken
+from apibase.viewsfolder.auths import LoginView, VerifyToken
 from apibase.viewsfolder.mainApi import *
 from .viewsfolder import siteManagement
 from rest_framework.authtoken.views import ObtainAuthToken
@@ -41,7 +41,7 @@ router.register(r'eventtime', siteManagement.EventTimeViewSet, basename='eventti
 router.register(r'schedule', siteManagement.ScheduleViewSet, basename='schedule')
 router.register(r'system_news', SysytemNewsView, basename='system News')
 urlpatterns = [
-    path('login/', ObtainAuthToken.as_view()),
+    path('login/', LoginView.as_view()),
     path('renewStore/',StoreRenew.as_view(), name='renewStore'),
     path('verify_token',VerifyToken.as_view(),name='verify_token'),
     path('', include(router.urls)),

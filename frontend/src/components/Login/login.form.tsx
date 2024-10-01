@@ -29,12 +29,13 @@ const LoginForm: React.FC = () => {
         window.location.href=referrer
       } else {
         // Different subdomain, navigate to the base URL
-        navigate(`/home`);
+        window.location.href=`${process.env.REACT_APP_BASE_URL}home`
+        // navigate(`/home`);
       }
     } catch (error) {
       // If referrer is not a valid URL or any other issue
-        navigate(`/welcome`);
-        // console.info(error)
+        window.location.href=`${process.env.REACT_APP_BASE_URL}welcome`
+        console.info(error)
     }
   };
   const onFinish: FormProps<FieldType>['onFinish'] = (values) => {
@@ -68,7 +69,6 @@ const LoginForm: React.FC = () => {
       })
       .catch((err) => {
         console.error(err)
-        alert(err)
         rootStore.notification.notify({
           title: 'Could not login. Please check the fields',
           text: 'Could not login. Please check the fields',

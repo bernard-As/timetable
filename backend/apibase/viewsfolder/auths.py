@@ -9,30 +9,38 @@ from django.contrib.auth import authenticate
 from rest_framework.permissions import IsAuthenticated
 from apibase.serializers import LoginSerializer
 from apibase.models import Users
+from rest_framework.authtoken.models import Token
 
 class LoginView(APIView):
     def post(self, request, *args, **kwargs):
-        if (request.data['password'] == ''):
-            request.data['password']= 'timetable'
+        # Get the username or email and password from the request
+        username_or_email = request.data.get('username')
+        password = request.data.get('password')
         
-        serializer = LoginSerializer(data=request.data)
-        if serializer.is_valid():
-            email = serializer.validated_data['email']
-            password = serializer.validated_data['password']
-    
-            user = authenticate(request, email=email, password=password)
-    
-            if user:
-                # User is valid, generate token using DRF method
-                obtain_auth_token = ObtainAuthToken()
-                token_response = obtain_auth_token.post(request)
-                token = token_response.data['token']
-    
-                return Response({'token': token, 'group':user.groups.all()})
-            else:
-                return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        # Try to authenticate by username or email
+        user = authenticate(request, username=username_or_email, password=password)
+        
+        if user is None:
+            try:
+                # If not authenticated by username, try authenticating by email
+                user_obj = Users.objects.get(email=username_or_email)
+                user = authenticate(request, username=user_obj.username, password=password)
+            except Users.DoesNotExist:
+                pass  # No user found with this email
+
+        # If still no user, return an error response
+        if user is None:
+            return Response({'error': 'Invalid credentials'}, status=400)
+        
+        # If authenticated, generate or retrieve the token
+        token, created = Token.objects.get_or_create(user=user)
+        
+        return Response({
+            'token': token.key,
+            'user_id': user.pk,
+            'email': user.email,
+            'username': user.username
+        })
     
 
 class VerifyToken(APIView):

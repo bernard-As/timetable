@@ -154,25 +154,6 @@ useEffect(() => {
       setTableData(newSh)
     },[timeSlots,courseData])
 
-    useEffect(()=>{
-      console.log(tableData)
-    },[tableData])
-  //   useEffect(()=>{
-  //     let newSh = [];
-  //         timeSlots.map(timeSlot=>{
-  //             const sc = {
-  //                 timeslot:`${timeSlot.start} - ${timeSlot.end}`,
-  //                 Monday:[],
-  //                 Tuesday:[],
-  //                 Wednesday:[],
-  //                 Thursday:[],
-  //                 Friday:[],b
-  //                 Saturday:[],
-  //             }
-  //             newSh = [...newSh.filter(n=>n.timeslot!==sc.timeslot),sc]
-  //         })
-  //         setTableData(newSh)
-  // },[timeSlots])
 
     useEffect(()=>{
       rootStore.holosticScheduleContentStore.additionallyFetchedData = []
@@ -185,7 +166,7 @@ useEffect(() => {
       fetchAdditional('title')
       fetchAdditional('lecturer')
       fetchAdditional('course')
-      fetchAdditional('assistant')
+      // fetchAdditional('assistant')
       fetchAdditional('activitytype')
       fetchAdditional('coursegroup')
       fetchAdditional('coursesemester')
@@ -918,7 +899,7 @@ useEffect(() => {
                           label:'Office'
                         },
                         {
-                          value:'OTH',
+                          value:'OT',
                           label:'Other'
                         },
 

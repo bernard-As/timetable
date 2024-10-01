@@ -68,20 +68,35 @@ class ViewSchedule(APIView):
 
 class MySchedule(APIView):
     authentication_classes = ([TokenAuthentication])
-    permission_classes = ([IsAuthenticated]) 
+    permission_classes = ([IsAuthenticated])
 
     def get(self, request):
         user = request.user
+        isLecturer = False
+        
         try:
-            lecturer = Lecturer.objects.filter(user=user.pk)
-            isLecturer = True
-        except:
+            # Check if the user is a lecturer
+            isLecturer = Lecturer.objects.filter(user=user.pk).exists()
+        except Exception as e:
+            print(f"Error checking lecturer status: {e}")
             isLecturer = False
-        if(isLecturer):
+        
+        if isLecturer:
+            # Fetch schedules for lecturer
             toReturn = Schedule.objects.filter(coursegroup__lecturer__user=user.pk)
-            print (user)
+        else:
+            try:
+                # Fetch the student object based on the user
+                student = Student.objects.get(user=user.pk)
+                # Ensure `coursegroup` is a queryset/list
+                coursegroups = student.coursegroup.all()  # assuming coursegroup is a ManyToMany field
+                toReturn = Schedule.objects.filter(coursegroup__in=coursegroups)
+            except Student.DoesNotExist:
+                return Response({"error": "Student not found"}, status=404)
+            except Exception as e:
+                return Response({"error": str(e)}, status=400)
+        
         serializer = ScheduleSerializer(toReturn, many=True)
-        # Return serialized data
         return Response(serializer.data)
 
 

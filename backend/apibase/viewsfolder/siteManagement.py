@@ -361,7 +361,7 @@ class StudentViewSet(viewsets.ModelViewSet):
     ]
 
     def create(self, request, *args, **kwargs):
-        program = Program.objects.get(id=request.data['program'])
+        # program = Program.objects.get(id=request.data['program'])
         userData = {
             'username':request.data['email'], 
             'password':make_password(str(request.data['studentId'])),

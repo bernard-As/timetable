@@ -54,6 +54,7 @@ PrivateDefaultApi.interceptors.response.use(
         title:'Unexpected',
         timeout:1500
       })
+      window.location.href = `${process.env.REACT_APP_BASE_URL}login`;
     }else if(error&&error.response && error.response.status === 400){
       rootStore.notification.notify({
         type:'error',

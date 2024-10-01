@@ -14,6 +14,9 @@ type FieldType = {
 
 const LoginForm: React.FC = () => {
   const navigate = useNavigate();
+  useEffect(()=>{
+    localStorage.clear()
+  },[navigate])
   const [form] = Form.useForm(); // Use Form instance to control the form
 
   const handleNavigation = () => {

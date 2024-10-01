@@ -4,6 +4,7 @@ import { observer } from "mobx-react";
 import { useEffect, useState } from "react";
 import { PrivateDefaultApi } from "../../../../utils/AxiosInstance";
 import { CgDetailsLess } from "react-icons/cg";
+import { GrFormSchedule } from "react-icons/gr";
 const SearchResult = observer(({results,model})=>{
     const [data,setData] = useState([]);
     useEffect(()=>{console.log(results);setData(results)},[results])
@@ -67,9 +68,17 @@ const SearchResult = observer(({results,model})=>{
                 dataSource={data}
                 renderItem={(item, index) => (
                   <List.Item
-                    actions={[<Tooltip title={'details'}><CgDetailsLess size={30}
+                    actions={[<Tooltip title={'details'}><CgDetailsLess size={32}
                         onClick={()=>rootStore.holosticScheduleContentStore.prepareToViewDetail(item.id)}
-                    /></Tooltip>]}
+                    /></Tooltip>,
+                    <Tooltip title={'Schedule'}>
+                    <GrFormSchedule size={32}
+                        onClick={()=>{
+                            rootStore.holosticScheduleContentStore.prepareToSchedule(item.id)
+                        }}
+                    />
+                </Tooltip>
+                ]}
                   >
                     <List.Item.Meta
                     //   avatar={ <Avatar src={`https://api.dicebear.com/7.x/miniavs/svg?seed=${index}`} />}

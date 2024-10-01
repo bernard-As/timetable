@@ -22,13 +22,14 @@ const HeadMenu:React.FC = observer(()=>{
         await PrivateDefaultApi.post('verify_token').then((res)=>{
             if(res.status === 401){
                 setisLogin(false)
+                navigate('/welcome')
             }else{
               rootStore.credential = res.data.credential
               setisLogin(true)
             }
         }).catch((error)=>{
           if(error.status===401)
-                setisLogin(false)
+                navigate('/welcome')
         })
       }
       checkTokenValidity2()

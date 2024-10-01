@@ -55,7 +55,7 @@ class RootStore {
     return false
   }
   isAdvisor(){
-    if(this.credential==='AD'){
+    if(this.credential===('AD'||'HOD'||'VR'||'PADM'||'SADM')){
       return true
     }
     return false

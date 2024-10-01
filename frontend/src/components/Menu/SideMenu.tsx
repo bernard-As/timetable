@@ -17,9 +17,29 @@ import { ImListNumbered } from "react-icons/im";
 import { FaGripLines } from "react-icons/fa6";
 import { FcDepartment } from "react-icons/fc";
 import { FaRegCalendarPlus } from "react-icons/fa";
+import { PrivateDefaultApi } from "../../utils/AxiosInstance";
 const SideMenu: React.FC = observer(() => {
   const [collapsed, setCollapsed] = useState(false);
   const navigate = useNavigate();
+  const [isLogin,setisLogin]:any = useState(false)
+    useEffect(()=>{
+      const checkTokenValidity2 = async()=> {
+        Cookies.get('token') !==null  &&
+        await PrivateDefaultApi.post('verify_token').then((res)=>{
+            if(res.status === 401){
+                setisLogin(false)
+                navigate('/welcome')
+            }else{
+              rootStore.credential = res.data.credential
+              setisLogin(true)
+            }
+        }).catch((error)=>{
+          if(error.status===401)
+                navigate('/welcome')
+        })
+      }
+      checkTokenValidity2()
+    },[navigate])
   const menuItems = [
     {
       key: 0,
@@ -210,6 +230,7 @@ const SideMenu: React.FC = observer(() => {
         Cookies.remove("token");
         navigate("/login");
       },
+      style:isLogin?{display:'block'}:{display:'none'}
     },
   ];
 

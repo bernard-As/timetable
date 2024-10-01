@@ -110,23 +110,32 @@ const Add  = observer(({model})=>{
       })
   }
   useEffect(()=>{
-    setTimeSlots()
     setTimeSlots(generateTimeSlots('09:00:00','20:00:00',timeInterval))
 },[timeInterval])
-    useEffect(()=>{
-      const toReturn = []
-      selectedCourseGroupM.map(s=>{
-        PrivateDefaultApi.post('view_schedule/',{
-          model:'course',
-          id:s,
-        }).then(res=>{
-          toReturn.push(res.data)
-        }).catch(err=>{
-          console.error(err)
-        })
-      })
-      setCourseData(toReturn)
-    },[selectedCourseGroupM])
+useEffect(() => {
+  const getItems = async () => {
+    try {
+      const responses = await Promise.all(
+        selectedCourseGroupM.map((s) => 
+          PrivateDefaultApi.post('view_schedule/', {
+            model: 'course',
+            id: s,
+          })
+        )
+      );
+
+      // Extract and concatenate all response data
+      const toReturn = responses.map(res => res.data).flat(); // Flattening in case you have nested arrays
+      setCourseData(toReturn);
+      console.log(toReturn);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  getItems();
+}, [selectedCourseGroupM]);
+
     useEffect(()=>{
       let newSh = [];
         timeSlots.map(timeSlot=>{
@@ -141,24 +150,29 @@ const Add  = observer(({model})=>{
             }
             newSh = [...newSh.filter(n=>n.timeslot!==sc.timeslot),sc]
         })
-        setTableData(newSh)
+      console.log('hi')
+      setTableData(newSh)
     },[timeSlots,courseData])
+
     useEffect(()=>{
-      let newSh = [];
-          timeSlots.map(timeSlot=>{
-              const sc = {
-                  timeslot:`${timeSlot.start} - ${timeSlot.end}`,
-                  Monday:[],
-                  Tuesday:[],
-                  Wednesday:[],
-                  Thursday:[],
-                  Friday:[],
-                  Saturday:[],
-              }
-              newSh = [...newSh.filter(n=>n.timeslot!==sc.timeslot),sc]
-          })
-          setTableData(newSh)
-  },[timeSlots])
+      console.log(tableData)
+    },[tableData])
+  //   useEffect(()=>{
+  //     let newSh = [];
+  //         timeSlots.map(timeSlot=>{
+  //             const sc = {
+  //                 timeslot:`${timeSlot.start} - ${timeSlot.end}`,
+  //                 Monday:[],
+  //                 Tuesday:[],
+  //                 Wednesday:[],
+  //                 Thursday:[],
+  //                 Friday:[],b
+  //                 Saturday:[],
+  //             }
+  //             newSh = [...newSh.filter(n=>n.timeslot!==sc.timeslot),sc]
+  //         })
+  //         setTableData(newSh)
+  // },[timeSlots])
 
     useEffect(()=>{
       rootStore.holosticScheduleContentStore.additionallyFetchedData = []
@@ -180,6 +194,7 @@ const Add  = observer(({model})=>{
       setadditionalData(rootStore.holosticScheduleContentStore.additionallyFetchedData)
     },[rootStore.holosticScheduleContentStore.additionallyFetchedData])
     return (
+      <>
         <Form
             name="add"
             onFinish={normalAdd}
@@ -1382,18 +1397,7 @@ const Add  = observer(({model})=>{
            </Form.Item>
             }
 
-            {
-              model.addFields.includes('coursesPreview')&&
-              timeSlots.length>0&& <Table
-                columns={columns} 
-                dataSource={tableData}
-                rowKey="timeslot"
-                pagination={false}
-                scroll={{ x: 1000 }}
-                bordered 
-            />
-              
-            }
+            
             <Form.Item
                 wrapperCol={{
                   offset: 8,
@@ -1405,6 +1409,20 @@ const Add  = observer(({model})=>{
               </Button>
             </Form.Item>
         </Form>
+        {
+              model.addFields.includes('coursesPreview')&&
+              timeSlots.length>0&& <Table
+                columns={columns} 
+                dataSource={tableData}
+                rowKey="timeslot"
+                pagination={false}
+                scroll={{ x: 1000 }}
+                bordered 
+            />
+              
+            }
+        </>
+
     )
 }
 )

@@ -147,9 +147,10 @@ class HolosticScheduleContentStore{
                 // 'longitude',
                 // 'latitude',
             ],
-            listFields:[
-                'name',
-            ],
+            list:{
+                title:'code',
+                description:'name'
+            },
             listExtraButtons:{
                 prefered:true,
                 viewSchedule:true
@@ -249,9 +250,10 @@ class HolosticScheduleContentStore{
                 // 'longitude',
                 // 'latitude',
             ],
-            listFields:[
-                'name',
-            ],
+            list:{
+                title:'floor_number',
+                description:'floor_number'
+            },
             listExtraButtons:{
                 prefered:true,
                 viewSchedule:true
@@ -355,9 +357,10 @@ class HolosticScheduleContentStore{
                 // 'longitude',
                 // 'latitude',
             ],
-            listFields:[
-                'name',
-            ],
+            list:{
+                title:'code',
+                description:'code'
+            },
             listExtraButtons:{
                 prefered:true,
                 viewSchedule:true
@@ -477,9 +480,10 @@ class HolosticScheduleContentStore{
                 // 'longitude',
                 // 'latitude',
             ],
-            listFields:[
-                'name',
-            ],
+            list:{
+                title:'shortname',
+                description:'name'
+            },
             listExtraButtons:{
                 prefered:true,
                 viewSchedule:true
@@ -580,9 +584,10 @@ class HolosticScheduleContentStore{
                 // 'longitude',
                 // 'latitude',
             ],
-            listFields:[
-                'name',
-            ],
+            list:{
+                title:'shortname',
+                description:'name'
+            },
             listExtraButtons:{
                 prefered:true,
                 viewSchedule:true
@@ -692,9 +697,10 @@ class HolosticScheduleContentStore{
                 // 'longitude',
                 // 'latitude',
             ],
-            listFields:[
-                'name',
-            ],
+            list:{
+                title:'shortname',
+                description:'name'
+            },
             listExtraButtons:{
                 prefered:true,
                 viewSchedule:true
@@ -803,9 +809,10 @@ class HolosticScheduleContentStore{
                 // 'longitude',
                 // 'latitude',
             ],
-            listFields:[
-                'name',
-            ],
+            list:{
+                title:'semester_num',
+                description:'semester_num'
+            },
             listExtraButtons:{
                 prefered:true,
                 viewSchedule:true
@@ -923,9 +930,10 @@ class HolosticScheduleContentStore{
                 // 'longitude',
                 // 'latitude',
             ],
-            listFields:[
-                'name',
-            ],
+            list:{
+                title:'first_name',
+                description:'last_name'
+            },
             listExtraButtons:{
                 prefered:true,
                 viewSchedule:true
@@ -1068,9 +1076,11 @@ class HolosticScheduleContentStore{
                 'status',
                 'is_elective',
             ],
-            listFields:[
-                'name',
-            ],
+            list:{
+                title:'code',
+                description:'name',
+
+            },
             listExtraButtons:{
                 prefered:true,
                 viewSchedule:true
@@ -1325,9 +1335,10 @@ class HolosticScheduleContentStore{
                 // 'longitude',
                 // 'latitude',
             ],
-            listFields:[
-                'name',
-            ],
+            list:{
+                title:'studentId',
+                description:'first_name'
+            },
             listExtraButtons:{
                 prefered:true,
                 viewSchedule:true
@@ -1502,6 +1513,14 @@ class HolosticScheduleContentStore{
     prepareToSchedule(id){
         this.schedule.targetModel = this.currentModel.name !== 'course'?this.currentModel.name :'coursegroup'
         this.schedule.recordToSchedule = id
+    }
+    getListDetail(model){
+        let title = this.content.find(c=>c.name===model)?.list.title
+        let description = this.content.find(c=>c.name===model)?.list.description
+        return {
+            title:title,
+            description:description
+        }
     }
 }
 

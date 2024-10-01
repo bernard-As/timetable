@@ -1,9 +1,9 @@
-import { Table } from "antd";
+import { Avatar, List, Table, Tooltip } from "antd";
 import rootStore from "../../../../mobx";
 import { observer } from "mobx-react";
 import { useEffect, useState } from "react";
 import { PrivateDefaultApi } from "../../../../utils/AxiosInstance";
-
+import { CgDetailsLess } from "react-icons/cg";
 const SearchResult = observer(({results,model})=>{
     const [data,setData] = useState([]);
     useEffect(()=>{console.log(results);setData(results)},[results])
@@ -61,9 +61,25 @@ const SearchResult = observer(({results,model})=>{
                 rowSelection={rowSelection}
             />
             :
-            data.map((result, index) => {
-                return null
-            })
+            <List
+            style={{maxWidth:'600px',backgroundColor:'#C9D6DF'}}
+                itemLayout="horizontal"
+                dataSource={data}
+                renderItem={(item, index) => (
+                  <List.Item
+                    actions={[<Tooltip title={'details'}><CgDetailsLess size={30}
+                        onClick={()=>rootStore.holosticScheduleContentStore.prepareToViewDetail(item.id)}
+                    /></Tooltip>]}
+                  >
+                    <List.Item.Meta
+                    //   avatar={ <Avatar src={`https://api.dicebear.com/7.x/miniavs/svg?seed=${index}`} />}
+                      title={item[rootStore.holosticScheduleContentStore.getListDetail(model.name).title]}
+                      description={item[rootStore.holosticScheduleContentStore.getListDetail(model.name).description]}
+                    />
+                  </List.Item>
+                )}
+            />
+            
         }
     </>)
 })

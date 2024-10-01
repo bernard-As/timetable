@@ -357,7 +357,7 @@ class StudentViewSet(viewsets.ModelViewSet):
         'user__first_name',
         'user__last_name',
         'user__email',
-        'user__title',
+        # 'user__title',
     ]
 
     def create(self, request, *args, **kwargs):

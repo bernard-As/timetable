@@ -787,9 +787,12 @@ useEffect(() => {
                     // filterOption={(input, option) =>
                     //   option.children.toLowerCase().includes(input.toLowerCase())
                     // }
+                    onChange={(event)=>{
+                      console.log(event)
+                      setselectedCourseGroupM(event)
+                    }}
                       onSelect={(event)=>{
                         localStorage.setItem(`${model.name}_coursegroup_m`,event)
-                        setselectedCourseGroupM([...selectedCourseGroupM.filter(p=>p!==event),event])
                       }}
                       maxTagCount={'resposive'}
                       mode="multiple"

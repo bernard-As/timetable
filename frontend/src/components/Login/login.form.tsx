@@ -30,6 +30,7 @@ const LoginForm: React.FC = () => {
         // Same subdomain, navigate to the referrer
         // navigate(referrer);
         window.location.href=`${process.env.REACT_APP_BASE_URL}home`
+        
 
       } else {
         // Different subdomain, navigate to the base URL

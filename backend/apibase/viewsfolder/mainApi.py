@@ -110,6 +110,8 @@ class SysytemNewsView(viewsets.ModelViewSet):
 
 class UpcomingScheduleView(generics.ListAPIView):
     serializer_class = ScheduleSerializer
+    authentication_classes = []
+    permission_classes = []
 
     def get_queryset(self):
         # Get the current date and time

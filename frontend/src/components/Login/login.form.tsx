@@ -29,10 +29,11 @@ const LoginForm: React.FC = () => {
       if (referrerUrl.hostname.endsWith(currentHostname) && (referrer!==`${process.env.REACT_APP_BASE_URL}welcome` && referrer!==`${process.env.REACT_APP_BASE_URL}login`)) {
         // Same subdomain, navigate to the referrer
         // navigate(referrer);
-        window.location.href=referrer
+        window.location.href=`${process.env.REACT_APP_BASE_URL}`
+
       } else {
         // Different subdomain, navigate to the base URL
-        window.location.href=`${process.env.REACT_APP_BASE_URL}home`
+        window.location.href=`${process.env.REACT_APP_BASE_URL}`
         // navigate(`/home`);
       }
     } catch (error) {

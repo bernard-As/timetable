@@ -146,7 +146,8 @@ export const CourseDisplayInCell = ({data,setshowSetScheduleModal})=>{
     const start = data.start;
     const end = data.end;
     const [courseData,setcourseData] = useState();
-    const [roomData,setroomData] = useState()
+    const [roomData,setroomData] = useState();
+    const [loading,setLoading] = useState(true)
     useEffect(()=>{
         const getDeatils = (id)=>{
             PrivateDefaultApi.get('coursegroup/'+cId+'/').then(res=>{
@@ -175,7 +176,8 @@ export const CourseDisplayInCell = ({data,setshowSetScheduleModal})=>{
             })
           };
         return(
-            <div>
+            <>{loading?<Spin/>:
+                <div>
                {courseData!==undefined&& 
                <div>
                <Space
@@ -227,6 +229,10 @@ export const CourseDisplayInCell = ({data,setshowSetScheduleModal})=>{
                 </div>}
 
             </div>
+            }
+            
+            </>
+            
         )
     }
     return (

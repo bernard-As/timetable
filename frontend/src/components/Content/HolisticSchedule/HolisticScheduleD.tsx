@@ -28,7 +28,7 @@ const HolisticScheduleD:React.FC=()=>{
     return (
         <>
             {
-                !canDisplay ? <HolisticSchedule404/> : 
+                // !canDisplay ? <HolisticSchedule404/> : 
                 
                 <Layout style={{backgroundColor:'transparent'}}>
                     <HHeader setToDisplay={setToDisplay} setsearchData={setsearchData}/>

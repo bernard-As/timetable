@@ -7,6 +7,7 @@ from django.utils import timezone
 from django.db.models import Q
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
+from rest_framework.views import APIView
 
 from apibase.models import *
 from apibase.serializers import *
@@ -130,3 +131,56 @@ class UpcomingScheduleView(generics.ListAPIView):
         queryset = self.get_queryset()
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
+class FreeModel(APIView):
+    authentication_classes =[]
+    permission_classes = []
+    # Mapping models and serializers
+    MODEL_SERIALIZER_MAP = {
+        'building': (Building, BuildingSerializer),
+        'room': (Room, RoomSerializer),
+        'schedule': (Schedule, ScheduleSerializer),
+        'systemnews': (SystemNews, SystemNewsSerializer),
+        'floor': (Floor, FloorSerializer),
+        'faculty': (Faculty, FacultySerializer),
+        'department': (Department, DepartmentSerializer),
+        'program': (Program, ProgramSerializer),
+        'semester': (Semester, SemesterSerializer),
+        'title': (Title, TitleSerializer),
+        'lecturer': (Lecturer, LecturerSerializer),
+        'student': (Student, StudentSerializer),
+        'course': (Course, CourseSerializer),
+        'coursegroup': (Coursegroup, CourseGroupSerializer),
+        'activitytype': (ActivityType, ActivitytypeSerializer),
+        'coursesemester': (CourseSemester, CourseSemesterSerializer),
+    }
+
+    def post(self, request):
+        try:
+            # Extract 'model' and 'id' from request data
+            model_name = request.data.get('model')
+            object_id = request.data.get('id')
+
+            # Validate if the model exists in our mapping
+            if model_name not in self.MODEL_SERIALIZER_MAP:
+                return Response({"error": "Invalid model name"}, status=400)
+
+            # Get the model and serializer based on the model name
+            model_class, serializer_class = self.MODEL_SERIALIZER_MAP[model_name]
+
+            if object_id:
+                # Fetch a single object by ID
+                try:
+                    obj = model_class.objects.get(id=object_id)
+                    serialized_data = serializer_class(obj).data
+                except model_class.DoesNotExist:
+                    return Response({"error": f"{model_name.capitalize()} not found."}, status=404)
+            else:
+                # Fetch all objects if no ID is provided
+                obj = model_class.objects.all()
+                serialized_data = serializer_class(obj, many=True).data
+
+            return Response(serialized_data, status=200)
+
+        except Exception as e:
+            print(f"Error: {e}")
+            return Response({"error": "Bad Request"}, status=400)

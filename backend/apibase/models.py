@@ -251,7 +251,7 @@ class ActivityType(models.Model):
         return self.name
 class Course(models.Model):
     """A course offered by the university"""
-    code = models.CharField(max_length=30, unique=True)
+    code = models.CharField(max_length=200, unique=True)
     name = models.TextField()
     description = models.TextField(blank=True)
     # waitinglist = models.PositiveSmallIntegerField(default=0)# when student passes the course

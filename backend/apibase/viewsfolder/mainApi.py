@@ -59,6 +59,13 @@ class ViewSchedule(APIView):
             toReturn = Schedule.objects.filter(coursegroup__course_semester__program=request.data['id'])
         elif model == 'semester':
             toReturn = Schedule.objects.filter(coursegroup__course_semester=request.data['id'])
+        elif model == 'student' :
+            stdCourses = Student.objects.get(pk=id).coursegroup
+
+            if(not stdCourses==None):
+                for c in stdCourses:
+                    schedules = Schedule.objects.filter(coursegroup=c.id)
+                    toReturn.extend(schedules)  # Extend the list with schedules
         else:
             return Response({'error': 'Invalid request'}, status=400)
 

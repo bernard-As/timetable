@@ -11,7 +11,6 @@ const LandHeader = observer(()=>{
     const navigate = useNavigate()
     useEffect(()=>{
        setisLogin( rootStore.checkTokenValidity2())
-       console.log(rootStore.checkTokenValidity2())
     },[navigate])
     const menuItems = [
         {

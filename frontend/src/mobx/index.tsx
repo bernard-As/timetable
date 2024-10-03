@@ -13,6 +13,7 @@ class RootStore {
   holosticScheduleContentStore = new HolosticScheduleContentStore();
   credential = 'OT'
   enableManagement = true;
+  tockenChecked = false;
   constructor() {
     makeAutoObservable(this);
   }

@@ -40,13 +40,14 @@ export const PrivateApi = axios.create({
 PrivateDefaultApi.interceptors.response.use(
   response => response,
   error => {
-    if (error&&error.response && error.response.status === 401) {
+    if (error&&error.response && error.response.status === 401&& !rootStore.tockenChecked) {
       rootStore.notification.notify({
         type:'error',
         text: 'Please login to access fine-tuned informations.',
         title:'Please login to access fine-tuned informations.',
         timeout:1500
       })
+      rootStore.tockenChecked = true;
     }else if(error&&error.response && error.response.status === 500){
       rootStore.notification.notify({
         type:'error',

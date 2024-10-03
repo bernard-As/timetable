@@ -54,7 +54,7 @@ export const RoomCodeDipslay = ({id})=>{
 
 export const CourseGroupDipslay = ({id})=>{
     const [data, setData] = useState();
-    const [loading,setLoading] = useState(false)
+    const [loading,setLoading] = useState(true)
     useEffect(()=>{
         PrivateDefaultApi.get('coursegroup/'+id+'/').then((res)=>{
             setData(res.data);
@@ -130,7 +130,7 @@ export const ScheduleCell = ({record})=>{
             </div>:
             '...'
             }
-            <Modal title="Basic Modal" open={showSetScheduleModal} footer={null}
+            <Modal title="Create Schedule" open={showSetScheduleModal} footer={null}
                 onCancel={()=>setshowSetScheduleModal(false)}
             >
               <Add model={rootStore.holosticScheduleContentStore.content.find(c=>c.name==='create_schedule')}/>
@@ -152,6 +152,7 @@ export const CourseDisplayInCell = ({data,setshowSetScheduleModal})=>{
         const getDeatils = (id)=>{
             PrivateDefaultApi.get('coursegroup/'+cId+'/').then(res=>{
                 setcourseData(res.data)
+                setLoading(false)
             }).catch(error=>{
                 // console.log(error)
             })

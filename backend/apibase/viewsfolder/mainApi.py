@@ -59,15 +59,15 @@ class ViewSchedule(APIView):
             toReturn = Schedule.objects.filter(coursegroup__course_semester__program=request.data['id'])
         elif model == 'semester':
             toReturn = Schedule.objects.filter(coursegroup__course_semester=request.data['id'])
-        elif model == 'student' :
-            stdCourses = Student.objects.get(pk=id).coursegroup
-
-            if(not stdCourses==None):
+        elif model == 'student':
+            # Get the student's course groups (assuming it's a ManyToManyField)
+            student = Student.objects.get(pk=id)
+            stdCourses = student.coursegroup.all()  # Use .all() to get the related course groups
+            if stdCourses.exists():  # Check if any course groups are available
+                print(stdCourses)
                 for c in stdCourses:
                     schedules = Schedule.objects.filter(coursegroup=c.id)
-                    toReturn.extend(schedules)  # Extend the list with schedules
-        else:
-            return Response({'error': 'Invalid request'}, status=400)
+                    toReturn.extend(schedules)  
 
         # Serialize the data
         serializer = ScheduleSerializer(toReturn, many=True)

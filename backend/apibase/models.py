@@ -285,7 +285,7 @@ class Coursegroup(models.Model):
         return self.course.code + ' Group: '+ str(self.group_number)+' by: '+self.lecturer.user.email
 class Student(models.Model):
     """Students"""
-    user = models.OneToOneField(Users,on_delete=models.SET_NULL, null=True,parent_link=True)  # type: ignore
+    user = models.ForeignKey(Users,on_delete=models.SET_NULL, null=True,parent_link=True)  # type: ignore
     studentId = models.CharField(max_length=255,unique=True)
     advisor = models.ForeignKey(Advisor,on_delete=models.SET_NULL, null=True)
     coursegroup = models.ManyToManyField(Coursegroup,null=True,blank=True)

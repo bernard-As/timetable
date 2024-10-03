@@ -409,30 +409,37 @@ class StudentViewSet(viewsets.ModelViewSet):
         return Response(modified_data)
 
     def update(self, request, *args, **kwargs):
-        group = Group.objects.filter(id=request.data['group'])
-        permissions  = Permission.objects.filter(id__in=request.data['user_permissions'])
-        faculties = [Faculty.objects.get(id=fac) for fac in request.data['faculty']if fac!='']
-        department = [Department.objects.get(id=dep) for dep in request.data['department']if dep!='']
-        program = [Program.objects.get(id=prog) for prog in request.data['program']if prog!='']
-
+        # group = Group.objects.filter(id=request.data['group'])
+        # permissions  = Permission.objects.filter(id__in=request.data['user_permissions'])
+        # faculties = [Faculty.objects.get(id=fac) for fac in request.data['faculty']if fac!='']
+        # department = [Department.objects.get(id=dep) for dep in request.data['department']if dep!='']
+        program = [request.data['program']]
+        coursegroup = [Coursegroup.objects.get(pk=c) for c in request.data['coursegroup']]
         userData = {
+            'username':request.data['email'], 
+            # 'password':make_password(str(request.data['studentId'])),
             'first_name':request.data['first_name'],
             'last_name':request.data['last_name'],
             'email':request.data['email'],
-            'is_active':request.data['status']
-            # 'group':group,
-            # 'user_permissions':request.data['user_permissions'],
+            'is_active':request.data['status'],
+            'program':request.data['program']
         }
-        related_user = Users.objects.get(user=request.data['user'])
-        for key, value in userData.items():
-            setattr(related_user, key, value)
-        related_user.user_permissions.clear()
-        related_user.program.clear()
-        related_user.save()
-        related_user.groups.set(group)
-        related_user.user_permissions.set(permissions)
-        related_user.program.set(program)
-        related_user.save()
+        id = request.data['id']
+        std = Student.objects.get(pk=id)
+        related_user = Users.objects.get(pk=std.user.pk)
+        related_user.__dict__.update(userData)
+        # for key, value in userData.items():
+        #     setattr(related_user, key, value)
+        # related_user.program.clear()
+        # related_user.save()
+        # related_user.program.set(program)
+        # related_user.save()
+        std.coursegroup.clear()
+        std.save()
+        std.coursegroup.set(coursegroup)
+        std.save()
+
+
         return super().update(request,*args,**kwargs)
 
     def modify_data(self, item):

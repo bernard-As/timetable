@@ -29,17 +29,17 @@ const LoginForm: React.FC = () => {
       if (referrerUrl.hostname.endsWith(currentHostname) && (referrer!==`${process.env.REACT_APP_BASE_URL}welcome` && referrer!==`${process.env.REACT_APP_BASE_URL}login`)) {
         // Same subdomain, navigate to the referrer
         // navigate(referrer);
-        window.location.href=`${process.env.REACT_APP_BASE_URL}home`
+        window.location.href=`https://timetable.rdu.edu.tr`
         
 
       } else {
         // Different subdomain, navigate to the base URL
-        window.location.href=`${process.env.REACT_APP_BASE_URL}home`
+        window.location.href=`https://timetable.rdu.edu.tr`
         // navigate(`/home`);
       }
     } catch (error) {
       // If referrer is not a valid URL or any other issue
-        window.location.href=`${process.env.REACT_APP_BASE_URL}welcome`
+        window.location.href=`https://timetable.rdu.edu.tr/welcome`
         console.info(error)
     }
   };

@@ -141,7 +141,7 @@ const HContent:React.FC<{stopLoadingf:any,toDisplay:any,setToDisplay:any,searchD
                     <Details/>
                 }
                 {
-                    toDisplay==='edit'&&rootStore.enableManagement&&rootStore.isManager()&&
+                    toDisplay==='edit'&&((rootStore.enableManagement&&rootStore.isManager())||(model==='student'&&rootStore.isAdvisor()))&&
                     <Edit/>
                 }
                 {

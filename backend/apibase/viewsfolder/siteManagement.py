@@ -383,10 +383,15 @@ class StudentViewSet(viewsets.ModelViewSet):
         user_student.save()
         # student_group = Group.objects.get(id=request.data['group'])
         # user_student.groups.add(student_group)
+        try:
+            existingStudent = Student.objects.get(studentId=request.data['studentId'])
+            existingStudent.delete()
+        except:
+            pass
         studentData  ={
             'user':user_student,
             'studentId':request.data['studentId'],
-            'advisor':Advisor.objects.get(user=request.user.pk),
+            'advisor':Advisor.objects.filter(user=request.user.pk).last(),
         }
         request.data['user'] = user_student # type: ignore
         std = Student.objects.create(**studentData)

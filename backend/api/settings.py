@@ -142,7 +142,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         # 'knox.auth.TokenAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
+        # 'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication',
         # other authentication classes...
     ],
@@ -157,6 +157,9 @@ CORS_ALLOWED_ORIGINS = [
 
 CSRF_TRUSTED_ORIGINS = [
     'https://timetable.rdu.edu.tr',
+    'http://timetable.rdu.edu.tr',
+    'https://timetable.rdu.edu.tr/admin',
+    'http://timetable.rdu.edu.tr/admin',
     'https://www.timetable.rdu.edu.tr',
     # Add other domains if needed
 ]

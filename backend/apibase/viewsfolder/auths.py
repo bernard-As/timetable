@@ -18,12 +18,17 @@ class LoginView(APIView):
         password = request.data.get('password')
         
         # Try to authenticate by username or email
-        user = authenticate(request, username=username_or_email, password=password)
+        # user = authenticate(request, username=username_or_email, password=password)
+        user = None
         
         if user is None:
             try:
                 # If not authenticated by username, try authenticating by email
-                user_obj = Users.objects.get(email=username_or_email)
+                try:
+                    user_obj = Users.objects.get(email=username_or_email)
+                except:
+                    user_obj = Users.objects.get(username=username_or_email)
+
                 user = authenticate(request, username=user_obj.username, password=password)
             except Users.DoesNotExist:
                 pass  # No user found with this email

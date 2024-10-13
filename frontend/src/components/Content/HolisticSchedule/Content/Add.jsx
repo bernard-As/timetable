@@ -1348,7 +1348,7 @@ useEffect(() => {
                  notFoundContent={null}
                  options={(data || []).map((d) => ({
                    value: d.id,
-                   label: d.code+ ' '+d.name,
+                   label: d.code+ ' '+d.name+' G'+d.group_number,
                  }))}
                />
            </Form.Item>

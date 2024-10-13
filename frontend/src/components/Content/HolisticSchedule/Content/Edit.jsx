@@ -102,7 +102,7 @@ const [courseData,setCourseData] = useState([])
             rootStore.holisticScheduleStore.deleteLocalStorageItemWith(`${model.name}_edit_`)
             rootStore.notification.notify({
               type:'success',
-              text:`${model.name } updated `
+              text:`${model.name } updated`
             })
             // form.resetFields()
         }).catch((error)=>{

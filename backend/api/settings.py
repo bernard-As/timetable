@@ -152,7 +152,9 @@ REST_FRAMEWORK = {
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://localhost:8000",
-    "https://timetable.rdu.edu.tr"
+    "https://timetable.rdu.edu.tr",
+    "https://timetable.rdu.edu.tr",
+
 ]
 
 CSRF_TRUSTED_ORIGINS = [

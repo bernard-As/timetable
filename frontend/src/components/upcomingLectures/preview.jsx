@@ -71,7 +71,9 @@ const UpComingLecturesPreview = observer(()=>{
                     maxHeight: '320px',
                 }}
                 renderItem={(item, index) => (
-                    <List.Item>
+                    <List.Item
+                      style={{margin:'10px'}}
+                    >
                       <List.Item.Meta
                         title={
                           <span>

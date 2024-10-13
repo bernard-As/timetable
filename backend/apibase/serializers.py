@@ -141,8 +141,18 @@ class ScheduleSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ['user']
 
+class ScheduleTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ScheduleType
+        fields = '__all__'
+
+
 class SystemNewsSerializer(serializers.ModelSerializer):
     class Meta:
         model = SystemNews
         fields = '__all__'
         
+class AdvisorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Advisor
+        fields = '__all__'

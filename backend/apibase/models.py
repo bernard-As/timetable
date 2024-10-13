@@ -288,7 +288,7 @@ class Student(models.Model):
     user = models.ForeignKey(Users,on_delete=models.SET_NULL, null=True,parent_link=True)  # type: ignore
     studentId = models.CharField(max_length=255,unique=True)
     advisor = models.ForeignKey(Advisor,on_delete=models.SET_NULL, null=True)
-    coursegroup = models.ManyToManyField(Coursegroup,null=True,blank=True)
+    coursegroup = models.ManyToManyField(Coursegroup,blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     def __str__(self):
         return self.user.user.first_name+ '_ '+ str(self.studentId)
@@ -353,9 +353,31 @@ class Preference(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+class ScheduleType(models.Model):
+    """Schedule type """
+    name = models.CharField(max_length=255)
+    can_std_view = models.BooleanField(default=False)
+    can_lect_view = models.BooleanField(default=False)
+    can_adv_view = models.BooleanField(default=False)
+    can_hod_view = models.BooleanField(default=False)
+    can_vcr_view = models.BooleanField(default=False)
+    can_padm_view = models.BooleanField(default=False)
+    can_system_view = models.BooleanField(default=False)
+    can_asst_view = models.BooleanField(default=False)
+    can_other_view = models.BooleanField(default=False)
+    status = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    def __str__(self):
+        return self.name
+    
 
 class Schedule(models.Model):
     """Schedule set """
+    CHOISES = [
+        ("Lecture", "Lecture"),
+        ("Tutorial", "Tutorial"),
+        ]
     user = models.ForeignKey(Users, on_delete=models.CASCADE, null=True, blank=True)
     room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name='schedule_room')
     coursegroup = models.ForeignKey(Coursegroup, on_delete=models.CASCADE, related_name='schedule_coursegroup')
@@ -363,10 +385,12 @@ class Schedule(models.Model):
     end = models.TimeField()
     day = models.SmallIntegerField(blank=True,null=True)
     date = models.DateField(blank=True, null=True)
+    type = models.ForeignKey(ScheduleType,on_delete=models.CASCADE)
     status = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
+    def __str__(self):
+        return self.user.user.email + ' ' +self.room.code+' '+str(self.start)+' '+str(self.end)+' '+str(self.day)+str(self.date)
     class Meta:
         constraints = [
             models.UniqueConstraint(
@@ -399,8 +423,14 @@ class Schedule(models.Model):
 
 class SystemNews(models.Model):
     """System news """
+    CHOISES = [
+        ("sys", "system"),
+        ("lect", "lecture"),
+        ]
     title = models.CharField(max_length=255)
     content = models.TextField()
+    type= models.CharField()
+    type = models.CharField(max_length=255,choices=CHOISES, default='sys')
     created_by = models.ForeignKey(Users, on_delete=models.SET_NULL, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

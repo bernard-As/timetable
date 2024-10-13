@@ -49,6 +49,7 @@ const Add  = observer(({model})=>{
         if(values.day!==undefined)values.day=rootStore.holosticScheduleContentStore.daysIndex.find(p=>p.name===values.day).id
         if(values.start!==undefined)values.end =  values.start[1].format('HH:mm')
         if(values.start!==undefined)values.start =  values.start[0].format('HH:mm')
+        if(values.type!==undefined)values.type = additionalData.find(ad=>ad.target==='scheduletype')?.data.find(d=>d.name===values.type)?.id
       PrivateDefaultApi.post(`${model.apiUrl}/`,values).then((res)=>{
           rootStore.holisticScheduleStore.deleteLocalStorageItemWith(`${model.name}_`)
           rootStore.notification.notify({
@@ -170,6 +171,7 @@ useEffect(() => {
       fetchAdditional('activitytype')
       fetchAdditional('coursegroup')
       fetchAdditional('coursesemester')
+      fetchAdditional('scheduletype')
     },[])
     useEffect(()=>{
       setadditionalData(rootStore.holosticScheduleContentStore.additionallyFetchedData)
@@ -1282,6 +1284,25 @@ useEffect(() => {
                 />
                 </Form.Item>
             }
+            {model.addFields.includes('assignmentType')&&
+                <Form.Item
+                  label="Assignment Type"
+                  defaultValue={'Lecture'}
+                  defaultActiveFirstOption
+                  name='type'
+                  rules={[
+                    {
+                      required: true,
+                      message: `Need to select an assignement type!`,
+                    },
+                  ]}
+                >
+                  <Segmented
+                  options={additionalData.find(ad => ad.target === 'scheduletype')?.data.map(item => item.name)}
+                  
+                />
+                </Form.Item>
+            }
             {model.addFields.includes('day')&&typeSelected==='Weekly'&&
                 <Form.Item
                   label="Select a day"
@@ -1292,6 +1313,8 @@ useEffect(() => {
                       message: `Need to select a day!`,
                     },
                   ]}
+                  initialValue={'Monday'}
+                  defaultValue={'Monday'}
                 >
                  <Segmented
                     options={['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']}
@@ -1323,7 +1346,7 @@ useEffect(() => {
                     },
                   ]}
             >
-                <TimePicker.RangePicker  minuteStep={15} format={'HH:mm'} />
+                <TimePicker.RangePicker  minuteStep={15} format={'HH:mm'}  needConfirm={false}/>
                 </Form.Item>
             }
             {model.addFields.includes('coursegroup_s')&&

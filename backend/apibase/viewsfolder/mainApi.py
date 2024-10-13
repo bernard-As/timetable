@@ -108,7 +108,7 @@ class MySchedule(APIView):
         return Response(serializer.data)
 
 
-class SysytemNewsView(viewsets.ModelViewSet):
+class SystemNewsView(viewsets.ModelViewSet):
     authentication_classes = []
     permission_classes = []
     queryset = SystemNews.objects.all()
@@ -134,12 +134,13 @@ class UpcomingScheduleView(generics.ListAPIView):
             Q(date__gt=now.date()) |  # Future dates
             Q(date=now.date(), start__gte=now.time()) |  # Today's schedules after the current time
             Q(day__gte=current_day)  # Schedules based on the day field (today or future days)
-        ).order_by('date', 'day', 'start')[:10]
+        ).order_by('date', 'day', 'start')[:15]
 
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
+
 class FreeModel(APIView):
     authentication_classes =[]
     permission_classes = []
@@ -161,6 +162,8 @@ class FreeModel(APIView):
         'coursegroup': (Coursegroup, CourseGroupSerializer),
         'activitytype': (ActivityType, ActivitytypeSerializer),
         'coursesemester': (CourseSemester, CourseSemesterSerializer),
+        'advisor': (Advisor, AdvisorSerializer),
+        'users': (Users, UsersSerializer),
     }
 
     def post(self, request):

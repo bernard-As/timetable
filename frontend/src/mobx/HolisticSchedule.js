@@ -158,6 +158,14 @@ class HolisticScheduleStore {
         
         }
     }
+    getRandomColor() {
+        // List of selected colors
+        const colors = ['#B2B000', '#01F500', '#235FFF', '#D912FF', '#1AFFE7', '#F90028'];
+        // Get a random index from 0 to colors.length - 1
+        const randomIndex = Math.floor(Math.random() * colors.length);
+        // Return the color at the random index
+        return colors[randomIndex];
+    }
 }
 
 export default HolisticScheduleStore;

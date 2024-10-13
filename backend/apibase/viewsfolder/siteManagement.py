@@ -917,3 +917,14 @@ class ScheduleViewSet(viewsets.ModelViewSet):
         user = Users.objects.get(user=self.request.user.id)
         # If you want to update the user as well (for updates)
         serializer.save(user=user)
+
+class ScheduleTypeViewSet(viewsets.ModelViewSet):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    queryset = ScheduleType.objects.all().order_by('id')
+    serializer_class = ScheduleTypeSerializer
+    filter_backends = (filters.SearchFilter, filters.OrderingFilter)
+    search_fields = [
+        'name',
+        'created_at',
+    ]

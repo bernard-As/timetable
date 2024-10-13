@@ -39,7 +39,8 @@ router.register(r'coursegroup', siteManagement.CourseGroupViewSet, basename='cou
 router.register(r'preference', siteManagement.PreferenceViewSet, basename='preference')
 router.register(r'eventtime', siteManagement.EventTimeViewSet, basename='eventtime')
 router.register(r'schedule', siteManagement.ScheduleViewSet, basename='schedule')
-router.register(r'system_news', SysytemNewsView, basename='system News')
+router.register(r'scheduletype', siteManagement.ScheduleTypeViewSet, basename='schedule type')
+router.register(r'system_news', SystemNewsView, basename='system News')
 urlpatterns = [
     path('login/', LoginView.as_view()),
     path('renewStore/',StoreRenew.as_view(), name='renewStore'),

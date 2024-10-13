@@ -27,6 +27,26 @@
     --content-color: var(--content-color-dark)
   }
 }
+/* For WebKit browsers (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+  width: 12px; /* Width of the entire scrollbar */
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(45deg, #a5bbe488, #4174d3); /* Thumb (scroll indicator) */
+  border-radius: 10px; /* Rounded corners for the scrollbar thumb */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555; /* Thumb color when hovered */
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1; /* The background (track) of the scrollbar */
+  border-radius: 10px;
+}
+
+
 body {
   /* background-color: var(--background-color); */
   /* color: var(--text-color); */
@@ -36,6 +56,8 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  scrollbar-width: thin; /* Can be "auto" or "thin" */
+  scrollbar-color: #ff0000 #f1f1f1; /* First color is the thumb, second is the track */
 }
 
 code {
@@ -81,6 +103,7 @@ code {
   justify-content: flex-end;
   position: absolute;
   right:0;
+  min-width: 100px;
 }
 
 .content{
@@ -126,5 +149,16 @@ code {
   margin-top: 10%;
 }
 .new-preview{
-  min-width: 100%;
+  /* min-width: 100%; */
+  max-width: 600px;
+  min-width: 360;
+  margin: 10px;
+}
+
+.welcome-text{
+  max-width: 650px;
+}
+.welcome-logo{
+  max-width: 250px;
+  min-width: 100px;
 }

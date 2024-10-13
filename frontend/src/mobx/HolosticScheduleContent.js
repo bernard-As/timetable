@@ -1186,6 +1186,7 @@ class HolosticScheduleContentStore{
             apiUrl:'schedule',
             addFields:[
                 'type',
+                'assignmentType',
                 'day',
                 'date',
                 'start',

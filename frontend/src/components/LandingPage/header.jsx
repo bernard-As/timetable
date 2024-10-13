@@ -6,12 +6,8 @@ import { RiHome2Line } from "react-icons/ri";
 import rootStore from "../../mobx";
 import { useNavigate } from "react-router-dom";
 import { IoLogIn } from "react-icons/io5";
-const LandHeader = observer(()=>{
-    const [isLogin,setisLogin] = useState(false)
+const LandHeader = observer(({isLogin=false})=>{
     const navigate = useNavigate()
-    useEffect(()=>{
-       setisLogin( rootStore.checkTokenValidity2())
-    },[navigate])
     const menuItems = [
         {
           key: 1,
@@ -39,11 +35,7 @@ const LandHeader = observer(()=>{
         // },
       ];
     return (
-        <Header>
-            <Space
-                direction="horizontal"
-            >
-                <Header
+        <Header
             style={{display:'flex'}}
             className="head-menu-container"
         >
@@ -54,8 +46,9 @@ const LandHeader = observer(()=>{
             </div>
             <Menu
                 mode="horizontal"
-                style={{flex:1,minWidth:0}}
+                style={{}}
                 className="head-menu"
+                // inlineCollapsed={false}
             >
               {menuItems.map((menuItem) => (
                 <Menu.Item
@@ -70,8 +63,6 @@ const LandHeader = observer(()=>{
                 </Menu.Item>
               ))}
             </Menu>
-        </Header>
-            </Space>
         </Header>
     )
 })

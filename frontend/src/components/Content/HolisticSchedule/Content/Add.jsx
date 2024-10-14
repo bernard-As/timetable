@@ -13,9 +13,11 @@ const Add  = observer(({model})=>{
   const [selectedDepartment,setselectedDepartment] = useState([])
   const [selectedProgram,setselectedProgram] = useState([])
   const [selectedBuilding,setselectedBuilding] = useState([])
+  const [selectedStudent,setselectedStudent] = useState()
   const [selectFloor,setselectFloor] = useState([])
   const [typeSelected, setTypeSElected] = useState('Weekly')
   const [data,setData] = useState([])
+  const [data2,setData2] = useState([])
   const [dataRoom,setDataRoom] = useState([])
   const [selectedCourseGroupM,setselectedCourseGroupM] = useState([])
   const [timeSlots,setTimeSlots] = useState([0])
@@ -92,11 +94,14 @@ const Add  = observer(({model})=>{
       })
     }
 
-    const onSearch= (value)=>{
-      PrivateDefaultApi.get('coursegroup/?search='+value).then((res)=>{
+    const onSearch= (value,model='coursegroup')=>{
+      PrivateDefaultApi.get(model+'/?search='+value).then((res)=>{
+        if(model==='coursegroup')
           setData(res.data)
-          setadditionalData([...additionalData.filter(a=>a.target!=='coursegroup'),{
-            target:'coursegroup',
+        else
+          setData2(res.data)
+          setadditionalData([...additionalData.filter(a=>a.target!==model),{
+            target:model,
             data:res.data
           }])
       }).catch((error)=>{
@@ -122,20 +127,39 @@ useEffect(() => {
             model: 'course',
             id: s,
           })
-        )
+        ),
+        
       );
 
       // Extract and concatenate all response data
-      const toReturn = responses.map(res => res.data).flat(); // Flattening in case you have nested arrays
+      // const toReturn = responses.map(res => res.data).flat(); // Flattening in case you have nested arrays
+      let selected = responses.map(res => res.data).flat();
+      selected.map(s=>{
+        s.color='#a2e981'
+        selected = [...selected.filter(sl=>sl.id!==s.id),s]
+        
+      })
+      if(model.name==='assistant'){
+        selected = selected.filter(s=>s.type===2)
+      }
+      let stdres = []
+      if(selectedStudent!==undefined){
+        stdres = await PrivateDefaultApi.post('view_schedule/',{
+          model:'student',
+          id:selectedStudent
+        })
+        stdres = stdres.data
+      }
+      const toReturn = [...selected,...stdres]
+      // const toReturn = responses.map(res => res.data).flat(); // Flattening in case you have nested arrays
       setCourseData(toReturn);
-      console.log(toReturn);
     } catch (err) {
       console.error(err);
     }
   };
 
   getItems();
-}, [selectedCourseGroupM]);
+}, [selectedCourseGroupM,selectedStudent]);
 
     useEffect(()=>{
       let newSh = [];
@@ -151,7 +175,6 @@ useEffect(() => {
             }
             newSh = [...newSh.filter(n=>n.timeslot!==sc.timeslot),sc]
         })
-      console.log('hi')
       setTableData(newSh)
     },[timeSlots,courseData])
 
@@ -172,6 +195,7 @@ useEffect(() => {
       fetchAdditional('coursegroup')
       fetchAdditional('coursesemester')
       fetchAdditional('scheduletype')
+      fetchAdditional('student')
     },[])
     useEffect(()=>{
       setadditionalData(rootStore.holosticScheduleContentStore.additionallyFetchedData)
@@ -769,6 +793,36 @@ useEffect(() => {
 
                 </Form.Item>
             }
+            {model.addFields.includes('student')&&
+               <Form.Item
+               name="student"
+               label="Select a Student"
+               rules={[
+                   {
+                     required: true,
+                     message: `Need to select a student!`,
+                   },
+                 ]}
+               initialValue={localStorage.getItem(`create_student`)}
+           >
+               <Select
+                 showSearch
+                 placeholder={'Search for a Student'}
+                 defaultActiveFirstOption={false}
+                 suffixIcon={null}
+                 filterOption={false}
+                 onSearch={(values)=>{
+                  onSearch(values,'student')
+                 }}
+                 onSelect={(value)=>setselectedStudent(value)}
+                 notFoundContent={null}
+                 options={(data2 || []).map((d) => ({
+                   value: d.id,
+                   label: d.studentId+': '+d.first_name+' '+d.last_name,
+                 }))}
+               />
+           </Form.Item>
+            }
             {
               model.addFields.includes('coursegroup_m')&&
               additionalData.find(ad=>ad.target==='coursegroup')&&
@@ -790,7 +844,6 @@ useEffect(() => {
                     //   option.children.toLowerCase().includes(input.toLowerCase())
                     // }
                     onChange={(event)=>{
-                      console.log(event)
                       setselectedCourseGroupM(event)
                     }}
                       onSelect={(event)=>{
@@ -1418,6 +1471,18 @@ useEffect(() => {
         </Form>
         {
               model.addFields.includes('coursesPreview')&&
+              timeSlots.length>0&& <Table
+                columns={columns} 
+                dataSource={tableData}
+                rowKey="timeslot"
+                pagination={false}
+                scroll={{ x: 1000 }}
+                bordered 
+            />
+              
+            }
+           {
+              model.addFields.includes('coursesPreview_m')&&
               timeSlots.length>0&& <Table
                 columns={columns} 
                 dataSource={tableData}

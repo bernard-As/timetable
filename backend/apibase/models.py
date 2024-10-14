@@ -267,7 +267,7 @@ class Coursegroup(models.Model):
     extra_session_of = models.ManyToManyField('self',blank=True)# when there are some extra session that should be linked to the main session
     group_number = models.PositiveSmallIntegerField(default=1)
     lecturer = models.ForeignKey(Lecturer,on_delete=models.SET_NULL,null=True,related_name='course_lecturer')
-    assistant = models.ForeignKey(Users,blank=True,on_delete=models.SET_NULL,null=True)
+    # assistant = models.ForeignKey(Users,blank=True,on_delete=models.SET_NULL,null=True)
     lecturer_assistant = models.ForeignKey(Lecturer,blank=True,related_name="Lecturer_Assisting",on_delete=models.SET_NULL,null=True)
     merged_with = models.ManyToManyField('self',blank=True) # foreign key of the main course where it is merged
     duration = models.TextField(null=True)
@@ -298,6 +298,13 @@ class StudentGroup(models.Model):
     coursegroup = models.ManyToManyField(Coursegroup, related_name='studentgroups')
     timespan = models.DateTimeField(auto_now_add=True)
     status = models.BooleanField()
+
+class Assistant(models.Model):
+    """Assistant """
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    coursegroup = models.ManyToManyField(Coursegroup)
+    
+    
 class Day(models.Model):
     """Day of week (0-6 is Monday - Sunday) or full date as int"""
     data = models.IntegerField(null=False)
@@ -441,6 +448,8 @@ class AdminOperations(models.Model):
             ("view_adminoperationsP", "Can view admin operations"),
             ("edit_preferences_adminoperationsP","Can edit preferences of other users")
         ]
+
+
 @receiver(post_migrate)
 def create_predefined_instances(sender, **kwargs):
     ActivityType.objects.get_or_create(name='Classroom Lecture', description="A regular lecture In a regular classroom.")

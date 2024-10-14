@@ -156,3 +156,8 @@ class AdvisorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Advisor
         fields = '__all__'
+
+class AssistantSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Assistant
+        fields = '__all__'

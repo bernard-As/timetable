@@ -73,7 +73,7 @@ const LandingPage = ()=>{
                         style={{padding:'20px'}}
                         wrap
                     >
-                        <Col span={12} style={{minWidth:'450px'}}>
+                        <Col span={12} style={{minWidth:'450px'}} id="advisor">
                             <AdvisorList />
                         </Col>
                         {/* <Col span={12} style={{minWidth:'450px'}}>

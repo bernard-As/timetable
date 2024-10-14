@@ -5,6 +5,10 @@ import { Link } from "react-router-dom";
 
 const Welcome = ({isLogin}) =>{
     const [ellipsis,setellipsis] = useState(true)
+    const navigatetoad = ()=>{
+        const element = document.getElementById('advisor');
+        element.scrollIntoView();
+    }
     return(
         <center>
             <Card>
@@ -44,7 +48,9 @@ const Welcome = ({isLogin}) =>{
                                 </Link>
                             </Button>
                             <Button block>
-                                <Link to="/login">Find my advisor</Link>
+                                <Link onClick={()=>{
+                                    navigatetoad()
+                                }}>Find my advisor</Link>
                             </Button>
                             </Space>
                         

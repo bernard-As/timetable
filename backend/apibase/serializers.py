@@ -19,7 +19,7 @@ class UsersSerializer(serializers.ModelSerializer):
     id=serializers.IntegerField(read_only=True)
     class Meta:
         model = Users
-        fields = '__all__'
+        fields = ['first_name','last_name','email','profile_picture','program','id','title']
 
 class GroupSerializer(serializers.ModelSerializer):
     id=serializers.IntegerField(read_only=True)

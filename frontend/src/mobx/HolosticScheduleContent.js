@@ -10,7 +10,7 @@ import { FaGripLines } from "react-icons/fa6";
 import { PrivateDefaultApi } from "../utils/AxiosInstance";
 import rootStore from ".";
 import { useEffect, useState } from "react";
-import { CourseGroupDipslay, LecturerDisplay, RenderTableViewDapartment, RenderTableViewFaculty, RenderTableViewProgram, RenderTableViewSemester, RoomCodeDipslay } from "../components/Content/HolisticSchedule/Content/AdditionalRendering";
+import { CourseGroupDipslay, LecturerDisplay, RenderTableViewCourses, RenderTableViewDapartment, RenderTableViewFaculty, RenderTableViewProgram, RenderTableViewSemester, RoomCodeDipslay } from "../components/Content/HolisticSchedule/Content/AdditionalRendering";
 
 class HolosticScheduleContentStore{
     delete = {
@@ -1367,7 +1367,7 @@ class HolosticScheduleContentStore{
                     title:'Courses',
                     dataIndex:'coursegroup',
                     key:'coursegroup',
-                    
+                    render: (_,render)=><RenderTableViewCourses id={render.coursegroup}/>                    
                 },
                 {
                     title:'Program',
@@ -1462,6 +1462,136 @@ class HolosticScheduleContentStore{
                 'status',
             ]
         },
+        {
+            name:'assistant',
+            apiUrl:'assistant',
+            addFields:[
+                'student',
+                'coursegroup_m',
+                'status',
+                'coursesPreview_m'
+                // 'longitude',
+                // 'latitude',
+            ],
+            list:{
+                title:'studentId',
+                description:'first_name'
+            },
+            listExtraButtons:{
+                prefered:true,
+                viewSchedule:true
+            },
+            columns:[
+                {
+                    title:'Title',
+                    dataIndex:'title',
+                    key:'title',
+                    
+                },
+                {
+                    title:'First Name',
+                    dataIndex:'first_name',
+                    key:'first_name',
+                    
+                },
+                {
+                    title:'Last Name',
+                    dataIndex:'last_name',
+                    key:'last_name',
+                    
+                },
+                {
+                    title:'Student Id',
+                    dataIndex:'studentId',
+                    key:'studentId',
+                    
+                },
+                {
+                    title:'Courses',
+                    dataIndex:'coursegroup',
+                    key:'coursegroup',
+                    render: (_,render)=><RenderTableViewCourses id={render.coursegroup}/>
+                    
+                },
+                {
+                    title:'Program',
+                    dataIndex:'program',
+                    key:'program',
+                    render: (_,render)=><RenderTableViewProgram id={render.program}/>
+                },
+                {
+                    title:'status',
+                    dataIndex:'status',
+                    key:'status',
+                    render: (b) => 
+                        <Tooltip title={b ?'Active':'Inactive'}>
+                        <FaDotCircle  
+                            style={{
+                                color: b ? 'green' : 'red',
+                            }}
+                        />
+                        </Tooltip>
+                    ,
+                    style:{width:2}
+                },
+                {
+                    title: 'Action',
+                    key: 'operation',
+                    fixed: 'right',
+                    // width: 100,
+                    render: (_,record) => <Space>
+                         <Tooltip title={'View full details'}>
+                            <GrView size={21} 
+                                onClick={()=>{
+                                    this.prepareToViewDetail(record.id)
+                                }}
+                            />
+                        </Tooltip>
+                        <Tooltip title={'Schedule'}>
+                            <GrFormSchedule size={27}
+                                onClick={()=>{
+                                    this.prepareToSchedule(record.id)
+                                }}
+                            />
+                        </Tooltip>
+                        {/* <Tooltip title={'Bookmark'}>
+                            <IoStarOutline size={25}/>
+                        </Tooltip> */}
+                        <Tooltip title={'Edit'}>
+                            <CiEdit size={25}
+                                onClick={()=>{
+                                    this.prepareToEdit(record.id)
+                                }}
+                            />
+                        </Tooltip>
+                        <Tooltip title={'Delete'}>
+                            <Popconfirm 
+                                title="Sure to delete?"  
+                                onConfirm={() => {
+                                    this.prepareToDelete(record.id)
+                                }}>
+                                <MdDeleteForever color="red" size={25}/>
+                            </Popconfirm>
+                        </Tooltip>
+
+                    </Space>,
+                  },
+            ],
+            detail:[
+                'student',
+                'coursegroup_m',
+                'status',
+                'coursesPreview_m'
+                // 'created_at',
+                // 'updated_at',
+            ],
+            edit:[
+               'student',
+                'coursegroup_m',
+                'status',
+                'coursesPreview_m'
+            ]
+        }, 
         
     ]
     additionallyFetchedData = []
@@ -1523,6 +1653,7 @@ class HolosticScheduleContentStore{
             description:description
         }
     }
+    
 }
 
 

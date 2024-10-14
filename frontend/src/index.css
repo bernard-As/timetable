@@ -57,7 +57,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   scrollbar-width: thin; /* Can be "auto" or "thin" */
-  scrollbar-color: #ff0000 #f1f1f1; /* First color is the thumb, second is the track */
+  scrollbar-color: #eb8787 #f1f1f1; /* First color is the thumb, second is the track */
 }
 
 code {
@@ -161,4 +161,12 @@ code {
 .welcome-logo{
   max-width: 250px;
   min-width: 100px;
+}
+
+.single-cell{
+  height: 15px;
+  border-radius: 7px;
+  padding:6px 3px 6px 3px;
+  margin-bottom: 5px;
+  /* background-color: rgba(247, 168, 22, 0.637); */
 }

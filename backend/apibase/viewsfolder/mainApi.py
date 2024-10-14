@@ -64,11 +64,33 @@ class ViewSchedule(APIView):
             student = Student.objects.get(pk=id)
             stdCourses = student.coursegroup.all()  # Use .all() to get the related course groups
             if stdCourses.exists():  # Check if any course groups are available
-                print(stdCourses)
                 for c in stdCourses:
                     schedules = Schedule.objects.filter(coursegroup=c.id)
                     toReturn.extend(schedules)  
 
+            ##Check if assistant if assign 
+            try:
+                assistant = Assistant.objects.get(student=student.pk)
+                stdCourses = assistant.coursegroup.all()
+                if stdCourses.exists():  # Check if any course groups are available
+                    for c in stdCourses:
+                        schedules = Schedule.objects.filter(coursegroup=c.id)
+                        toReturn.extend(schedules)
+            except:
+                pass
+        elif model == 'assistant':
+            # Get the student's course groups (assuming it's a ManyToManyField)
+            student = Assistant.objects.get(pk=id)
+
+            stdCourses = student.coursegroup.all()  
+            if stdCourses.exists():  # Check if any course groups are available
+                for c in stdCourses:
+                    schedules = Schedule.objects.filter(coursegroup=c.id,type=2)
+                    toReturn.extend(schedules)
+            if student.student.coursegroup.exists():  # Check if any course groups are available
+                for c in student.student.coursegroup.all():
+                    schedules = Schedule.objects.filter(coursegroup=c.id)
+                    toReturn.extend(schedules)
         # Serialize the data
         serializer = ScheduleSerializer(toReturn, many=True)
         # Return serialized data
@@ -164,6 +186,7 @@ class FreeModel(APIView):
         'coursesemester': (CourseSemester, CourseSemesterSerializer),
         'advisor': (Advisor, AdvisorSerializer),
         'users': (Users, UsersSerializer),
+        'assistant': (Users, UsersSerializer),
     }
 
     def post(self, request):

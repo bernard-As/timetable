@@ -148,6 +148,23 @@ class RoomViewSet(viewsets.ModelViewSet):
         'floor__building__longitude',
         'state_description',
         ]
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        serialized_data = self.get_serializer(queryset, many=True).data
+        modified_data = [self.modify_data(item) for item in serialized_data] # type: ignore
+        return Response(modified_data,200)
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serialized_data = self.get_serializer(instance).data
+        modified_data = self.modify_data(serialized_data)
+        return Response(modified_data)
+    
+    def modify_data(self, item):
+        floor = Floor.objects.get(pk=item['floor'])
+        item['floor_num'] = floor.floor_number
+        item['building'] = floor.building.name
+        return item
 
 class FacultyViewSet(viewsets.ModelViewSet):
     authentication_classes = [TokenAuthentication]
@@ -223,35 +240,37 @@ class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
 
-class AssistantView(APIView):
+class AssistantView(viewsets.ModelViewSet):
     authentication_classes = ([TokenAuthentication])
     permission_classes = ([IsAuthenticated]) 
-    queryset = Group.objects.all()
-    serializer_class = GroupSerializer
-    def post(self,request):
-        id = request.data['id']
-        try:
-            assistant = Student.objects.get(pk=id)
-        except:
-            return Response({'error': 'assistant not found'}, status=status.HTTP_404_NOT_FOUND)
-        return Response({
-            'first_name': assistant.user.user.first_name,
-            'last_name': assistant.user.user.last_name,
-            'studentId': assistant.studentId,
-            'program':assistant.user.program
-        },200)
-    def get(self,request):
-        asss = Student.objects.all()
-        res = []
-        for a in asss:
-            res.append({
-                'first_name':a.user.user.first_name,
-                'last_name':a.user.user.last_name,
-                'studentId':a.studentId,
-                'program':a.user.program
-            })
-        return Response(res,200)
+    queryset = Assistant.objects.all()
+    serializer_class = AssistantSerializer
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        serialized_data = self.get_serializer(queryset, many=True).data
+        modified_data = [self.modify_data(item) for item in serialized_data] # type: ignore
+        return Response(modified_data,200)
 
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serialized_data = self.get_serializer(instance).data
+        modified_data = self.modify_data(serialized_data)
+        return Response(modified_data)
+    
+    def modify_data(self, item):
+        related_user = Student.objects.get(id=item["student"])
+        item['first_name'] = related_user.user.user.first_name
+        item['last_name'] = related_user.user.user.last_name
+        item['email'] = related_user.user.user.email
+        item['studentId'] = related_user.studentId
+        item['status'] = related_user.user.user.is_active
+        title_serializer = TitleSerializer(related_user.user.title).data
+        item['title'] = title_serializer['shortname'] # type: ignore
+        # item['group'] = [GroupSerializer(seri).data for  seri in related_user.groups.all()] # type: ignore
+        # item['group'] = GroupSerializer(related_user.groups.all()[0]).data['id'] # type: ignore
+        # item['user_permissions'] = [GroupSerializer(seri).data for  seri in related_user.user_permissions.all()]
+        item['program']=[ProgramSerializer(prog).data['id'] for prog in related_user.user.program.all()] # type: ignore
+        return item
 
 class LecturerViewSet(viewsets.ModelViewSet):
     authentication_classes = [TokenAuthentication]
@@ -771,6 +790,15 @@ class CourseGroupViewSet(viewsets.ModelViewSet):
         course = Course.objects.get(pk=item['course'])
         item['code'] = course.code
         item['name'] = course.name
+
+        lecturer = Lecturer.objects.get(pk=item['lecturer'])
+        lectTitle = lecturer.user.title.shortname
+        item['lect']= {
+            'first_name': lecturer.user.first_name,
+            'last_name': lecturer.user.last_name,
+            'email': lecturer.user.email,
+            'title': lectTitle
+        }
         return item
     
 class PreferenceViewSet(viewsets.ModelViewSet):
@@ -917,6 +945,24 @@ class ScheduleViewSet(viewsets.ModelViewSet):
         user = Users.objects.get(user=self.request.user.id)
         # If you want to update the user as well (for updates)
         serializer.save(user=user)
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        serialized_data = self.get_serializer(queryset, many=True).data
+        modified_data = [self.modify_data(item) for item in serialized_data] # type: ignore
+        return Response(modified_data,200)
+    
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serialized_data = self.get_serializer(instance).data
+        modified_data = self.modify_data(serialized_data)
+        return Response(modified_data)
+
+    def modify_data(self, item):
+        Iam = Schedule.objects.get(pk=item['id'])
+        item['type_name'] = Iam.type.name
+        return item
+    
 
 class ScheduleTypeViewSet(viewsets.ModelViewSet):
     authentication_classes = [TokenAuthentication]

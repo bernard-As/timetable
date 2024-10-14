@@ -6,7 +6,7 @@ class HolisticScheduleStore {
         {name:'course',status:true},
         {name:'room',status:true},
         {name:'lecturer',status:true},
-        {name:'assistant',status:false},
+        {name:'assistant',status:true},
         {name:'student',status:true},
         {name:'semester',status:true},
         {name:'program',status:true},
@@ -160,11 +160,34 @@ class HolisticScheduleStore {
     }
     getRandomColor() {
         // List of selected colors
-        const colors = ['#B2B000', '#01F500', '#235FFF', '#D912FF', '#1AFFE7', '#F90028'];
+        const colors = ['#b8b65ad5', '#7eec7ec9', '#235effa9', '#d812ff77', '#d812ff77', '#f9002985'];
         // Get a random index from 0 to colors.length - 1
         const randomIndex = Math.floor(Math.random() * colors.length);
         // Return the color at the random index
         return colors[randomIndex];
+    }
+    isPhone(){
+        const isPhone = window.innerWidth < 768
+        return isPhone
+    }
+    getDesignedColor(type){
+        if(type === 1){
+            return ''
+        }else if(type===2){
+            return 'rgba(139, 66, 139, 0.705)'
+        }else if (type===3){
+            return 'rgba(247, 168, 22, 0.637)'
+        }else if(type===4){
+            return '#FF9800'
+        }else if(type===5){
+            return '#8BC34A'
+        }else if(type===6){
+            return '#03A9F4'
+        }else if(type===7){
+            return '#FF9800'
+        }else if(type===8){
+            return '#03A9F4'
+        }
     }
 }
 

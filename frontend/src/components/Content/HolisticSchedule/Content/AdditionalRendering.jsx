@@ -1,4 +1,4 @@
-import { Divider, Modal, Popconfirm, Space, Spin, Tooltip } from "antd"
+import { Divider, Modal, Popconfirm, Space, Spin, Tag, Tooltip } from "antd"
 import { useEffect, useState } from "react"
 import Add from "./Add"
 import rootStore from "../../../../mobx"
@@ -140,13 +140,17 @@ export const ScheduleCell = ({record})=>{
     )
 }
 
-export const CourseDisplayInCell = ({data,setshowSetScheduleModal})=>{
+export const  CourseDisplayInCell = ({data,setshowSetScheduleModal})=>{
     const cId = data.coursegroup;
     const rId = data.room;
     const start = data.start;
     const end = data.end;
+    const color = data.color!==undefined?data.color:rootStore.holisticScheduleStore.getDesignedColor(data.type);
     const [courseData,setcourseData] = useState();
     const [roomData,setroomData] = useState();
+    // const [lecturer,setlecturer] = useState()
+    const [assistants,setassistants] = useState([])
+    const [ltype,setltype] = useState([])
     const [loading,setLoading] = useState(true)
     useEffect(()=>{
         const getDeatils = (id)=>{
@@ -161,9 +165,20 @@ export const CourseDisplayInCell = ({data,setshowSetScheduleModal})=>{
             }).catch(error=>{
                 // console.log(error)
             })
+            PrivateDefaultApi.get('assistant/').then(res=>{
+                setassistants(res.data)
+            }).catch(error=>{
+                // console.log(error)
+            })
+            PrivateDefaultApi.get('scheduletype/').then(res=>{
+                setltype(res.data)
+            }).catch(error=>{
+                // console.log(error)
+            })
         }
         getDeatils()
     },[cId,rId])
+    
     const TooltipRender = ()=>{
         const deleteConfirm = (e) => {
             PrivateDefaultApi.delete('schedule/'+data.id+'/').then((res)=>{
@@ -203,6 +218,27 @@ export const CourseDisplayInCell = ({data,setshowSetScheduleModal})=>{
                 >
                     <div>Code: {courseData.code}</div>
                 </Space><br/>
+                <Space
+                    direction="horizontal"
+                >
+                    <div>Type: <Tag color={rootStore.holisticScheduleStore.getDesignedColor(data.type)}>{ltype.find(l=>l.id===data.type)?.name}</Tag></div>
+                </Space><br/>
+                <Space
+                    direction="horizontal"
+                >
+                    <div>Room: {roomData.code} - Floor: {roomData.floor_num} - Building: {roomData.building} </div>
+                </Space><br/>
+                <Space
+                    direction="horizontal"
+                >
+                    <div>Lecturer: {courseData.lect.first_name} {courseData.lect.last_name}</div>
+                </Space><br/>
+                {data.type===2&&
+                    <><Space
+                    direction="horizontal"
+                >
+                    <div>Assistant: {assistants.filter(a=>a.coursegroup.includes(data.coursegroup)).at(-1).first_name} {assistants.filter(a=>a.coursegroup.includes(data.coursegroup)).at(-1).last_name}</div>
+                </Space><br/></>}
                 {rootStore.enableManagement&&rootStore.isManager()&&<Space.Compact
                     direction="horizontal"
                     align="end"
@@ -245,16 +281,29 @@ export const CourseDisplayInCell = ({data,setshowSetScheduleModal})=>{
                 icon={<FcInfo size={25}/>}
                 showCancel={false}
             >
-            <Tooltip title={<span>{courseData.name}<br/>
+            {rootStore.holisticScheduleStore.isPhone()!==true?
+                <Tooltip title={<span>{courseData.name}<br/>
                 To view more details click
             </span>}>
-            <span>
+            <span
+                className="single-cell"
+                style={{backgroundColor:color}}
+            >
                 {`${courseData.code} G${courseData.group_number} ~Room: ${roomData.code}`}
-                <Divider style={{padding:0}}/>
+                {/* <Divider style={{padding:0}}/> */}
             </span>
-        </Tooltip>
+            </Tooltip>:
+            <span
+            className="single-cell"
+                style={{backgroundColor:color}}
+                >
+            {`${courseData.code} G${courseData.group_number} ~Room: ${roomData.code}`}
+            <Divider style={{padding:0}}/>
+        </span>
+            }
         </Popconfirm>
         }
+        <br />
         </>
         
     )
@@ -382,6 +431,55 @@ export const RenderTableViewProgram = ({id})=>{
         <Spin spinning={loading} size="medium"/>
         :
         <span>{data!==undefined&&data.name}</span>
+
+        }
+    </>
+
+    )
+}
+export const RenderTableViewCourses = ({id})=>{
+    const [data, setData] = useState();
+    const [loading,setLoading] = useState(true)
+
+    useEffect(()=>{
+        const getItems = async () => {
+            try {
+                const responses = await Promise.all(
+                    id.map((i) => {
+                        return PrivateDefaultApi.get('coursegroup/' + i + '/'); // Explicitly return the promise
+                    })
+                );
+                
+                const data = responses.map((response) => response.data).flat();
+                setData(data);
+            } catch (err) {
+                console.log(err);
+            }
+        };
+        
+        
+        getItems()
+    },[id])
+    useEffect(()=>{
+        setLoading(false)
+    },[data])
+    return (<>
+        {loading?
+        <Spin spinning={loading} size="medium"/>
+        :
+        <span>{data!==undefined&&
+            data.map(d=>{
+                return (
+                    <span
+                        key={d.id}
+                    >
+                        <Tag>
+                            {d.code} G{d.group_number}
+                        </Tag>
+                    </span>
+                )
+            })
+        }</span>
 
         }
     </>

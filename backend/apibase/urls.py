@@ -41,6 +41,7 @@ router.register(r'eventtime', siteManagement.EventTimeViewSet, basename='eventti
 router.register(r'schedule', siteManagement.ScheduleViewSet, basename='schedule')
 router.register(r'scheduletype', siteManagement.ScheduleTypeViewSet, basename='schedule type')
 router.register(r'system_news', SystemNewsView, basename='system News')
+router.register(r'assistant', siteManagement.AssistantView, basename='Assistant')
 urlpatterns = [
     path('login/', LoginView.as_view()),
     path('renewStore/',StoreRenew.as_view(), name='renewStore'),
@@ -49,7 +50,7 @@ urlpatterns = [
     path('GP/',siteManagement.UserGroupPermission.getGP, name='User Groups and permissions user based'),
     path('AllGP/',siteManagement.UserGroupPermission.get_groups_and_permissions, name='All User Group'),
     path('student_list/',siteManagement.StudentViewSet.get_short_list, name='Student select list'),
-    path('assistant/',siteManagement.AssistantView.as_view(), name='Assistant View'),
+    # path('assistant/',siteManagement.AssistantView.as_view(), name='Assistant View'),
     path('view_schedule/',ViewSchedule.as_view(), name='Schedule view View'),
     path('my_schedule/',MySchedule.as_view(), name='Schedule view View'),
     path('upcoming-schedule/',UpcomingScheduleView.as_view(), name='Upcoming Schedule View'),

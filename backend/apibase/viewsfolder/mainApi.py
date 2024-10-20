@@ -74,7 +74,7 @@ class ViewSchedule(APIView):
                 stdCourses = assistant.coursegroup.all()
                 if stdCourses.exists():  # Check if any course groups are available
                     for c in stdCourses:
-                        schedules = Schedule.objects.filter(coursegroup=c.id)
+                        schedules = Schedule.objects.filter(coursegroup=c.id,type=2)
                         toReturn.extend(schedules)
             except:
                 pass
@@ -115,12 +115,22 @@ class MySchedule(APIView):
             # Fetch schedules for lecturer
             toReturn = Schedule.objects.filter(coursegroup__lecturer__user=user.pk)
         else:
+            toReturn = []
             try:
                 # Fetch the student object based on the user
                 student = Student.objects.get(user=user.pk)
                 # Ensure `coursegroup` is a queryset/list
                 coursegroups = student.coursegroup.all()  # assuming coursegroup is a ManyToMany field
-                toReturn = Schedule.objects.filter(coursegroup__in=coursegroups)
+                toReturn.extend(Schedule.objects.filter(coursegroup__in=coursegroups))
+                try:
+                    assistant = Assistant.objects.get(student=student.pk)
+                    stdCourses = assistant.coursegroup.all()
+                    if stdCourses.exists():  # Check if any course groups are available
+                        for c in stdCourses:
+                            schedules = Schedule.objects.filter(coursegroup=c.id,type=2)
+                            toReturn.extend(schedules)
+                except:
+                    pass
             except Student.DoesNotExist:
                 return Response({"error": "Student not found"}, status=404)
             except Exception as e:

@@ -19,7 +19,7 @@ const Home: React.FC = () =>{
                     <SideMenu/>
                     <Layout
                         style={{
-                            padding:'0 15px 15px',
+                            padding:rootStore.holisticScheduleStore.isPhone()?'0 4px 0px':'0 15px 15px',
                             backgroundColor:rootStore.mainStore.darkMode?'rgb(31, 36, 56)':'rgb(176, 192, 255)'
                         }}
                     >

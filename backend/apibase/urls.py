@@ -54,6 +54,7 @@ urlpatterns = [
     path('view_schedule/',ViewSchedule.as_view(), name='Schedule view View'),
     path('my_schedule/',MySchedule.as_view(), name='Schedule view View'),
     path('upcoming-schedule/',UpcomingScheduleView.as_view(), name='Upcoming Schedule View'),
+    path('my-upcoming-schedule/',MyUpcomingScheduleView.as_view(), name='My Upcoming Schedule View'),
     path('free_model/',FreeModel.as_view(), name='Free model')
     # path('start/',start_main,name='main')
 ]

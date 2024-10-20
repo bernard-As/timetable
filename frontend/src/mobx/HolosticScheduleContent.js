@@ -1597,12 +1597,12 @@ class HolosticScheduleContentStore{
     additionallyFetchedData = []
 
     daysIndex = [
-        { id: 1, name: 'Monday' },
-        { id: 2, name: 'Tuesday' },
-        { id: 3, name: 'Wednesday' },
-        { id: 4, name: 'Thursday' },
-        { id: 5, name: 'Friday' },
-        { id: 6, name: 'Saturday' },
+        { id: 1, name: 'Monday',shortname:'Mon' },
+        { id: 2, name: 'Tuesday',shortname:'Tue' },
+        { id: 3, name: 'Wednesday',shortname:'Wed' },
+        { id: 4, name: 'Thursday',shortname:'Thu' },
+        { id: 5, name: 'Friday',shortname:'Fri' },
+        { id: 6, name: 'Saturday',shortname:'Sat' },
         // { id: 7, name: 'Sunday' },
     ]
 

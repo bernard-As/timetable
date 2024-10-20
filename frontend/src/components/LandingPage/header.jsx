@@ -59,7 +59,8 @@ const LandHeader = observer(({isLogin=false})=>{
                 style={menuItem.style}
                 onClick={()=>menuItem.onclick()}
                 >
-                  {!rootStore.mainStore.sideMenuCollapse&&<span>{menuItem.label}</span>}
+                  <span>{menuItem.label}</span>
+                  {/* {!rootStore.mainStore.sideMenuCollapse&&<span>{menuItem.label}</span>} */}
                 </Menu.Item>
               ))}
             </Menu>

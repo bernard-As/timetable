@@ -149,13 +149,15 @@ label {
   /* color: var(--text-color); */
   position: relative;
   transition: transform 0.5s ease; /* Smooth transition */
-  min-width: 50%;
+  min-width: 360px;
+  max-width: 360px;
 
 }
 
 .horiz_devider{
   background-color:var(--text-color);
-  height: 80vh;
+  height: 60vh;
+  margin: auto 10px;
 }
 
 .loginForm{

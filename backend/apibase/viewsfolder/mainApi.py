@@ -11,6 +11,7 @@ from rest_framework.views import APIView
 
 from apibase.models import *
 from apibase.serializers import *
+from apibase.viewsfolder.fns import shedule_modify_data
 
 # generics
 class ViewSchedule(APIView):
@@ -93,8 +94,8 @@ class ViewSchedule(APIView):
                     toReturn.extend(schedules)
         # Serialize the data
         serializer = ScheduleSerializer(toReturn, many=True)
-        # Return serialized data
-        return Response(serializer.data)
+        modified_data = [shedule_modify_data(item) for item in serializer.data] # type: ignore
+        return Response(modified_data)
 
 class MySchedule(APIView):
     authentication_classes = ([TokenAuthentication])
@@ -137,7 +138,8 @@ class MySchedule(APIView):
                 return Response({"error": str(e)}, status=400)
         
         serializer = ScheduleSerializer(toReturn, many=True)
-        return Response(serializer.data)
+        modified_data = [shedule_modify_data(item) for item in serializer.data] # type: ignore
+        return Response(modified_data)
 
 
 class SystemNewsView(viewsets.ModelViewSet):
@@ -158,7 +160,8 @@ class UpcomingScheduleView(generics.ListAPIView):
 
         # Get the current day of the week (1=Monday, 7=Sunday)
         current_day = now.weekday() + 1  # weekday() returns 0 for Monday, so we add 1
-
+        if current_day == 7:
+            current_day = 1
         # Filter schedules that:
         # 1. Have a future date OR
         # 2. Are scheduled for today or in the future based on the `day` field (Mon=1, Sun=7)
@@ -171,7 +174,44 @@ class UpcomingScheduleView(generics.ListAPIView):
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
         serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
+        modified_data = [shedule_modify_data(item) for item in serializer.data] # type: ignore
+        return Response(modified_data)
+
+class MyUpcomingScheduleView(generics.ListAPIView):
+    serializer_class = ScheduleSerializer
+    authentication_classes = ([TokenAuthentication])
+    permission_classes = ([IsAuthenticated])
+
+    def get_queryset(self):
+        # Get the current date and time
+        now = timezone.now()
+
+        # Get the current day of the week (1=Monday, 7=Sunday)
+        current_day = now.weekday() + 1  # weekday() returns 0 for Monday, so we add 1
+        if current_day == 7:
+            current_day = 1
+        # Filter schedules that:
+        # 1. Have a future date OR
+        # 2. Are scheduled for today or in the future based on the `day` field (Mon=1, Sun=7)
+        user = Users.objects.get(user=self.request.user)
+        if(Student.objects.filter(user=user).exists()):
+            myCourses = Student.objects.get(user=user).coursegroup.all()
+        elif (Lecturer.objects.filter(user=user.pk).exists()):
+            myCourses = Coursegroup.objects.filter(lecturer__user=user)
+        return Schedule.objects.filter(
+            (
+                Q(date__gt=now.date()) |  # Future dates
+                Q(date=now.date(), start__gte=now.time()) |  # Today's schedules after the current time
+                Q(day__gte=current_day)  # Schedules based on the day field (today or future days)
+            ) & Q(coursegroup__in=myCourses)  # Filter by user's courses
+        ).order_by('date', 'day', 'start')[:15]
+        
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        modified_data = [shedule_modify_data(item) for item in serializer.data] # type: ignore
+        return Response(modified_data)
 
 class FreeModel(APIView):
     authentication_classes =[]
@@ -223,6 +263,8 @@ class FreeModel(APIView):
                 # Fetch all objects if no ID is provided
                 obj = model_class.objects.all()
                 serialized_data = serializer_class(obj, many=True).data
+                if model_name=='schedule':
+                    serialized_data = [shedule_modify_data(item) for item in serialized_data] # type: ignore
 
             return Response(serialized_data, status=200)
 

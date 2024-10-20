@@ -3,7 +3,7 @@ import LandHeader from "./header";
 import { Col, FloatButton, Row, Space, Tooltip } from "antd";
 import CoursesModNews from "./CoursesModNews";
 import SysNotificationsPreView from "../SysNotifications/preview";
-import UpComingLecturesPreview from "../upcomingLectures/preview";
+import UpComingLecturesPreview from "../upcomingLectures/";
 import DynamicFooter from "../Footer";
 import Welcome from "./Welcome";
 import { useEffect, useState } from "react";
@@ -61,10 +61,10 @@ const LandingPage = ()=>{
                         style={{padding:'20px'}}
                         wrap
                     >
-                        <Col span={12} style={{minWidth:'450px'}}>
+                        <Col span={12} style={{minWidth:'370px'}}>
                             <SysNotificationsPreView/>
                         </Col>
-                        <Col span={12} style={{minWidth:'450px'}}>
+                        <Col span={12} style={{minWidth:'370px'}}>
                             <UpComingLecturesPreview/>
                         </Col>
                     </Row>
@@ -73,7 +73,7 @@ const LandingPage = ()=>{
                         style={{padding:'20px'}}
                         wrap
                     >
-                        <Col span={12} style={{minWidth:'450px'}} id="advisor">
+                        <Col span={12} style={{minWidth:'370px'}} id="advisor">
                             <AdvisorList />
                         </Col>
                         {/* <Col span={12} style={{minWidth:'450px'}}>

@@ -1,5 +1,5 @@
 import { Divider, Modal, Popconfirm, Space, Spin, Tag, Tooltip } from "antd"
-import { useEffect, useState } from "react"
+import React, { useEffect, useState } from "react"
 import Add from "./Add"
 import rootStore from "../../../../mobx"
 import { FiPlus } from "react-icons/fi";
@@ -79,16 +79,16 @@ export const CourseGroupDipslay = ({id})=>{
 
     )
 }
-export const ScheduleCell = ({record})=>{
+export const ScheduleCell = React.memo(({record})=>{
     const [loaded,setLoaded] = useState(false)
     const [showSetScheduleModal,setshowSetScheduleModal]  =useState(false)
     const [isRecord,setIsRecord] = useState(false)
     const [showAdd,setshowAdd]  = useState(false)
-
+    console.log(record,'llRecord')
     
     useEffect(()=>{
         setLoaded(true)
-        if(record.length>0)
+        if(record?.length>0)
             setIsRecord(true)
     },[record])
 
@@ -107,7 +107,7 @@ export const ScheduleCell = ({record})=>{
                 }}
                 style={{minHeight:'20px', minWidth:'15px'}}
             >
-                {record.map(r=>{
+                {record?.map(r=>{
                     
                     return (
                         <CourseDisplayInCell data={r}
@@ -138,158 +138,28 @@ export const ScheduleCell = ({record})=>{
         </>
 
     )
-}
+})
 
 export const  CourseDisplayInCell = ({data,setshowSetScheduleModal})=>{
-    const cId = data.coursegroup;
-    const rId = data.room;
-    const start = data.start;
-    const end = data.end;
     const color = data.color!==undefined?data.color:rootStore.holisticScheduleStore.getDesignedColor(data.type);
-    const [courseData,setcourseData] = useState();
-    const [roomData,setroomData] = useState();
-    // const [lecturer,setlecturer] = useState()
-    const [assistants,setassistants] = useState([])
-    const [ltype,setltype] = useState([])
-    const [loading,setLoading] = useState(true)
-    useEffect(()=>{
-        const getDeatils = (id)=>{
-            PrivateDefaultApi.get('coursegroup/'+cId+'/').then(res=>{
-                setcourseData(res.data)
-                setLoading(false)
-            }).catch(error=>{
-                // console.log(error)
-            })
-            PrivateDefaultApi.get('room/'+rId+'/').then(res=>{
-                setroomData(res.data)
-            }).catch(error=>{
-                // console.log(error)
-            })
-            PrivateDefaultApi.get('assistant/').then(res=>{
-                setassistants(res.data)
-            }).catch(error=>{
-                // console.log(error)
-            })
-            PrivateDefaultApi.get('scheduletype/').then(res=>{
-                setltype(res.data)
-            }).catch(error=>{
-                // console.log(error)
-            })
-        }
-        getDeatils()
-    },[cId,rId])
-    
-    const TooltipRender = ()=>{
-        const deleteConfirm = (e) => {
-            PrivateDefaultApi.delete('schedule/'+data.id+'/').then((res)=>{
-                rootStore.notification.notify({
-                    type:'success',
-                    text:'Course deleted successfully',
-                    title:'Course deleted successfully',
-                    timeout: 3000
-                })
-                rootStore.holosticScheduleContentStore.refreshSchedule = true
-            })
-          };
-        return(
-            <>{loading?<Spin/>:
-                <div>
-               {courseData!==undefined&& 
-               <div>
-               <Space
-                    direction="horizontal"
-                >
-                    Day: {data.day!==(undefined||null)?`${rootStore.holosticScheduleContentStore.daysIndex.find(d=>d.id===data.day)?.name}`:
-                        data.date
-                    }
-                </Space><br/>
-                <Space
-                    direction="horizontal"
-                >
-                    Start: {start} - End {end}
-                </Space><br/>
-                <Space
-                    direction="horizontal"
-                >
-                    <div>Name: {courseData.name}</div>
-                </Space><br/>
-                <Space
-                    direction="horizontal"
-                >
-                    <div>Code: {courseData.code}</div>
-                </Space><br/>
-                <Space
-                    direction="horizontal"
-                >
-                    <div>Type: <Tag color={rootStore.holisticScheduleStore.getDesignedColor(data.type)}>{ltype.find(l=>l.id===data.type)?.name}</Tag></div>
-                </Space><br/>
-                <Space
-                    direction="horizontal"
-                >
-                    <div>Room: {roomData.code} - Floor: {roomData.floor_num} - Building: {roomData.building} </div>
-                </Space><br/>
-                <Space
-                    direction="horizontal"
-                >
-                    <div>Lecturer: {courseData.lect.first_name} {courseData.lect.last_name}</div>
-                </Space><br/>
-                {data.type===2&&
-                    <><Space
-                    direction="horizontal"
-                >
-                    <div>Assistant: {assistants.filter(a=>a.coursegroup.includes(data.coursegroup)).at(-1).first_name} {assistants.filter(a=>a.coursegroup.includes(data.coursegroup)).at(-1).last_name}</div>
-                </Space><br/></>}
-                {rootStore.enableManagement&&rootStore.isManager()&&<Space.Compact
-                    direction="horizontal"
-                    align="end"
-                >
-                    <Popconfirm
-                        title='Are you sure to delete this schedle'
-                        okText="Yes"
-                        cancelText="No"
-                        onConfirm={deleteConfirm}
-                    >
-                        <MdDeleteForever size={23} style={{margin:'7px'}} color="red"/>
-
-                    </Popconfirm>
-                    {/* <MdEdit size={23} style={{margin:'7px'}} color="blue"/> */}
-                    <Tooltip
-                        title="Add a new Schedule"
-                    >
-                        <AiOutlinePlus size={23} style={{margin:'7px'}} color="green"
-                            onClick={()=>{
-                                setshowSetScheduleModal(true)
-                            }}
-                        />
-                    </Tooltip>
-                </Space.Compact>}
-                </div>}
-
-            </div>
-            }
-            
-            </>
-            
-        )
-    }
     return (
-        <>{courseData!==undefined&&roomData!==undefined&&
+        <>{data.cg!==undefined&&data.rm!==undefined&&
             <Popconfirm
                 title={null}
-                description={<TooltipRender/>}
+                description={<CourseTooltipRender data={data} setshowSetScheduleModal={setshowSetScheduleModal}/>}
                 footer={null}
                 icon={<FcInfo size={25}/>}
                 showCancel={false}
             >
             {rootStore.holisticScheduleStore.isPhone()!==true?
-                <Tooltip title={<span>{courseData.name}<br/>
+                <Tooltip title={<span>{data.cg.name}<br/>
                 To view more details click
             </span>}>
             <span
                 className="single-cell"
                 style={{backgroundColor:color}}
             >
-                {`${courseData.code} G${courseData.group_number} ~Room: ${roomData.code}`}
+                {`${data.cg.code} G${data.cg.group_number} ~Room: ${data.rm.code}`}
                 {/* <Divider style={{padding:0}}/> */}
             </span>
             </Tooltip>:
@@ -297,8 +167,8 @@ export const  CourseDisplayInCell = ({data,setshowSetScheduleModal})=>{
             className="single-cell"
                 style={{backgroundColor:color}}
                 >
-            {`${courseData.code} G${courseData.group_number} ~Room: ${roomData.code}`}
-            <Divider style={{padding:0}}/>
+            {`${data.cg.code} G${data.cg.group_number} ~Room: ${data.rm.code}`}
+            {/* <Divider style={{padding:0}}/> */}
         </span>
             }
         </Popconfirm>
@@ -363,7 +233,14 @@ export const getDayData = (timeSlot,day,data)=>{
         return true
     return false
 }
-
+export const getDayString = (data)=>{
+    if(data.day!==undefined){
+        return rootStore.holosticScheduleContentStore.daysIndex.find(d=>d.id===data.day)
+    }else if(data.date!==undefined){
+    const dayOfWeek = dayjs(data.date).format('dddd');
+    return rootStore.holosticScheduleContentStore.daysIndex.find(d=>d.name===dayOfWeek)
+    }
+}
 export const RenderTableViewDapartment = ({id})=>{
     const [data, setData] = useState();
     const [loading,setLoading] = useState(true)
@@ -508,5 +385,105 @@ export const RenderTableViewSemester = ({id})=>{
         }
     </>
 
+    )
+}
+export const CourseTooltipRender = ({data,setshowSetScheduleModal=()=>{}})=>{
+    const [loading,setLoading] = useState(true)
+    useEffect(()=>{
+        setLoading(false)
+    },[data])
+    const deleteConfirm = (e) => {
+        PrivateDefaultApi.delete('schedule/'+data.id+'/').then((res)=>{
+            rootStore.notification.notify({
+                type:'success',
+                text:'Course deleted successfully',
+                title:'Course deleted successfully',
+                timeout: 3000
+            })
+            rootStore.holosticScheduleContentStore.refreshSchedule = true
+        })
+      };
+    return(
+        <>{loading?<Spin/>:
+            <div>
+           {data!==undefined&& 
+           <div>
+           <Space
+                direction="horizontal"
+            >
+                Day: {data.day!==(undefined||null)?`${rootStore.holosticScheduleContentStore.daysIndex.find(d=>d.id===data.day)?.name}`:
+                    data.date
+                }
+            </Space><br/>
+            <Space
+                direction="horizontal"
+            >
+                Start: {data.start} - End {data.end}
+            </Space><br/>
+            <Space
+                direction="horizontal"
+            >
+                <div>Name: {data.cg.name}</div>
+            </Space><br/>
+            <Space
+                direction="horizontal"
+            >
+                <div>Code: {data.cg.code} G{data.cg.group_number}</div>
+            </Space><br/>
+            <Space
+                direction="horizontal"
+            >
+                <div>Type: <Tag color={rootStore.holisticScheduleStore.getDesignedColor(data.type)}>{data.tp.name}</Tag></div>
+            </Space><br/>
+            <Space
+                direction="horizontal"
+            >
+                <div>Room: {data.rm.code} - Floor: {data.rm.floor_num} - Building: {data.rm.building} </div>
+            </Space><br/>
+            <Space
+                direction="horizontal"
+            >
+                <div>Lecturer: {data.lect.title} {data.lect.first_name} {data.lect.last_name}</div>
+            </Space><br/>
+            {data.type===2&&data.assit!==undefined&&
+                <><Space
+                direction="horizontal"
+            >
+                <div>Assistant: {data.assit.title} {data.assit.first_name} {data.assit.last_name}</div>
+            </Space><br/></>}
+            {rootStore.enableManagement&&rootStore.isManager()&&<Space.Compact
+                    direction="horizontal"
+                    align="end"
+                >
+                    <Popconfirm
+                        title='Are you sure to delete this schedle'
+                        okText="Yes"
+                        cancelText="No"
+                        onConfirm={deleteConfirm}
+                    >
+                        <MdDeleteForever size={23} style={{margin:'7px'}} color="red"/>
+
+                    </Popconfirm>
+                    {/* <MdEdit size={23} style={{margin:'7px'}} color="blue"/> */}
+                    <Tooltip
+                        title="Add a new Schedule"
+                    >
+                        <AiOutlinePlus size={23} style={{margin:'7px'}} color="green"
+                            onClick={()=>{
+                                setshowSetScheduleModal(true)
+                            }}
+                        />
+                    </Tooltip>
+                </Space.Compact>}
+            </div>}
+            
+            {data===undefined&&<div>
+                ...    
+            </div>}
+        </div>
+        }
+        
+        </>
+        
     )
 }

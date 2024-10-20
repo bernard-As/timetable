@@ -151,7 +151,7 @@ code {
 .new-preview{
   /* min-width: 100%; */
   max-width: 600px;
-  min-width: 360;
+  /* min-width: 360px; */
   margin: 10px;
 }
 
@@ -169,4 +169,7 @@ code {
   padding:6px 3px 6px 3px;
   margin-bottom: 5px;
   /* background-color: rgba(247, 168, 22, 0.637); */
+}
+.mobile-schedule .ant-table-cell{
+  padding: 13px 7px!important;
 }

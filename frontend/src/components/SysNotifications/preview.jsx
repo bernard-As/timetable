@@ -46,7 +46,7 @@ const SysNotificationsPreView = () =>{
                 itemLayout="horizontal"
                 dataSource={data}
                 style={{
-                    overflowY:'scroll',
+                    overflowY:'auto',
                     maxHeight: '320px',
                 }}
                 renderItem={(item, index) => (

@@ -16,6 +16,8 @@ from rest_framework import status
 from rest_framework.decorators import api_view, renderer_classes
 import copy
 
+from apibase.viewsfolder.fns import shedule_modify_data
+
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 
@@ -955,14 +957,10 @@ class ScheduleViewSet(viewsets.ModelViewSet):
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
         serialized_data = self.get_serializer(instance).data
-        modified_data = self.modify_data(serialized_data)
+        modified_data = shedule_modify_data(serialized_data)
         return Response(modified_data)
 
-    def modify_data(self, item):
-        Iam = Schedule.objects.get(pk=item['id'])
-        item['type_name'] = Iam.type.name
-        return item
-    
+
 
 class ScheduleTypeViewSet(viewsets.ModelViewSet):
     authentication_classes = [TokenAuthentication]

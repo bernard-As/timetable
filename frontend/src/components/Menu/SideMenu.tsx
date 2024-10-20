@@ -247,7 +247,7 @@ const SideMenu: React.FC = observer(() => {
       collapsed={collapsed}
       onCollapse={handleCollapse}
       breakpoint="lg"
-      collapsedWidth="80"
+      collapsedWidth={rootStore.holisticScheduleStore.isPhone()?"50":'80'}
       className="sider-container"
       style={rootStore.mainStore.darkMode ? { backgroundColor: '#52616B' } : { backgroundColor: '#C9D6DF' }}
     >

@@ -11,7 +11,7 @@ from rest_framework.views import APIView
 
 from apibase.models import *
 from apibase.serializers import *
-from apibase.viewsfolder.fns import shedule_modify_data
+from apibase.viewsfolder.fns import canScheduleDisplay, shedule_modify_data
 
 # generics
 class ViewSchedule(APIView):
@@ -51,7 +51,6 @@ class ViewSchedule(APIView):
             if(isLecturer):
                 lectCourses = Coursegroup.objects.filter(lecturer = user.id)
                 toReturn = Schedule.objects.filter(coursegroup__lecturer__user=user)
-            print (toReturn)
         elif model == 'faculty':
             toReturn = Schedule.objects.filter(coursegroup__course_semester__program__department__faculty=request.data['id'])
         elif model == 'department':
@@ -93,7 +92,12 @@ class ViewSchedule(APIView):
                     schedules = Schedule.objects.filter(coursegroup=c.id)
                     toReturn.extend(schedules)
         # Serialize the data
-        serializer = ScheduleSerializer(toReturn, many=True)
+        R = []
+        for schedule in toReturn:
+            canDisplay = canScheduleDisplay(None,schedule.pk)
+            if (canDisplay):
+                R.extend([schedule])
+        serializer = ScheduleSerializer(R, many=True)
         modified_data = [shedule_modify_data(item) for item in serializer.data] # type: ignore
         return Response(modified_data)
 
@@ -136,8 +140,12 @@ class MySchedule(APIView):
                 return Response({"error": "Student not found"}, status=404)
             except Exception as e:
                 return Response({"error": str(e)}, status=400)
-        
-        serializer = ScheduleSerializer(toReturn, many=True)
+        R = []
+        for schedule in toReturn:
+            canDisplay = canScheduleDisplay(user.pk,schedule.pk)
+            if (canDisplay):
+                R.extend([schedule])
+        serializer = ScheduleSerializer(R, many=True)
         modified_data = [shedule_modify_data(item) for item in serializer.data] # type: ignore
         return Response(modified_data)
 
@@ -165,11 +173,17 @@ class UpcomingScheduleView(generics.ListAPIView):
         # Filter schedules that:
         # 1. Have a future date OR
         # 2. Are scheduled for today or in the future based on the `day` field (Mon=1, Sun=7)
-        return Schedule.objects.filter(
+        toReturn = Schedule.objects.filter(
             Q(date__gt=now.date()) |  # Future dates
             Q(date=now.date(), start__gte=now.time()) |  # Today's schedules after the current time
             Q(day__gte=current_day)  # Schedules based on the day field (today or future days)
         ).order_by('date', 'day', 'start')[:15]
+        R = []
+        for schedule in toReturn:
+            canDisplay = canScheduleDisplay(None,schedule.pk)
+            if (canDisplay):
+                R.extend([schedule])
+        return R
 
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
@@ -194,17 +208,26 @@ class MyUpcomingScheduleView(generics.ListAPIView):
         # 1. Have a future date OR
         # 2. Are scheduled for today or in the future based on the `day` field (Mon=1, Sun=7)
         user = Users.objects.get(user=self.request.user)
-        if(Student.objects.filter(user=user).exists()):
-            myCourses = Student.objects.get(user=user).coursegroup.all()
+        myCourses = []
+        if(Student.objects.filter(user=user.pk).exists()):
+            myCourses = Student.objects.get(user=user.pk).coursegroup.all()
         elif (Lecturer.objects.filter(user=user.pk).exists()):
             myCourses = Coursegroup.objects.filter(lecturer__user=user)
-        return Schedule.objects.filter(
+        print(myCourses)
+        toReturn =Schedule.objects.filter(
             (
                 Q(date__gt=now.date()) |  # Future dates
                 Q(date=now.date(), start__gte=now.time()) |  # Today's schedules after the current time
                 Q(day__gte=current_day)  # Schedules based on the day field (today or future days)
             ) & Q(coursegroup__in=myCourses)  # Filter by user's courses
-        ).order_by('date', 'day', 'start')[:15]
+        ).order_by('date', 'day', 'start')[:15] 
+        R = []
+        for schedule in toReturn:
+            canDisplay = canScheduleDisplay(user.pk,schedule.pk)
+            if (canDisplay):
+                R.extend([schedule])
+
+        return R
         
 
     def list(self, request, *args, **kwargs):
@@ -264,6 +287,12 @@ class FreeModel(APIView):
                 obj = model_class.objects.all()
                 serialized_data = serializer_class(obj, many=True).data
                 if model_name=='schedule':
+                    R = []
+                    for schedule in obj:
+                        canDisplay = canScheduleDisplay(None,schedule.pk)
+                        if (canDisplay):
+                            R.extend([schedule])
+                        serialized_data = serializer_class(R, many=True).data
                     serialized_data = [shedule_modify_data(item) for item in serialized_data] # type: ignore
 
             return Response(serialized_data, status=200)

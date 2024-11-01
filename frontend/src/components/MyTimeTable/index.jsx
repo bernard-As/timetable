@@ -120,19 +120,19 @@ const MyTimetable = ()=>{
         let tempMarks ={
             0:{
                 value:'09:00 - 10:00',
-                label:'09 - 10',
+                label:'09:00',
             },
             33:{
                 value:'12:00 - 13:00',
-                label:'12 - 13',
+                label:'12:00',
             },
             66:{
-                value:'15:00 - 16:00',
-                label:'15 - 16',
+                value:'14:00 - 15:00',
+                label:'14:00',
             },
             100:{
-                value:'19:00 - 20:00',
-                label:'18 - 20',
+                value:'17:00 - 18:00',
+                label:'17:00',
             }
         }
         // timeSlots.map(t=>{

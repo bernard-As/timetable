@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { PrivateDefaultApi } from "../../../../utils/AxiosInstance";
 import rootStore from "../../../../mobx";
 import { observer } from "mobx-react";
-import { Table } from "antd";
+import { Col, Row, Segmented, Table } from "antd";
 import { ScheduleCell } from "./AdditionalRendering";
 import dayjs from "dayjs";
 import isBetween from 'dayjs/plugin/isBetween';
@@ -18,6 +18,8 @@ const Schedule = observer(({id,model})=>{
     const [data,setData] = useState([])
     const [timeSlots,settimeSlots] = useState([])
     const [tableData, setTableData] = useState([])
+    const [scheduleType,setscheduleType] = useState([])
+    const [selectedScheduleType,setselectedScheduleType] = useState('')
     const columns = [ {
         title:'TimeSlot',
         dataIndex: 'timeslot',
@@ -38,7 +40,12 @@ const Schedule = observer(({id,model})=>{
                 id:id,
                 model:model.name
             }).then((res)=>{
-                setData(res.data);
+                if(selectedScheduleType!==''){
+                    const filteredData = res.data.filter(item=>item.type===selectedScheduleType)
+                    setData(filteredData)
+                }else{
+                    setData(res.data);
+                }
             }).catch((error)=>{
                 console.log(error);
                 rootStore.notification.notify({
@@ -74,7 +81,7 @@ const Schedule = observer(({id,model})=>{
             // convertToData();
         }
         computeSchedule();
-    },[id,model.name,timeInterval])
+    },[id,model.name,timeInterval,selectedScheduleType])
     
     useEffect(()=>{
         const compareTimeSlots = (timeSlot, courseStart, courseEnd) => {
@@ -150,7 +157,36 @@ const Schedule = observer(({id,model})=>{
             })
             setTableData(newSh)
     },[timeSlots])
+
+    useEffect(()=>{
+        const getSchduleType = ()=>{
+            PrivateDefaultApi.get('scheduletype/').then((res)=>{
+                
+                setscheduleType(res.data)
+            })
+        }
+        getSchduleType()
+    },[])
     return (<>
+        <Row
+            justify={'start'}
+        >
+            <Col span={12}>
+            <Segmented
+                options={
+                    scheduleType
+                }
+                style={{
+                    margin:'12px'
+                }}
+                onChange={(value)=>{
+                    setselectedScheduleType(value)
+                }}
+                    
+            />
+            </Col>
+
+        </Row>
        {timeSlots.length>0&& <Table 
             columns={columns} 
             dataSource={tableData}

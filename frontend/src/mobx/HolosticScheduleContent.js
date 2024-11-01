@@ -1191,7 +1191,8 @@ class HolosticScheduleContentStore{
                 'date',
                 'start',
                 'coursegroup_s',
-                'room_s'
+                'room_s',
+                'invigilator'
             ],
             listFields:[
                 'name',

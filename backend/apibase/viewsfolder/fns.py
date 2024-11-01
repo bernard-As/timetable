@@ -9,6 +9,15 @@ def shedule_modify_data(item):
             'last_name':lecturer.user.last_name,
             'title':lecturer.user.title.shortname,
         }
+
+        try:
+        
+             if(Lecturer.objects.filter(pk=item['invigilator']).exists()):
+                    invi = Lecturer.objects.get(pk=item['invigilator'])
+                  
+                    item['invigilator'] = invi.user.title.shortname+' '+invi.user.first_name + ' ' + invi.user.last_name
+        except:
+             pass
         try:
             assistant = Assistant.objects.filter(coursegroup__in=[Iam.coursegroup,]).last()
             print(assistant)

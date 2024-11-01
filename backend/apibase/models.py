@@ -401,8 +401,8 @@ class Schedule(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=['room', 'start', 'end', 'day'],
-                name='unique_room_day_time'
+                fields=['room', 'start', 'end', 'day', 'type'],
+                name='unique_room_day_time_time'
             )
         ]
 
@@ -414,7 +414,8 @@ class Schedule(models.Model):
 
         # Check if the lecture overlaps with any other lecture in the same room
         overlapping_schedule = Schedule.objects.filter(
-            room=self.room
+            room=self.room,
+            type=self.type
         ).filter(
             Q(day=self.day) & Q(date=self.date) if self.date else Q(day=self.day)
         ).filter(

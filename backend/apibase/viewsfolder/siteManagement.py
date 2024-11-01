@@ -972,3 +972,19 @@ class ScheduleTypeViewSet(viewsets.ModelViewSet):
         'name',
         'created_at',
     ]
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        serialized_data = self.get_serializer(queryset, many=True).data
+        modified_data = [self.modify_data(item) for item in serialized_data] # type: ignore
+        return Response(modified_data,200)
+    
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serialized_data = self.get_serializer(instance).data
+        modified_data = shedule_modify_data(serialized_data)
+        return Response(modified_data)
+    def modify_data(self, item):
+        item['value'] = item['id']
+        item['label'] = item['name']
+        return item

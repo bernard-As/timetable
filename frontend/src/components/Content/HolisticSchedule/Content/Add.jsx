@@ -1456,7 +1456,32 @@ useEffect(() => {
                />
            </Form.Item>
             }
-
+            {model.addFields.includes('invigilator')&&
+               <Form.Item
+               name="invigilator"
+               label="Select the invigilator"
+              
+               initialValue={localStorage.getItem(`create_invigilatorId`)}
+           >
+               <Select
+                onSelect={(event)=>{
+                  localStorage.setItem(`${model.name}_lecturer`,event)
+                }}
+                allowClear
+                initialValue={localStorage.getItem(`${model.name}_lecturer`)}
+              >
+                {additionalData.find(ad=>ad.target==='lecturer')?.data.map(l=>{
+                  return l.status&&<Select.Option key={l.id} value={l.id}>
+                    <Tooltip title={l.email}>
+                      {`${l.first_name}  ${l.last_name}`}
+                    </Tooltip>
+                  </Select.Option>
+                })
+                }
+              </Select>
+               
+           </Form.Item>
+            }
             
             <Form.Item
                 wrapperCol={{

@@ -393,6 +393,7 @@ class Schedule(models.Model):
     day = models.SmallIntegerField(blank=True,null=True)
     date = models.DateField(blank=True, null=True)
     type = models.ForeignKey(ScheduleType,on_delete=models.CASCADE)
+    invigilator = models.ForeignKey(Lecturer, on_delete=models.SET_NULL, null=True, blank=True)
     status = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

@@ -159,6 +159,7 @@ export const  CourseDisplayInCell = ({data,setshowSetScheduleModal})=>{
                 style={{backgroundColor:color}}
             >
                 {`${data.cg.code} G${data.cg.group_number} ~Room: ${data.rm.code}`}
+                {data.type===3&&data.invigilator!==null&&<span>{' '+data.invigilator}</span>}
                 {/* <Divider style={{padding:0}}/> */}
             </span>
             </Tooltip>:
@@ -167,7 +168,7 @@ export const  CourseDisplayInCell = ({data,setshowSetScheduleModal})=>{
                 style={{backgroundColor:color}}
                 >
             {`${data.cg.code} G${data.cg.group_number} ~Room: ${data.rm.code}`}
-            {/* <Divider style={{padding:0}}/> */}
+            {data.type===3&&data.invigilator!==null&&<span> {' '+data.invigilator}</span>}
         </span>
             }
         </Popconfirm>
@@ -449,6 +450,12 @@ export const CourseTooltipRender = ({data,setshowSetScheduleModal=()=>{}})=>{
                 direction="horizontal"
             >
                 <div>Assistant: {data.assit.title} {data.assit.first_name} {data.assit.last_name}</div>
+            </Space><br/></>}
+            {data.type===3&&data.invigilator!==undefined&&rootStore.enableManagement&&rootStore.isManager()&&
+                <><Space
+                direction="horizontal"
+            >
+                <div>Invigilator: {data.invigilator}</div>
             </Space><br/></>}
             {rootStore.enableManagement&&rootStore.isManager()&&<Space.Compact
                     direction="horizontal"

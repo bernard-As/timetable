@@ -38,3 +38,26 @@ def shedule_modify_data(item):
         }
         return item
     
+
+def canScheduleDisplay(userPk, schedulePk):
+    schedule = Schedule.objects.get(pk=schedulePk)
+    if(not userPk):
+         if schedule.type.can_other_view:
+              return True
+         else:
+              return False
+    else:
+        user = Users.objects.get(pk=userPk)
+        if Student.objects.filter(user=user.pk).exists():
+              if schedule.type.can_std_view:
+                   return True
+              else:
+                   return False
+        elif Lecturer.objects.filter(user=user.pk).exists():
+             if schedule.type.can_lect_view:
+                  return True
+             else:
+                  return False
+        
+              
+    

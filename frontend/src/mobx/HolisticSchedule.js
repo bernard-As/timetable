@@ -178,7 +178,7 @@ class HolisticScheduleStore {
         }else if (type===3){
             return 'rgba(247, 168, 22, 0.637)'
         }else if(type===4){
-            return '#FF9800'
+            return '#ce8a6f96'
         }else if(type===5){
             return '#8BC34A'
         }else if(type===6){

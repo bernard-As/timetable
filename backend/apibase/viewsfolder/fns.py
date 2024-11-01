@@ -47,43 +47,42 @@ def canScheduleDisplay(userPk, schedulePk):
          else:
               return False
     else:
-        user = Users.objects.get(pk=userPk)
-        if Student.objects.filter(user=user.pk).exists():
-              if schedule.type.can_std_view:
+          user = Users.objects.get(pk=userPk)
+          if Student.objects.filter(user=user.pk).exists():
+               if schedule.type.can_std_view:
+                    return True
+               else:
+                    return False
+          elif user.credential=='PADM':
+              if schedule.type.can_padm_view:
                    return True
               else:
                    return False
-        elif Lecturer.objects.filter(user=user.pk).exists():
-            if user.credential=='PADM':
-                if schedule.type.can_padm_view:
-                     return True
-                else:
-                     return False
-            elif user.credential=='SYSADM':
-                if schedule.type.can_system_view:
-                     return True
-                else:
-                     return False
-            elif user.credential=='VR':
-                if schedule.type.can_vcr_view:
-                     return True
-                else:
-                     return False
-            elif user.credential=='AD':
-                if schedule.type.can_adv_view:
-                     return True
-                else:
-                     return False
-            elif user.credential=='HOD':
-                if schedule.type.can_hod_view:
-                     return True
-                else:
-                     return False
-            elif user.credential=='HOD':
-                if schedule.type.can_hod_view:
-                     return True
-                else:
-                     return False
-                     
+          elif user.credential=='SYSADM':
+              if schedule.type.can_system_view:
+                   return True
+              else:
+                   return False
+          elif user.credential=='VR':
+              if schedule.type.can_vcr_view:
+                   return True
+              else:
+                   return False
+          elif user.credential=='AD':
+              if schedule.type.can_adv_view:
+                   return True
+              else:
+                   return False
+          elif user.credential=='HOD':
+              if schedule.type.can_hod_view:
+                   return True
+              else:
+                   return False
+          elif user.credential=='HOD':
+              if schedule.type.can_hod_view:
+                   return True
+              else:
+                   return False
+
               
     

@@ -15,12 +15,13 @@ from apibase.viewsfolder.fns import canScheduleDisplay, shedule_modify_data
 
 # generics
 class ViewSchedule(APIView):
-    authentication_classes = []
-    permission_classes = [] 
+    authentication_classes = ([TokenAuthentication])
+    permission_classes =( [IsAuthenticated] )
     queryset = Schedule.objects.all()
     serializer_class = ScheduleSerializer
 
     def post(self, request):
+        user = request.user
         try:
             model = request.data['model']
             id = request.data['id']
@@ -94,9 +95,11 @@ class ViewSchedule(APIView):
         # Serialize the data
         R = []
         for schedule in toReturn:
-            canDisplay = canScheduleDisplay(None,schedule.pk)
+            canDisplay = canScheduleDisplay(user.pk,schedule.pk)
             if (canDisplay):
                 R.extend([schedule])
+
+            print(R)
         serializer = ScheduleSerializer(R, many=True)
         modified_data = [shedule_modify_data(item) for item in serializer.data] # type: ignore
         return Response(modified_data)

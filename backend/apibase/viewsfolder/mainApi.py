@@ -37,7 +37,14 @@ class ViewSchedule(APIView):
             for c in lectCourses:
                 schedules = Schedule.objects.filter(coursegroup=c.id)
                 toReturn.extend(schedules)  # Extend the list with schedules
-            invigilationShc = Schedule.objects.filter(lecturer__user=id,type=3)
+            invigilationShc = Schedule.objects.filter(invigilator=id,type=3)
+            schedule_ids = {schedule.id for schedule in toReturn}
+            
+            # Add invigilation schedules that are not already in the toReturn list
+            for invigilation in invigilationShc:
+                if invigilation.id not in schedule_ids:
+                    toReturn.append(invigilation)
+                        # toReturn.extend(invigilationShc) 
             
         
         elif model == 'course':

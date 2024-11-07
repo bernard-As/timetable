@@ -37,7 +37,7 @@ class ViewSchedule(APIView):
             for c in lectCourses:
                 schedules = Schedule.objects.filter(coursegroup=c.id)
                 toReturn.extend(schedules)  # Extend the list with schedules
-            invigilationShc = Schedule.objects.filter(lecturer__user=id,type=3)
+            invigilationShc = Schedule.objects.filter(coursegroup__lecturer__user=id,type=3)
             
         
         elif model == 'course':

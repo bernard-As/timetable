@@ -62,13 +62,13 @@ class ViewSchedule(APIView):
                 lectCourses = Coursegroup.objects.filter(lecturer = user.id)
                 toReturn = Schedule.objects.filter(coursegroup__lecturer__user=user)
         elif model == 'faculty':
-            toReturn = Schedule.objects.filter(coursegroup__course_semester__program__department__faculty=request.data['id'])
+            toReturn = Schedule.objects.filter(coursegroup__course_semester__program__department__faculty=request.data['id']).distinct()
         elif model == 'department':
-            toReturn = Schedule.objects.filter(coursegroup__course_semester__program__department=request.data['id'])
+            toReturn = Schedule.objects.filter(coursegroup__course_semester__program__department=request.data['id']).distinct()
         elif model == 'program':
-            toReturn = Schedule.objects.filter(coursegroup__course_semester__program=request.data['id'])
+            toReturn = Schedule.objects.filter(coursegroup__course_semester__program=request.data['id']).distinct()
         elif model == 'semester':
-            toReturn = Schedule.objects.filter(coursegroup__course_semester=request.data['id'])
+            toReturn = Schedule.objects.filter(coursegroup__course_semester=request.data['id']).distinct()
         elif model == 'student':
             # Get the student's course groups (assuming it's a ManyToManyField)
             student = Student.objects.get(pk=id)
@@ -120,7 +120,7 @@ class MySchedule(APIView):
     def get(self, request):
         user = request.user
         isLecturer = False
-        
+        toReturn = []
         try:
             # Check if the user is a lecturer
             isLecturer = Lecturer.objects.filter(user=user.pk).exists()
@@ -130,9 +130,17 @@ class MySchedule(APIView):
         
         if isLecturer:
             # Fetch schedules for lecturer
-            toReturn = Schedule.objects.filter(coursegroup__lecturer__user=user.pk)
+            toReturn.extend(Schedule.objects.filter(coursegroup__lecturer__user=user.pk))
+            invigilationShc = Schedule.objects.filter(invigilator__user=user.pk,type=3)
+            schedule_ids = {schedule.id for schedule in toReturn}
+            
+            # Add invigilation schedules that are not already in the toReturn list
+            x = []
+            for invigilation in invigilationShc:
+                if invigilation.id not in schedule_ids:
+                    toReturn.append(invigilation)
+                    pass
         else:
-            toReturn = []
             try:
                 # Fetch the student object based on the user
                 student = Student.objects.get(user=user.pk)

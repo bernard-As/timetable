@@ -3,7 +3,7 @@ import { PrivateDefaultApi } from "../../utils/AxiosInstance";
 import rootStore from "../../mobx";
 import { generateTimeSlots, getDayData, getDayString, ScheduleCell } from "../Content/HolisticSchedule/Content/AdditionalRendering";
 import { useNavigate } from "react-router-dom";
-import { Segmented, Slider, Space, Table, Tag } from "antd";
+import { Col, Row, Segmented, Slider, Space, Table, Tag } from "antd";
 
 const MyTimetable = ()=>{
     const navigate = useNavigate()
@@ -15,6 +15,9 @@ const MyTimetable = ()=>{
     const [tableMobileData,settableMobileData] = useState([])
     const [mobileColumns,setMobileColumns] = useState()
     const [marks,setMarks] = useState()
+    const [selectedScheduleType,setselectedScheduleType] = useState('')
+    const [scheduleType,setscheduleType] = useState([])
+
     const columns = [ {
         title:'TimeSlot',
         dataIndex: 'timeslot',
@@ -36,15 +39,34 @@ const MyTimetable = ()=>{
         setTimeSlots()
         const getMyData = async () =>{
             await PrivateDefaultApi.get('my_schedule/').then((res)=>{
-                setData(res.data)
+                if(selectedScheduleType!==''){
+                    const filteredData = res.data.filter(item=>item.type===selectedScheduleType)
+                    setData(filteredData)
+                }else{
+                    setData(res.data);
+                }
             }).catch((error)=>{
                 console.log(error);
+                rootStore.notification.notify({
+                    type:'error',
+                    text:'Could load the requested timetable',
+                    title:'Could load the requested timetable',
+                    timeout:2500
+                })
             })
         }
         getMyData();
         setTimeSlots(generateTimeSlots('09:00:00','20:00:00',timeInterval))
-    },[navigate,timeInterval])
-
+    },[navigate,timeInterval,selectedScheduleType])
+    useEffect(()=>{
+        const getSchduleType = ()=>{
+            PrivateDefaultApi.get('scheduletype/').then((res)=>{
+                
+                setscheduleType(res.data)
+            })
+        }
+        getSchduleType()
+    },[])
     useEffect(()=>{
         // For Desktop
         let newSh = [];
@@ -172,6 +194,25 @@ const MyTimetable = ()=>{
     };
 
     return (<>
+    <Row
+            justify={'start'}
+        >
+            <Col span={12}>
+            <Segmented
+                options={
+                    scheduleType
+                }
+                style={{
+                    margin:'12px'
+                }}
+                onChange={(value)=>{
+                    setselectedScheduleType(value)
+                }}
+                    
+            />
+            </Col>
+
+        </Row>
         {rootStore.holisticScheduleStore.isPhone()&&
         <><Segmented
             onChange={handleChageDisplay}

@@ -732,7 +732,7 @@ class CourseViewSet(viewsets.ModelViewSet):
         except:
             item['user_name'] = 'Unknow'
         
-            for index, cg in enumerate(item['coursegroup_set']):
+            for index, cg in enumerate(item['coursegroup']):
                 course_semester_ids = cg.get('course_semester')  # Get the 'course_semester' field from the current dictionary
                 if course_semester_ids is not None:
                     related_programs = CourseSemester.objects.filter(id__in=course_semester_ids).values_list('program__pk', flat=True)

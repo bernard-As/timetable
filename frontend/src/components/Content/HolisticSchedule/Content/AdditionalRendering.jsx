@@ -233,6 +233,19 @@ export const getDayData = (timeSlot,day,data)=>{
         return true
     return false
 }
+export const getDateData = (timeSlot,date,data)=>{
+    let isDay = false
+    if(data.date!==(null||undefined)&&date===dayjs(data.date).format('DD-MM-YYYY'))
+        isDay = true
+
+    // console.log(date);
+    
+    if(!isDay)
+        return false
+    else if(compareTimeSlots(timeSlot,data.start,data.end))
+        return true
+    return false
+}
 export const getDayString = (data)=>{
     if(data.day!==undefined){
         return rootStore.holosticScheduleContentStore.daysIndex.find(d=>d.id===data.day)

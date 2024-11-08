@@ -3,7 +3,7 @@ import { PrivateDefaultApi } from "../../../../utils/AxiosInstance";
 import rootStore from "../../../../mobx";
 import { observer } from "mobx-react";
 import { Col, Row, Segmented, Table } from "antd";
-import { ScheduleCell } from "./AdditionalRendering";
+import { getDateData, ScheduleCell } from "./AdditionalRendering";
 import dayjs from "dayjs";
 import isBetween from 'dayjs/plugin/isBetween';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
@@ -20,19 +20,49 @@ const Schedule = observer(({id,model})=>{
     const [tableData, setTableData] = useState([])
     const [scheduleType,setscheduleType] = useState([])
     const [selectedScheduleType,setselectedScheduleType] = useState('')
-    const columns = [ {
-        title:'TimeSlot',
-        dataIndex: 'timeslot',
-        key:'timeslot'
-    },
-    ...rootStore.holosticScheduleContentStore.daysIndex.map(({id,name, ...rest})=>(
-        {
-        title:name,
-        dataIndex:id,
-        key:id,
-        render: (_,record) => <ScheduleCell record={record[name]}/>,
-        rest
-    }))]
+    const [columns, setColumns] = useState([]) 
+    
+    useEffect(()=>{
+        const midtermDays = [
+             '09-11-2024',
+             '11-11-2024',
+             '12-11-2024',
+             '13-11-2024',
+             '14-11-2024',
+             '15-11-2024',
+             '16-11-2024',
+        ]
+        if(selectedScheduleType===3){
+            setColumns( [ {
+                title:'TimeSlot',
+                dataIndex: 'timeslot',
+                key:'timeslot'
+            },
+            ...midtermDays.map((m)=>(
+                {
+                title:m,
+                dataIndex:matchMedia,
+                key:m,
+                render: (_,record) => <ScheduleCell record={record[m]}/>,
+            }))])
+        }else{
+            setColumns( [ {
+                title:'TimeSlot',
+                dataIndex: 'timeslot',
+                key:'timeslot'
+            },
+            ...rootStore.holosticScheduleContentStore.daysIndex.map(({id,name, ...rest})=>(
+                {
+                title:name,
+                dataIndex:id,
+                key:id,
+                render: (_,record) => <ScheduleCell record={record[name]}/>,
+                rest
+            }))])
+        }
+    },[selectedScheduleType])
+    
+   
     
     useEffect(()=>{
         const getSchedule = ()=>{
@@ -126,7 +156,7 @@ const Schedule = observer(({id,model})=>{
         const convertToData= ()=>{
             let newSh = [];
             timeSlots.map(timeSlot=>{
-                const sc = {
+                const sc = selectedScheduleType!==3?{
                     timeslot:`${timeSlot.start} - ${timeSlot.end}`,
                     Monday:data?.filter(d=>(getDayData(timeSlot,1,d))),
                     Tuesday:data?.filter(d=>(getDayData(timeSlot,2,d))),
@@ -134,13 +164,25 @@ const Schedule = observer(({id,model})=>{
                     Thursday:data?.filter(d=>(getDayData(timeSlot,4,d))),
                     Friday:data?.filter(d=>(getDayData(timeSlot,5,d))),
                     Saturday:data?.filter(d=>(getDayData(timeSlot,6,d))),
+                }:{
+                    timeslot:`${timeSlot.start} - ${timeSlot.end}`,
+                    '09-11-2024':data?.filter(d=>(getDateData(timeSlot,'09-11-2024',d))),
+                    '11-11-2024':data?.filter(d=>(getDateData(timeSlot,'11-11-2024',d))),
+                    '12-11-2024':data?.filter(d=>(getDateData(timeSlot,'12-11-2024',d))),
+                    '13-11-2024':data?.filter(d=>(getDateData(timeSlot,'13-11-2024',d))),
+                    '14-11-2024':data?.filter(d=>(getDateData(timeSlot,'14-11-2024',d))),
+                    '15-11-2024':data?.filter(d=>(getDateData(timeSlot,'15-11-2024',d))),
+                    '16-11-2024':data?.filter(d=>(getDateData(timeSlot,'16-11-2024',d))),
                 }
+            console.log(sc);
+
                 newSh = [...newSh.filter(n=>n.timeslot!==sc.timeslot),sc]
             })
             setTableData(newSh)
         }
         data.length>0&&convertToData()
-    },[timeSlots,data])
+    },[timeSlots,data,selectedScheduleType])
+
     useEffect(()=>{
         let newSh = [];
             timeSlots.map(timeSlot=>{

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { PrivateDefaultApi } from "../../utils/AxiosInstance";
 import rootStore from "../../mobx";
-import { generateTimeSlots, getDayData, getDayString, ScheduleCell } from "../Content/HolisticSchedule/Content/AdditionalRendering";
+import { generateTimeSlots, getDateData, getDayData, getDayString, ScheduleCell } from "../Content/HolisticSchedule/Content/AdditionalRendering";
 import { useNavigate } from "react-router-dom";
 import { Col, Row, Segmented, Slider, Space, Table, Tag } from "antd";
 
@@ -17,24 +17,47 @@ const MyTimetable = ()=>{
     const [marks,setMarks] = useState()
     const [selectedScheduleType,setselectedScheduleType] = useState('')
     const [scheduleType,setscheduleType] = useState([])
+    const [columns, setColumns] = useState([]) 
 
-    const columns = [ {
-        title:'TimeSlot',
-        dataIndex: 'timeslot',
-        key:'timeslot',
-        fixed:'left',
-        render: (_,record)=><span
-                    id={ record.timeslot}
-                >{record.timeslot}</span>
-    },
-    ...rootStore.holosticScheduleContentStore.daysIndex.map(({id,name, ...rest})=>(
-        {
-        title:name,
-        dataIndex:id,
-        key:id,
-        render: (_,record) => <ScheduleCell record={record[name]}/>,
-        rest
-    }))]
+    useEffect(()=>{
+        const midtermDays = [
+             '09-11-2024',
+             '11-11-2024',
+             '12-11-2024',
+             '13-11-2024',
+             '14-11-2024',
+             '15-11-2024',
+             '16-11-2024',
+        ]
+        if(selectedScheduleType===3){
+            setColumns( [ {
+                title:'TimeSlot',
+                dataIndex: 'timeslot',
+                key:'timeslot'
+            },
+            ...midtermDays.map((m)=>(
+                {
+                title:m,
+                dataIndex:matchMedia,
+                key:m,
+                render: (_,record) => <ScheduleCell record={record[m]}/>,
+            }))])
+        }else{
+            setColumns( [ {
+                title:'TimeSlot',
+                dataIndex: 'timeslot',
+                key:'timeslot'
+            },
+            ...rootStore.holosticScheduleContentStore.daysIndex.map(({id,name, ...rest})=>(
+                {
+                title:name,
+                dataIndex:id,
+                key:id,
+                render: (_,record) => <ScheduleCell record={record[name]}/>,
+                rest
+            }))])
+        }
+    },[selectedScheduleType])
     useEffect(()=>{
         setTimeSlots()
         const getMyData = async () =>{
@@ -71,7 +94,7 @@ const MyTimetable = ()=>{
         // For Desktop
         let newSh = [];
         timeSlots.map(timeSlot=>{
-            const sc = {
+            const sc = selectedScheduleType!==3?{
                 timeslot:`${timeSlot.start} - ${timeSlot.end}`,
                 Monday:data?.filter(d=>(getDayData(timeSlot,1,d))),
                 Tuesday:data?.filter(d=>(getDayData(timeSlot,2,d))),
@@ -79,7 +102,18 @@ const MyTimetable = ()=>{
                 Thursday:data?.filter(d=>(getDayData(timeSlot,4,d))),
                 Friday:data?.filter(d=>(getDayData(timeSlot,5,d))),
                 Saturday:data?.filter(d=>(getDayData(timeSlot,6,d))),
+            }:{
+                timeslot:`${timeSlot.start} - ${timeSlot.end}`,
+                '09-11-2024':data?.filter(d=>(getDateData(timeSlot,'09-11-2024',d))),
+                '11-11-2024':data?.filter(d=>(getDateData(timeSlot,'11-11-2024',d))),
+                '12-11-2024':data?.filter(d=>(getDateData(timeSlot,'12-11-2024',d))),
+                '13-11-2024':data?.filter(d=>(getDateData(timeSlot,'13-11-2024',d))),
+                '14-11-2024':data?.filter(d=>(getDateData(timeSlot,'14-11-2024',d))),
+                '15-11-2024':data?.filter(d=>(getDateData(timeSlot,'15-11-2024',d))),
+                '16-11-2024':data?.filter(d=>(getDateData(timeSlot,'16-11-2024',d))),
             }
+            console.log(sc);
+            
             newSh = [...newSh.filter(n=>n.timeslot!==sc.timeslot),sc]
         })
         setTableData(newSh)
@@ -95,7 +129,7 @@ const MyTimetable = ()=>{
             newSh2 = [...newSh2.filter(n=>n.day!==sc.day),sc]
         })
         settableMobileData(newSh2)
-    },[timeSlots,data])
+    },[timeSlots,data,selectedScheduleType])
     useEffect(()=>{
         // For Desktop
         let newSh = [];
@@ -232,6 +266,7 @@ const MyTimetable = ()=>{
             style={{
                 margin:'3px'
             }}
+            defaultValue="desktop"
         /><br/>
          <center><Slider 
             step={null} 

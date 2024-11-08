@@ -87,8 +87,8 @@ def canScheduleDisplay(userPk, schedulePk):
                    return True
               else:
                    return False
-          elif user.credential=='HOD':
-              if schedule.type.can_hod_view:
+          elif Lecturer.objects.filter(user=user.pk).exists():
+              if schedule.type.can_other_view:
                    return True
               else:
                    return False

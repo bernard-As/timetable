@@ -133,6 +133,7 @@ class MySchedule(APIView):
             toReturn.extend(Schedule.objects.filter(coursegroup__lecturer__user=user.pk))
             invigilationShc = Schedule.objects.filter(invigilator__user=user.pk,type=3)
             schedule_ids = {schedule.id for schedule in toReturn}
+            # return Response({"error": Users.objects.get(pk=user.pk).credential}, status=404)
             
             # Add invigilation schedules that are not already in the toReturn list
             x = []
@@ -233,7 +234,7 @@ class MyUpcomingScheduleView(generics.ListAPIView):
             myCourses = Student.objects.get(user=user.pk).coursegroup.all()
         elif (Lecturer.objects.filter(user=user.pk).exists()):
             myCourses = Coursegroup.objects.filter(lecturer__user=user)
-        print(myCourses)
+        # print(myCourses)
         toReturn =Schedule.objects.filter(
             (
                 Q(date__gt=now.date()) |  # Future dates

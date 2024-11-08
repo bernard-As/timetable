@@ -203,7 +203,7 @@ const SideMenu: React.FC = observer(() => {
           icon: React.createElement(PiListStarDuotone),
           label: 'Complete',
           onClick: ()=>{
-            navigate('/holistic-schedule/complete')
+            navigate('/complete')
           },
           style:
               (rootStore.holisticScheduleStore.checkCredentialAllowence('complete')

@@ -14,7 +14,7 @@ class HolisticScheduleStore {
         {name:'faculty',status:true},
         {name:'floor',status:true},
         {name:'building',status:true},
-        {name:'complete',status:false},
+        {name:'complete',status:true},
         {name:'create_schedule',status:true},
     ]
     credentDisplay = [

@@ -5,7 +5,7 @@ import { generateTimeSlots, getDateData, getDayData, getDayString, ScheduleCell 
 import { useNavigate } from "react-router-dom";
 import { Col, Row, Segmented, Slider, Space, Table, Tag } from "antd";
 
-const MyTimetable = ()=>{
+const CompleteSchedule = ()=>{
     const navigate = useNavigate()
     const [data,setData] = useState();
     const [timeSlots,setTimeSlots] = useState([0])
@@ -34,7 +34,7 @@ const MyTimetable = ()=>{
                 title:'TimeSlot',
                 dataIndex: 'timeslot',
                 key:'timeslot',
-                width:rootStore.holisticScheduleStore.isPhone()?'0px':'auto'
+                style:{width:50}
             },
             ...midtermDays.map((m)=>(
                 {
@@ -48,7 +48,7 @@ const MyTimetable = ()=>{
                 title:'TimeSlot',
                 dataIndex: 'timeslot',
                 key:'timeslot',
-                style:{width:'50px'}
+                // width:'50px'
             },
             ...rootStore.holosticScheduleContentStore.daysIndex.map(({id,name, ...rest})=>(
                 {
@@ -63,7 +63,10 @@ const MyTimetable = ()=>{
     useEffect(()=>{
         setTimeSlots()
         const getMyData = async () =>{
-            await PrivateDefaultApi.get('my_schedule/').then((res)=>{
+            await PrivateDefaultApi.post(`view_schedule/`,{
+                model:'complete',
+                id:'none'
+            }).then((res)=>{
                 if(selectedScheduleType!==''){
                     const filteredData = res.data.filter(item=>item.type===selectedScheduleType)
                     setData(filteredData)
@@ -304,4 +307,4 @@ const MyTimetable = ()=>{
          </>
      )
 }
-export default MyTimetable;
+export default CompleteSchedule;

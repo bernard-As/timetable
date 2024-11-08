@@ -101,6 +101,8 @@ class ViewSchedule(APIView):
                 for c in student.student.coursegroup.all():
                     schedules = Schedule.objects.filter(coursegroup=c.id)
                     toReturn.extend(schedules)
+        elif model == 'complete':
+            toReturn = Schedule.objects.all().distinct()
         # Serialize the data
         R = []
         for schedule in toReturn:

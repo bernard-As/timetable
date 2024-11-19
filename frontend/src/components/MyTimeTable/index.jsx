@@ -253,7 +253,7 @@ const MyTimetable = ()=>{
             onChange={handleChageDisplay}
             options={[
                
-              {
+               {
                 label: 'Mobile',
                 value: 'mobile',
                //  icon: <BarsOutlined />,

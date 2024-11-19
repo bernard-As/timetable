@@ -975,6 +975,9 @@ class ScheduleTypeViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return ScheduleType.objects.filter(status=True)
 
+    def get_queryset(self):
+        return ScheduleType.objects.filter(status=True)
+
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
         serialized_data = self.get_serializer(queryset, many=True).data

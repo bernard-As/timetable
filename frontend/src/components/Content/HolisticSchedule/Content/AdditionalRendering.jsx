@@ -159,7 +159,7 @@ export const  CourseDisplayInCell = ({data,setshowSetScheduleModal})=>{
                 style={{backgroundColor:color}}
             >
                 {`${data.cg.code} G${data.cg.group_number} ~Room: ${data.rm.code}`}
-                {data.type===3&&data.invigilator!==null&&<span>{' '+data.invigilator}</span>}
+                {data.type===3&&rootStore.enableManagement&&rootStore.isManager()&&data.invigilator!==null&&<span>{' '+data.invigilator}</span>}
                 {/* <Divider style={{padding:0}}/> */}
             </span>
             </Tooltip>:
@@ -168,7 +168,7 @@ export const  CourseDisplayInCell = ({data,setshowSetScheduleModal})=>{
                 style={{backgroundColor:color}}
                 >
             {`${data.cg.code} G${data.cg.group_number} ~Room: ${data.rm.code}`}
-            {data.type===3&&data.invigilator!==null&&<span> {' '+data.invigilator}</span>}
+            {data.type===3&&rootStore.enableManagement&&rootStore.isManager()&&data.invigilator!==null&&<span> {' '+data.invigilator}</span>}
         </span>
             }
         </Popconfirm>

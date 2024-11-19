@@ -15,7 +15,7 @@ const MyTimetable = ()=>{
     const [tableMobileData,settableMobileData] = useState([])
     const [mobileColumns,setMobileColumns] = useState()
     const [marks,setMarks] = useState()
-    const [selectedScheduleType,setselectedScheduleType] = useState(3)
+    const [selectedScheduleType,setselectedScheduleType] = useState()
     const [scheduleType,setscheduleType] = useState([])
     const [columns, setColumns] = useState([]) 
 
@@ -64,7 +64,7 @@ const MyTimetable = ()=>{
         setTimeSlots()
         const getMyData = async () =>{
             await PrivateDefaultApi.get('my_schedule/').then((res)=>{
-                if(selectedScheduleType!==''){
+                if(selectedScheduleType!==''&&selectedScheduleType!=='All'){
                     const filteredData = res.data.filter(item=>item.type===selectedScheduleType)
                     setData(filteredData)
                 }else{
@@ -224,7 +224,6 @@ const MyTimetable = ()=>{
         if(marks!==undefined&&marks[value]!==undefined)
           toReturn = marks[value]
         return toReturn.label // Customize the tooltip content here
-  
     };
 
     return (<>
@@ -234,7 +233,10 @@ const MyTimetable = ()=>{
             <Col span={12}>
             <Segmented
                 options={
-                    scheduleType
+                    [{
+                        label:'All',
+                        value:'All'
+                    },...scheduleType, ]
                 }
                 style={{
                     margin:'12px'
@@ -242,7 +244,6 @@ const MyTimetable = ()=>{
                 onChange={(value)=>{
                     setselectedScheduleType(value)
                 }}
-                defaultValue={3}
             />
             </Col>
 
@@ -251,6 +252,7 @@ const MyTimetable = ()=>{
         <><Segmented
             onChange={handleChageDisplay}
             options={[
+               
               {
                 label: 'Mobile',
                 value: 'mobile',

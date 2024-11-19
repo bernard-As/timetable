@@ -972,6 +972,8 @@ class ScheduleTypeViewSet(viewsets.ModelViewSet):
         'name',
         'created_at',
     ]
+    def get_queryset(self):
+        return ScheduleType.objects.filter(status=True)
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())

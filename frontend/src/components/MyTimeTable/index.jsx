@@ -15,7 +15,7 @@ const MyTimetable = ()=>{
     const [tableMobileData,settableMobileData] = useState([])
     const [mobileColumns,setMobileColumns] = useState()
     const [marks,setMarks] = useState()
-    const [selectedScheduleType,setselectedScheduleType] = useState()
+    const [selectedScheduleType,setselectedScheduleType] = useState('All')
     const [scheduleType,setscheduleType] = useState([])
     const [columns, setColumns] = useState([]) 
 
@@ -68,7 +68,7 @@ const MyTimetable = ()=>{
                     const filteredData = res.data.filter(item=>item.type===selectedScheduleType)
                     setData(filteredData)
                 }else{
-                    setData(res.data);
+                    setData(res.data.filter(item=>item.type!==3));
                 }
             }).catch((error)=>{
                 console.log(error);

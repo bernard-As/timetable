@@ -1,6 +1,7 @@
 import { computed, makeAutoObservable } from "mobx";
 import { PrivateDefaultApi } from "../utils/AxiosInstance";
 import rootStore from ".";
+import dayjs from "dayjs";
 class HolisticScheduleStore {
     allowedDisplay = [
         {name:'course',status:true},
@@ -118,6 +119,16 @@ class HolisticScheduleStore {
             ]
         },
     ]
+    add_schedule_holder = {
+        status:false,
+        type:'Daily',
+        assignmentType:'Final',
+        date:dayjs(Date.now()).format('YYYY-MM-DD'),
+        start: [
+            dayjs('09:00:00', 'HH:mm:ss'), // Start time
+            dayjs('17:00:00', 'HH:mm:ss')  // End time
+        ]
+    }
     constructor() {
         makeAutoObservable(this);
     }

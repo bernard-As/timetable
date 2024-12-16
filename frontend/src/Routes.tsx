@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Home from './components/home';
+import Home from './components/Home';
 import P404 from './components/404page';
 import SiteManagement from './components/siteMnagement/main';
 import LandingPage from './components/LandingPage';
@@ -17,7 +17,7 @@ const MainRoutes: React.FC = ()=>{
               <Route path='/login' element={<Login />}/>
               <Route path='/siteManagement' element={<SiteManagement />}/>
               <Route path='*' element={<P404 />}/>
-              <Route path='*' element={<P404 />}/>
+              {/* <Route path='*' element={<P404 />}/> */}
             </Routes>
         </Router>
     )

@@ -96,11 +96,11 @@ export const ScheduleCell = React.memo(({record,currentDate=null})=>{
         rootStore.holisticScheduleStore.add_schedule_holder.type = 'Daily'
         rootStore.holisticScheduleStore.add_schedule_holder.assignmentType = 'Final Exam'
         rootStore.holisticScheduleStore.add_schedule_holder.date = currentDate
-        rootStore.holisticScheduleStore.add_schedule_holder.start = [
-            dayjs(record.start, 'HH:mm:ss'),
-            dayjs(record.start, 'HH:mm:ss'),
-            // dayjs(record.start, 'HH:mm:ss').add(2,'hour'),
-        ]
+        // rootStore.holisticScheduleStore.add_schedule_holder.start = [
+        //     dayjs(record.start, 'HH:mm:ss'),
+        //     dayjs(record.start, 'HH:mm:ss'),
+        //     // dayjs(record.start, 'HH:mm:ss').add(2,'hour'),
+        // ]
     },[showSetScheduleModal])
     return (
         <>        

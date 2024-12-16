@@ -92,15 +92,17 @@ export const ScheduleCell = React.memo(({record,currentDate=null})=>{
             setIsRecord(true)
     },[record])
     useEffect(()=>{
-        rootStore.holisticScheduleStore.add_schedule_holder.room = record.room
+        if(record!==undefined){
+        // rootStore.holisticScheduleStore.add_schedule_holder.room = record.room
         rootStore.holisticScheduleStore.add_schedule_holder.type = 'Daily'
         rootStore.holisticScheduleStore.add_schedule_holder.assignmentType = 'Final Exam'
-        rootStore.holisticScheduleStore.add_schedule_holder.date = currentDate
+        rootStore.holisticScheduleStore.add_schedule_holder.date = dayjs(currentDate,'DD-MM-YYYY').format('YYYY-MM-DD')
         // rootStore.holisticScheduleStore.add_schedule_holder.start = [
         //     dayjs(record.start, 'HH:mm:ss'),
         //     dayjs(record.start, 'HH:mm:ss'),
         //     // dayjs(record.start, 'HH:mm:ss').add(2,'hour'),
         // ]
+        }
     },[showSetScheduleModal])
     return (
         <>        
@@ -425,6 +427,7 @@ export const CourseTooltipRender = ({data,setshowSetScheduleModal=()=>{}})=>{
                 timeout: 3000
             })
             rootStore.holosticScheduleContentStore.refreshSchedule = true
+            rootStore.holisticScheduleStore.schedule_created +=1
         })
       };
     return(

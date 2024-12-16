@@ -129,6 +129,7 @@ class HolisticScheduleStore {
             dayjs('17:00:00', 'HH:mm:ss')  // End time
         ]
     }
+    schedule_created = 0
     constructor() {
         makeAutoObservable(this);
     }

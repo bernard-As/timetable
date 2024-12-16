@@ -60,6 +60,7 @@ const Add  = observer(({model})=>{
             text:`${model.name.toUpperCase() } created `
           })
           form.resetFields()
+          rootStore.holisticScheduleStore.schedule_created +=1
       }).catch((error)=>{
         console.log(error);
         if(model.name==='create_schedule')
@@ -1408,7 +1409,6 @@ useEffect(() => {
                       message: `Need to select a timerange!`,
                     },
                   ]}
-                  initialValue={rootStore.holisticScheduleStore.add_schedule_holder.start}
             >
                 <TimePicker.RangePicker  minuteStep={15} format={'HH:mm'}  needConfirm={false}/>
                 </Form.Item>

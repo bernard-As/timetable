@@ -196,7 +196,7 @@ const Schedule = observer(({id,model})=>{
             // convertToData();
         }
         computeSchedule();
-    },[id,model.name,timeInterval,selectedScheduleType])
+    },[id,model.name,timeInterval,selectedScheduleType,rootStore.holisticScheduleStore.schedule_created])
     
     useEffect(()=>{
         const compareTimeSlots = (timeSlot, courseStart, courseEnd) => {

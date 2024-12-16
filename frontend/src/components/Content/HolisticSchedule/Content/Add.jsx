@@ -4,6 +4,7 @@ import { PrivateDefaultApi } from "../../../../utils/AxiosInstance";
 import { observer } from "mobx-react";
 import { useEffect, useState } from "react";
 import { generateTimeSlots, getDayData, ScheduleCell } from "./AdditionalRendering";
+import dayjs from "dayjs";
 
 const Add  = observer(({model})=>{
   const [form] = Form.useForm();
@@ -200,6 +201,11 @@ useEffect(() => {
     useEffect(()=>{
       setadditionalData(rootStore.holosticScheduleContentStore.additionallyFetchedData)
     },[rootStore.holosticScheduleContentStore.additionallyFetchedData])
+    
+    useEffect(()=>{
+      setTypeSElected(rootStore.holisticScheduleStore.add_schedule_holder.type)
+    },[rootStore.holisticScheduleStore.add_schedule_holder.type])
+
     return (
       <>
         <Form
@@ -1334,14 +1340,14 @@ useEffect(() => {
                   onChange={(value) => {
                     setTypeSElected(value)
                   }}
+                  defaultValue={`${rootStore.holisticScheduleStore.add_schedule_holder.type}`}
                 />
                 </Form.Item>
             }
             {model.addFields.includes('assignmentType')&&
                 <Form.Item
                   label="Assignment Type"
-                  defaultValue={'Lecture'}
-                  defaultActiveFirstOption
+                  initialValue={rootStore.holisticScheduleStore.add_schedule_holder.assignmentType}
                   name='type'
                   rules={[
                     {
@@ -1352,7 +1358,7 @@ useEffect(() => {
                 >
                   <Segmented
                   options={additionalData.find(ad => ad.target === 'scheduletype')?.data.map(item => item.name)}
-                  
+                  // defaultValue={rootStore.holisticScheduleStore.add_schedule_holder.assignmentType}
                 />
                 </Form.Item>
             }
@@ -1378,14 +1384,18 @@ useEffect(() => {
                 <Form.Item
                 name="date"
                 label='Select a date'
+                // defaultValue={dayjs('2024-12-17') }
                 rules={[
                     {
                       required: true,
                       message: `Need to select a date!`,
                     },
                   ]}
+                  initialValue={dayjs(rootStore.holisticScheduleStore.add_schedule_holder.date)}
                 >
-                  <DatePicker/>
+                  <DatePicker
+                  
+                  />
                 </Form.Item>
             }
             {model.addFields.includes('start')&&
@@ -1398,6 +1408,7 @@ useEffect(() => {
                       message: `Need to select a timerange!`,
                     },
                   ]}
+                  initialValue={rootStore.holisticScheduleStore.add_schedule_holder.start}
             >
                 <TimePicker.RangePicker  minuteStep={15} format={'HH:mm'}  needConfirm={false}/>
                 </Form.Item>
@@ -1412,7 +1423,6 @@ useEffect(() => {
                      message: `Need to select at least one course!`,
                    },
                  ]}
-               initialValue={localStorage.getItem(`create_courseId`)}
            >
                <Select
                  showSearch
@@ -1439,7 +1449,7 @@ useEffect(() => {
                      message: `Need to select at least one room!`,
                    },
                  ]}
-               initialValue={localStorage.getItem(`create_courseId`)}
+               initialValue={rootStore.holisticScheduleStore.add_schedule_holder.room}
            >
                <Select
                  showSearch

@@ -17,7 +17,7 @@ const MainRoutes: React.FC = ()=>{
               <Route path='/login' element={<Login />}/>
               <Route path='/siteManagement' element={<SiteManagement />}/>
               <Route path='*' element={<P404 />}/>
-              <Route path='*' element={<P404 />}/>
+              {/* <Route path='*' element={<P404 />}/> */}
             </Routes>
         </Router>
     )

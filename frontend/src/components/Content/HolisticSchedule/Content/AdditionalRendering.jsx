@@ -79,18 +79,29 @@ export const CourseGroupDipslay = ({id})=>{
 
     )
 }
-export const ScheduleCell = React.memo(({record})=>{
+export const ScheduleCell = React.memo(({record,currentDate=null})=>{
     const [loaded,setLoaded] = useState(false)
     const [showSetScheduleModal,setshowSetScheduleModal]  =useState(false)
     const [isRecord,setIsRecord] = useState(false)
     const [showAdd,setshowAdd]  = useState(false)
+    console.log(record);
     
     useEffect(()=>{
         setLoaded(true)
         if(record?.length>0)
             setIsRecord(true)
     },[record])
-
+    useEffect(()=>{
+        rootStore.holisticScheduleStore.add_schedule_holder.room = record.room
+        rootStore.holisticScheduleStore.add_schedule_holder.type = 'Daily'
+        rootStore.holisticScheduleStore.add_schedule_holder.assignmentType = 'Final Exam'
+        rootStore.holisticScheduleStore.add_schedule_holder.date = currentDate
+        rootStore.holisticScheduleStore.add_schedule_holder.start = [
+            dayjs(record.start, 'HH:mm:ss'),
+            dayjs(record.start, 'HH:mm:ss'),
+            // dayjs(record.start, 'HH:mm:ss').add(2,'hour'),
+        ]
+    },[showSetScheduleModal])
     return (
         <>        
         {
@@ -238,7 +249,7 @@ export const getDateData = (timeSlot,date,data)=>{
     if(data.date!==(null||undefined)&&date===dayjs(data.date).format('DD-MM-YYYY'))
         isDay = true
 
-    // console.log(date);
+    console.log(date);
     
     if(!isDay)
         return false

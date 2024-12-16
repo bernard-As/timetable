@@ -2,13 +2,14 @@ import { useEffect, useState } from "react";
 import { PrivateDefaultApi } from "../../../../utils/AxiosInstance";
 import rootStore from "../../../../mobx";
 import { observer } from "mobx-react";
-import { Col, Row, Segmented, Table } from "antd";
+import { Card, Col, FloatButton, Row, Segmented, Table, Tag, Typography } from "antd";
 import { getDateData, ScheduleCell } from "./AdditionalRendering";
 import dayjs from "dayjs";
 import isBetween from 'dayjs/plugin/isBetween';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
-
+import { BsCalendar3Week } from "react-icons/bs";
+import { MdOutlineLooksOne,MdOutlineLooksTwo,MdOutlineLooks3 } from "react-icons/md";
 dayjs.extend(isBetween);
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
@@ -21,7 +22,38 @@ const Schedule = observer(({id,model})=>{
     const [scheduleType,setscheduleType] = useState([])
     const [selectedScheduleType,setselectedScheduleType] = useState('')
     const [columns, setColumns] = useState([]) 
+    const [columns1, setColumns1] = useState([]) 
+    const [columns2, setColumns2] = useState([]) 
+    const [columns3, setColumns3] = useState([]) 
+    const [tableData1, setTableData1] = useState([])
+    const [tableData2, setTableData2] = useState([])
+    const [tableData3, setTableData3] = useState([])
+    const [isMultiWeek,setisMultiWeek] = useState(false)
+    const finalDays = {
+        week1:{
+            start:3,
+            end:4
+        },
+        week2:{
+            start:6,
+            end:11,
+        },
+        week3:{
+            start:13,
+            end:18
+        }
+    }
+    const scrollToDiv = (divID) => {
+
+        const element = document.getElementById(divID);
     
+        if (element) {
+    
+          element.scrollIntoView({ behavior: 'smooth' });
+    
+        }
+    
+      };
     useEffect(()=>{
         const midtermDays = [
             '09-11-2024',
@@ -32,6 +64,7 @@ const Schedule = observer(({id,model})=>{
             '15-11-2024',
             '16-11-2024',
         ]
+        
         if(selectedScheduleType===3){
             setColumns( [ {
                 title:'TimeSlot',
@@ -45,6 +78,58 @@ const Schedule = observer(({id,model})=>{
                 key:m,
                 render: (_,record) => <ScheduleCell record={record[m]}/>,
             }))])
+        }else if(selectedScheduleType===5){
+            setisMultiWeek(true)
+            setTimeInterval(120)
+            const week1Columns = []
+            const week2Columns = []
+            const week3Columns = []
+            for(let i=finalDays.week1.start;i<=finalDays.week1.end;i++){
+                const m = `0${i}-01-2025`;
+                week1Columns.push({
+                    title:m,
+                    dataIndex:m,
+                    key:`week1_${i+1}`,
+                    render: (_,record) => <ScheduleCell record={record[m]} currentDate={m}/>,
+                    })
+            }
+            for(let i=finalDays.week2.start;i<=finalDays.week2.end;i++){
+                const ini = i>9?'':'0'
+                const m = `${ini}${i}-01-2025`;
+                week2Columns.push({
+                    title:m,
+                    dataIndex:m,
+                    key:`week2_${i+1}`,
+                    render: (_,record) => <ScheduleCell record={record[m]} currentDate={m}/>,
+                    })
+            }
+            for(let i=finalDays.week3.start;i<=finalDays.week3.end;i++){
+                const m = `${i}-01-2025`;
+                week3Columns.push({
+                    title:m,
+                    dataIndex:m,
+                    key:`week3_${i+1}`,
+                    render: (_,record) => <ScheduleCell record={record[m]} currentDate={m}/>,
+                    })
+            }
+            const defaultTimeslotCol = {
+                title:'TimeSlot',
+                dataIndex: 'timeslot',
+                key:'timeslot'
+            }
+            setColumns1([ 
+                defaultTimeslotCol,
+                ...week1Columns
+            ])
+            setColumns2([
+                defaultTimeslotCol,
+                ...week2Columns
+                ])
+            setColumns3([
+                defaultTimeslotCol,
+                ...week3Columns
+            ])    
+                    
         }else{
             setColumns( [ {
                 title:'TimeSlot',
@@ -155,6 +240,9 @@ const Schedule = observer(({id,model})=>{
         }
         const convertToData= ()=>{
             let newSh = [];
+            let newSh1 = [];
+            let newSh2 = [];
+            let newSh3 = [];
             timeSlots.map(timeSlot=>{
                 const sc = selectedScheduleType!==3?{
                     timeslot:`${timeSlot.start} - ${timeSlot.end}`,
@@ -174,11 +262,41 @@ const Schedule = observer(({id,model})=>{
                     '15-11-2024':data?.filter(d=>(getDateData(timeSlot,'15-11-2024',d))),
                     '16-11-2024':data?.filter(d=>(getDateData(timeSlot,'16-11-2024',d))),
                 }
-            console.log(sc);
-
                 newSh = [...newSh.filter(n=>n.timeslot!==sc.timeslot),sc]
+
+                if (selectedScheduleType===5){
+                    const sc1 = {timeslot:`${timeSlot.start} - ${timeSlot.end}`,}
+                    for(let i=finalDays.week1.start;i<=finalDays.week1.end;i++){
+                        const m = `0${i}-01-2025`;
+                        sc1[m] = data?.filter(d=>(getDateData(timeSlot,m,d)))
+                    }
+                    newSh1 = [...newSh1.filter(n=>n.timeslot!==sc1.timeslot),sc1]
+                    const sc2 = {timeslot:`${timeSlot.start} - ${timeSlot.end}`,}
+                    for(let i=finalDays.week2.start;i<=finalDays.week2.end;i++){
+                        const ini = i>9?'':'0'
+                        const m = `${ini}${i}-01-2025`;
+                        sc2[m] = data?.filter(d=>(getDateData(timeSlot,m,d)))
+                    }
+                    newSh2 = [...newSh2.filter(n=>n.timeslot!==sc2.timeslot),sc2]
+                    const sc3 = {timeslot:`${timeSlot.start} - ${timeSlot.end}`,}
+                    for(let i=finalDays.week3.start;i<=finalDays.week3.end;i++){
+                        const m = `${i}-01-2025`;
+                        sc3[m] = data?.filter(d=>(getDateData(timeSlot,m,d)))
+                    }
+                    newSh3 = [...newSh3.filter(n=>n.timeslot!==sc3.timeslot),sc3]
+
+
+                }
             })
             setTableData(newSh)
+            if (selectedScheduleType===5){
+                setTableData1(newSh1)
+                setTableData2(newSh2)
+                setTableData3(newSh3)
+                console.log(newSh1);
+                
+            }
+
         }
         data.length>0&&convertToData()
     },[timeSlots,data,selectedScheduleType])
@@ -229,14 +347,104 @@ const Schedule = observer(({id,model})=>{
             </Col>
 
         </Row>
-       {timeSlots.length>0&& <Table 
+        {selectedScheduleType!==5?
+        timeSlots.length>0&& <Table 
             columns={columns} 
             dataSource={tableData}
             rowKey="timeslot"
             pagination={false}
             scroll={{ x: 1000 }}
             bordered 
-        />}
+        />:
+        <div>
+            <center>
+            <Tag color="white" style={{
+                    marginBottom:'10px'
+                }}>
+                    <Typography.Title level={3} id="week1">
+                        Week1
+                    </Typography.Title>
+                </Tag>
+            </center>
+            {timeSlots.length>0&&  <Table 
+                columns={columns1} 
+                dataSource={tableData1}
+                rowKey="timeslot"
+                pagination={false}
+                scroll={{ x: 1000 }}
+                bordered 
+            />}
+            <center>
+            <Tag color="white" style={{
+                    marginBottom:'10px',
+                    marginTop:'10px',
+                }}>
+                    <Typography.Title level={3} id="week2">
+                        Week2
+                    </Typography.Title>
+                </Tag>
+            </center>
+            
+            {timeSlots.length>0&&  <Table 
+                columns={columns2} 
+                dataSource={tableData2}
+                rowKey="timeslot"
+                pagination={false}
+                scroll={{ x: 1000 }}
+                bordered 
+            />}
+            <center>
+                <Tag color="white" style={{
+                    marginBottom:'10px',
+                    marginTop:'10px',
+                }}>
+                    <Typography.Title level={3} id="week3">
+                        Week3
+                    </Typography.Title>
+                </Tag>
+            </center>
+            {timeSlots.length>0&&  <Table 
+                columns={columns3} 
+                dataSource={tableData3}
+                rowKey="timeslot"
+                pagination={false}
+                scroll={{ x: 1000 }}
+                bordered 
+            />}
+
+        </div>
+    }
+    {selectedScheduleType===5&&
+    <FloatButton.Group
+      trigger="click"
+      type="primary"
+      style={{
+        insetInlineEnd: 50,
+      }}
+      icon={<BsCalendar3Week />}
+    >
+      <FloatButton 
+        icon={<MdOutlineLooksOne size={21}/>}
+        onClick={() => {
+            scrollToDiv('week1')
+        }}
+    />
+      <FloatButton 
+        icon={<MdOutlineLooksTwo size={21}/>}
+        onClick={() => {
+            scrollToDiv('week2')
+        }}
+    />
+      <FloatButton 
+        icon={<MdOutlineLooks3 size={21}/>}
+        onClick={() => {
+            scrollToDiv('week3')
+        }}
+    />
+    </FloatButton.Group>
+
+    }
+       
         </>
     )
 })

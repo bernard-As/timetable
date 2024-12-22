@@ -84,7 +84,6 @@ export const ScheduleCell = React.memo(({record,currentDate=null})=>{
     const [showSetScheduleModal,setshowSetScheduleModal]  =useState(false)
     const [isRecord,setIsRecord] = useState(false)
     const [showAdd,setshowAdd]  = useState(false)
-    console.log(record);
     
     useEffect(()=>{
         setLoaded(true)

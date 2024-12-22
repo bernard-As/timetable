@@ -3,14 +3,16 @@ import { PrivateDefaultApi } from "../../utils/AxiosInstance";
 import rootStore from "../../mobx";
 import { generateTimeSlots, getDateData, getDayData, getDayString, ScheduleCell } from "../Content/HolisticSchedule/Content/AdditionalRendering";
 import { useNavigate } from "react-router-dom";
-import { Col, Row, Segmented, Slider, Space, Table, Tag } from "antd";
+import { Col, FloatButton, Row, Segmented, Slider, Space, Table, Tag, Typography } from "antd";
+import { BsCalendar3Week } from "react-icons/bs";
+import { MdOutlineLooks3, MdOutlineLooksOne, MdOutlineLooksTwo } from "react-icons/md";
 
 const MyTimetable = ()=>{
     const navigate = useNavigate()
     const [data,setData] = useState();
     const [timeSlots,setTimeSlots] = useState([0])
     const [tableData, setTableData] = useState([])
-    const [timeInterval, settimeInterval] = useState(60)
+    const [timeInterval, setTimeInterval] = useState(60)
     const [isDesktopViewType,setisDesktopViewType]  = useState(true)
     const [tableMobileData,settableMobileData] = useState([])
     const [mobileColumns,setMobileColumns] = useState()
@@ -18,6 +20,39 @@ const MyTimetable = ()=>{
     const [selectedScheduleType,setselectedScheduleType] = useState('All')
     const [scheduleType,setscheduleType] = useState([])
     const [columns, setColumns] = useState([]) 
+    const [columns1, setColumns1] = useState([]) 
+    const [columns2, setColumns2] = useState([]) 
+    const [columns3, setColumns3] = useState([]) 
+    const [tableData1, setTableData1] = useState([])
+    const [tableData2, setTableData2] = useState([])
+    const [tableData3, setTableData3] = useState([])
+    const [isMultiWeek,setisMultiWeek] = useState(false)
+    const finalDays = {
+        week1:{
+            start:3,
+            end:4
+        },
+        week2:{
+            start:6,
+            end:11,
+        },
+        week3:{
+            start:13,
+            end:18
+        }
+    }
+    const scrollToDiv = (divID) => {
+
+        const element = document.getElementById(divID);
+    
+        if (element) {
+    
+          element.scrollIntoView({ behavior: 'smooth' });
+    
+        }
+    
+      };
+
 
     useEffect(()=>{
         const midtermDays = [
@@ -43,6 +78,58 @@ const MyTimetable = ()=>{
                 key:m,
                 render: (_,record) => <ScheduleCell record={record[m]}/>,
             }))])
+        }else if(selectedScheduleType===5){
+            setisMultiWeek(true)
+            setTimeInterval(120)
+            const week1Columns = []
+            const week2Columns = []
+            const week3Columns = []
+            for(let i=finalDays.week1.start;i<=finalDays.week1.end;i++){
+                const m = `0${i}-01-2025`;
+                week1Columns.push({
+                    title:m,
+                    dataIndex:m,
+                    key:`week1_${i+1}`,
+                    render: (_,record) => <ScheduleCell record={record[m]} currentDate={m}/>,
+                    })
+            }
+            for(let i=finalDays.week2.start;i<=finalDays.week2.end;i++){
+                const ini = i>9?'':'0'
+                const m = `${ini}${i}-01-2025`;
+                week2Columns.push({
+                    title:m,
+                    dataIndex:m,
+                    key:`week2_${i+1}`,
+                    render: (_,record) => <ScheduleCell record={record[m]} currentDate={m}/>,
+                    })
+            }
+            for(let i=finalDays.week3.start;i<=finalDays.week3.end;i++){
+                const m = `${i}-01-2025`;
+                week3Columns.push({
+                    title:m,
+                    dataIndex:m,
+                    key:`week3_${i+1}`,
+                    render: (_,record) => <ScheduleCell record={record[m]} currentDate={m}/>,
+                    })
+            }
+            const defaultTimeslotCol = {
+                title:'TimeSlot',
+                dataIndex: 'timeslot',
+                key:'timeslot'
+            }
+            setColumns1([ 
+                defaultTimeslotCol,
+                ...week1Columns
+            ])
+            setColumns2([
+                defaultTimeslotCol,
+                ...week2Columns
+                ])
+            setColumns3([
+                defaultTimeslotCol,
+                ...week3Columns
+            ])    
+                    
         }else{
             setColumns( [ {
                 title:'TimeSlot',
@@ -60,6 +147,8 @@ const MyTimetable = ()=>{
             }))])
         }
     },[selectedScheduleType])
+
+
     useEffect(()=>{
         setTimeSlots()
         const getMyData = async () =>{
@@ -83,6 +172,7 @@ const MyTimetable = ()=>{
         getMyData();
         setTimeSlots(generateTimeSlots('09:00:00','20:00:00',timeInterval))
     },[navigate,timeInterval,selectedScheduleType])
+
     useEffect(()=>{
         const getSchduleType = ()=>{
             PrivateDefaultApi.get('scheduletype/').then((res)=>{
@@ -92,9 +182,13 @@ const MyTimetable = ()=>{
         }
         getSchduleType()
     },[])
+
     useEffect(()=>{
         // For Desktop
         let newSh = [];
+        let newSh11 = [];
+        let newSh22 = [];
+        let newSh33 = [];
         timeSlots.map(timeSlot=>{
             const sc = selectedScheduleType!==3?{
                 timeslot:`${timeSlot.start} - ${timeSlot.end}`,
@@ -115,8 +209,39 @@ const MyTimetable = ()=>{
                 '16-11-2024':data?.filter(d=>(getDateData(timeSlot,'16-11-2024',d))),
             }
             newSh = [...newSh.filter(n=>n.timeslot!==sc.timeslot),sc]
+
+            if (selectedScheduleType===5){
+                const sc1 = {timeslot:`${timeSlot.start} - ${timeSlot.end}`,}
+                for(let i=finalDays.week1.start;i<=finalDays.week1.end;i++){
+                    const m = `0${i}-01-2025`;
+                    sc1[m] = data?.filter(d=>(getDateData(timeSlot,m,d)))
+                }
+                newSh11 = [...newSh11.filter(n=>n.timeslot!==sc1.timeslot),sc1]
+                const sc2 = {timeslot:`${timeSlot.start} - ${timeSlot.end}`,}
+                for(let i=finalDays.week2.start;i<=finalDays.week2.end;i++){
+                    const ini = i>9?'':'0'
+                    const m = `${ini}${i}-01-2025`;
+                    sc2[m] = data?.filter(d=>(getDateData(timeSlot,m,d)))
+                }
+                newSh22 = [...newSh22.filter(n=>n.timeslot!==sc2.timeslot),sc2]
+                const sc3 = {timeslot:`${timeSlot.start} - ${timeSlot.end}`,}
+                for(let i=finalDays.week3.start;i<=finalDays.week3.end;i++){
+                    const m = `${i}-01-2025`;
+                    sc3[m] = data?.filter(d=>(getDateData(timeSlot,m,d)))
+                }
+                newSh33 = [...newSh33.filter(n=>n.timeslot!==sc3.timeslot),sc3]
+
+
+            }
         })
         setTableData(newSh)
+        if (selectedScheduleType===5){
+            setTableData1(newSh11)
+            setTableData2(newSh22)
+            setTableData3(newSh33)
+            // console.log(newSh1);
+            
+        }
         // For Mobile
         let newSh2 = [];
         rootStore.holosticScheduleContentStore.daysIndex.map(d=>{
@@ -129,7 +254,10 @@ const MyTimetable = ()=>{
             newSh2 = [...newSh2.filter(n=>n.day!==sc.day),sc]
         })
         settableMobileData(newSh2)
+
+        
     },[timeSlots,data,selectedScheduleType])
+
     useEffect(()=>{
         // For Desktop
         let newSh = [];
@@ -282,7 +410,7 @@ const MyTimetable = ()=>{
         </>}
         {timeSlots.length>0&&<> {
             isDesktopViewType?
-            <Table 
+            selectedScheduleType!==5?<Table 
              columns={columns} 
              dataSource={tableData}
              rowKey="timeslot"
@@ -290,6 +418,64 @@ const MyTimetable = ()=>{
              scroll={{ x: 1000 }}
              bordered 
          />:
+         <div>
+            <center>
+            <Tag color="white" style={{
+                    marginBottom:'10px'
+                }}>
+                    <Typography.Title level={3} id="week1">
+                        Week1
+                    </Typography.Title>
+                </Tag>
+            </center>
+            {timeSlots.length>0&&  <Table 
+                columns={columns1} 
+                dataSource={tableData1}
+                rowKey="timeslot"
+                pagination={false}
+                scroll={{ x: 1000 }}
+                bordered 
+            />}
+            <center>
+            <Tag color="white" style={{
+                    marginBottom:'10px',
+                    marginTop:'10px',
+                }}>
+                    <Typography.Title level={3} id="week2">
+                        Week2
+                    </Typography.Title>
+                </Tag>
+            </center>
+            
+            {timeSlots.length>0&&  <Table 
+                columns={columns2} 
+                dataSource={tableData2}
+                rowKey="timeslot"
+                pagination={false}
+                scroll={{ x: 1000 }}
+                bordered 
+            />}
+            <center>
+                <Tag color="white" style={{
+                    marginBottom:'10px',
+                    marginTop:'10px',
+                }}>
+                    <Typography.Title level={3} id="week3">
+                        Week3
+                    </Typography.Title>
+                </Tag>
+            </center>
+            {timeSlots.length>0&&  <Table 
+                columns={columns3} 
+                dataSource={tableData3}
+                rowKey="timeslot"
+                pagination={false}
+                scroll={{ x: 1000 }}
+                bordered 
+            />}
+
+        </div>
+         :
             <Table
             className="mobile-schedule"
             columns={mobileColumns} 
@@ -303,6 +489,36 @@ const MyTimetable = ()=>{
           />
          }
          </>}
+         {selectedScheduleType===5&&
+    <FloatButton.Group
+      trigger="click"
+      type="primary"
+      style={{
+        insetInlineEnd: 50,
+      }}
+      icon={<BsCalendar3Week />}
+    >
+      <FloatButton 
+        icon={<MdOutlineLooksOne size={21}/>}
+        onClick={() => {
+            scrollToDiv('week1')
+        }}
+    />
+      <FloatButton 
+        icon={<MdOutlineLooksTwo size={21}/>}
+        onClick={() => {
+            scrollToDiv('week2')
+        }}
+    />
+      <FloatButton 
+        icon={<MdOutlineLooks3 size={21}/>}
+        onClick={() => {
+            scrollToDiv('week3')
+        }}
+    />
+    </FloatButton.Group>
+
+    }
          </>
      )
 }

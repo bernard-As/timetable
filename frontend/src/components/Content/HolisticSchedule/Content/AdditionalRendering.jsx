@@ -478,7 +478,7 @@ export const CourseTooltipRender = ({data,setshowSetScheduleModal=()=>{}})=>{
             >
                 <div>Assistant: {data.assit.title} {data.assit.first_name} {data.assit.last_name}</div>
             </Space><br/></>}
-            {data.type===3&&data.invigilator!==undefined&&rootStore.enableManagement&&rootStore.isManager()&&
+            {data.type===5&&data.invigilator!==undefined&&rootStore.enableManagement&&rootStore.isManager()&&
                 <><Space
                 direction="horizontal"
             >

@@ -6,6 +6,7 @@ import HeadMenu from './Menu/HeadMenu';
 import DynamicBreadcrumbs from './Menu/Breadcrumb';
 import DynamicContent from './Content';
 import DynamicFooter from './Footer';
+import SystemAnalisys from './sysAnalysis';
 const { Header, Content, Sider } = Layout;
 const Home: React.FC = () =>{
     useEffect(()=>{
@@ -29,6 +30,7 @@ const Home: React.FC = () =>{
                     </Layout>
                 </Layout>
             </Layout>
+            <SystemAnalisys/>
         </>
     );
 }

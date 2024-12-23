@@ -173,3 +173,7 @@ code {
 .mobile-schedule .ant-table-cell{
   padding: 13px 7px!important;
 }
+
+.text{
+  background-color: rgba(9, 90, 9, 0.575);
+}

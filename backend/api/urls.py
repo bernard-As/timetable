@@ -22,6 +22,7 @@ from api import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('apibase.urls')),
+    path('analysis/', include('analysis.urls')),
 
 ]
 

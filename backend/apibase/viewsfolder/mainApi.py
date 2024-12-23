@@ -1,8 +1,7 @@
 from rest_framework.response import Response 
 from rest_framework.views import APIView
-from rest_framework import viewsets, filters
+from rest_framework import viewsets, filters, status
 from rest_framework import generics
-from rest_framework.response import Response
 from django.utils import timezone
 from django.db.models import Q
 from rest_framework.permissions import IsAuthenticated

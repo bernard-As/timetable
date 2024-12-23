@@ -36,6 +36,14 @@ export const PrivateApi = axios.create({
     }
 })
 
+export const AnalysisApi = axios.create({
+  baseURL: process.env.REACT_APP_API_BASE_URL + 'analysis' || 'http://localhost:8000/analysis/',
+  headers: {
+    'Authorization': `Token ${getToken()}`,
+    'Content-Type': 'application/json'
+  }
+});
+
 // Axios response interceptor for DefaultApi
 PrivateDefaultApi.interceptors.response.use(
   response => response,

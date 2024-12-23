@@ -17,6 +17,7 @@ class HolisticScheduleStore {
         {name:'building',status:true},
         {name:'complete',status:true},
         {name:'create_schedule',status:true},
+        {name:'systemAnalysis',status:true},
     ]
     credentDisplay = [
         {
@@ -47,7 +48,8 @@ class HolisticScheduleStore {
                 'floor',
                 'building',
                 'complete',
-                'create_schedule'
+                'create_schedule',
+                'systemAnalysis'
             ]
         },
         {
@@ -66,7 +68,8 @@ class HolisticScheduleStore {
                 'floor',
                 'building',
                 'complete',
-                'create_schedule'
+                'create_schedule',
+                'systemAnalysis'
             ]
         },{
             name:'VR',
@@ -84,6 +87,7 @@ class HolisticScheduleStore {
                 'floor',
                 'building',
                 'complete',
+                'systemAnalysis',
             ]
         },{
             name:'HOD',

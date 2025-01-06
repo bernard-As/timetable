@@ -61,7 +61,8 @@ const LoginForm: React.FC = () => {
             timeout: 1500,
           });
           setTimeout(() => {
-            handleNavigation()
+            // handleNavigation()
+            window.location.href=`https://timetable.rdu.edu.tr/timetable`
           }, 500);
         } else {
           rootStore.notification.notify({

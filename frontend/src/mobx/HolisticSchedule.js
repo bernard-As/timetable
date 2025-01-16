@@ -198,9 +198,9 @@ class HolisticScheduleStore {
         }else if(type===5){
             return 'rgba(139, 69, 19, 0.4)'
         }else if(type===6){
-            return '#03A9F4'
+            return 'rgba(226, 211, 125, 0.4) '
         }else if(type===7){
-            return '#FF9800'
+            return 'rgba(175, 196, 128, 0.4)'
         }else if(type===8){
             return '#03A9F4'
         }

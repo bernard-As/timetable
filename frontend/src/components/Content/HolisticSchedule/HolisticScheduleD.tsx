@@ -12,11 +12,11 @@ const HolisticScheduleD:React.FC=()=>{
     const location = useLocation();
     const [canDisplay,setCanDisplay] = useState(false)
     const [loading,setLoading] = useState(true)
-    const [toDisplay,setToDisplay] = useState(null)
+    const [toDisplay,setToDisplay] = useState<any>('list')
     const [searchData, setsearchData] = useState(null)
 
     useEffect(()=>{
-        setToDisplay(null)
+        setToDisplay('list')
         setCanDisplay(rootStore.holisticScheduleStore.checkDisplayAvailability(location))
         return(
             () => {

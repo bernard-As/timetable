@@ -24,7 +24,8 @@ const HContent:React.FC<{stopLoadingf:any,toDisplay:any,setToDisplay:any,searchD
     useEffect(()=>{
         stopLoadingf(false);
     },[stopLoadingf])
-
+    console.log(toDisplay);
+    
     useEffect(()=>{
         if(toDisplay===null){
             setNothingToDisplay(true);

@@ -87,14 +87,15 @@ export const ScheduleCell = React.memo(({record,currentDate=null})=>{
     
     useEffect(()=>{
         setLoaded(true)
-        if(record?.length>0)
-            setIsRecord(true)
+        
+        if(record===undefined||record?.length>0)
+            setIsRecord(false)
     },[record])
     useEffect(()=>{
         if(record!==undefined){
         // rootStore.holisticScheduleStore.add_schedule_holder.room = record.room
         rootStore.holisticScheduleStore.add_schedule_holder.type = 'Daily'
-        rootStore.holisticScheduleStore.add_schedule_holder.assignmentType = 'Final Exam'
+        rootStore.holisticScheduleStore.add_schedule_holder.assignmentType = 'Final Make-up Exam'
         rootStore.holisticScheduleStore.add_schedule_holder.date = dayjs(currentDate,'DD-MM-YYYY').format('YYYY-MM-DD')
         // rootStore.holisticScheduleStore.add_schedule_holder.start = [
         //     dayjs(record.start, 'HH:mm:ss'),
@@ -108,22 +109,24 @@ export const ScheduleCell = React.memo(({record,currentDate=null})=>{
         {
             loaded?
             <div
-                
-                onMouseOver={()=>{
-                    setshowAdd(true)
-                }}
-                onMouseOut={()=>{
-                    setshowAdd(false)
+                className="cellDisplayer"
+                // onMouseOver={()=>{
+                //     setshowAdd(true)
+                // }}
+                // onMouseOut={()=>{
+                //     setshowAdd(false)
 
-                }}
+                // }}
                 style={{minHeight:'20px', minWidth:'15px'}}
             >
                 {record?.map(r=>{
                     
-                    return (
+                    return (<>
                         <CourseDisplayInCell data={r}
                         setshowSetScheduleModal={setshowSetScheduleModal}
+                        setIsRecord={setIsRecord}
                         />
+                        </>
                     )
                 })
 
@@ -133,8 +136,9 @@ export const ScheduleCell = React.memo(({record,currentDate=null})=>{
                         onClick={()=>{
                             setshowSetScheduleModal(true)
                         }}
+                        className="newAddPlus"
                     >
-                        {showAdd&&<FiPlus size={25}/>}
+                        <FiPlus size={25}/>
                     </span>
 
                 }
@@ -151,10 +155,15 @@ export const ScheduleCell = React.memo(({record,currentDate=null})=>{
     )
 })
 
-export const  CourseDisplayInCell = ({data,setshowSetScheduleModal})=>{
+export const  CourseDisplayInCell = ({data,setshowSetScheduleModal,setIsRecord})=>{
     const color = data.color!==undefined?data.color:rootStore.holisticScheduleStore.getDesignedColor(data.type);
+    useEffect(()=>{
+        if(data.cg===undefined&&data.rm===undefined){
+            setIsRecord(false)
+        }
+    },[])
     return (
-        <>{data.cg!==undefined&&data.rm!==undefined&&
+        <>{(data.cg!==undefined&&data.rm!==undefined)?
             <Popconfirm
                 title={null}
                 description={<CourseTooltipRender data={data} setshowSetScheduleModal={setshowSetScheduleModal}/>}
@@ -180,10 +189,19 @@ export const  CourseDisplayInCell = ({data,setshowSetScheduleModal})=>{
                 style={{backgroundColor:color}}
                 >
             {`${data.cg.code} G${data.cg.group_number} ~Room: ${data.rm.code}`}
+        
             {data.type===3&&rootStore.enableManagement&&rootStore.isManager()&&data.invigilator!==null&&<span> {' '+data.invigilator}</span>}
         </span>
             }
-        </Popconfirm>
+        </Popconfirm>:
+        <span
+            onClick={()=>{
+                setshowSetScheduleModal(true)
+            }}
+            className="newAddPlus"
+        >
+            <FiPlus size={25}/>
+        </span>
         }
         <br />
         </>

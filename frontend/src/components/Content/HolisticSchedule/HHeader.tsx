@@ -16,7 +16,7 @@ const HHeader:React.FC<{setToDisplay:any,setsearchData:any}> = observer(({setToD
     type SearchProps = GetProps<typeof Input.Search>;
     const onSearch: SearchProps['onSearch'] = (value, _e, info) => {
         console.log(info?.source, value)
-        if(value.trim()!==(""||null)){
+        if(value.trim()!==""||value.trim()!==null){
             setsearchData(value.trim())
         }
     };

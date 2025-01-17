@@ -177,3 +177,10 @@ code {
 .text{
   background-color: rgba(9, 90, 9, 0.575);
 }
+
+.newAddPlus{
+  display: none;
+}
+.cellDisplayer:hover .newAddPlus{
+  display: block;
+}

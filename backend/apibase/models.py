@@ -64,6 +64,7 @@ class Semester(models.Model):
     year = models.CharField(max_length=10,default="2023-2024")
     season = models.CharField(max_length=6, choices=SEMESTER_CHOICES)
     status = models.BooleanField(default=True)
+    is_current = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     class Meta:
@@ -395,6 +396,7 @@ class Schedule(models.Model):
     type = models.ForeignKey(ScheduleType,on_delete=models.CASCADE)
     invigilator = models.ForeignKey(Lecturer, on_delete=models.SET_NULL, null=True, blank=True)
     status = models.BooleanField(default=True)
+    semester = models.ForeignKey(Semester,on_delete=models.CASCADE,null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     def __str__(self):
@@ -402,7 +404,7 @@ class Schedule(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=['room', 'start', 'end', 'day', 'type'],
+                fields=['room', 'start', 'end', 'day', 'type','semester'],
                 name='unique_room_day_time_time'
             )
         ]
@@ -424,8 +426,8 @@ class Schedule(models.Model):
         ).exclude(id=self.id)  # Exclude the current instance if updating
 
         if overlapping_schedule.exists():
-            pass
-            # raise ValidationError('The schedule overlaps with another lecture in the same room.')
+            # pass
+            raise ValidationError('The schedule overlaps with another lecture in the same room.')
 
     def save(self, *args, **kwargs):
         self.clean()  # Run validation before saving

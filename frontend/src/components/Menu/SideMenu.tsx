@@ -18,6 +18,7 @@ import { FaGripLines } from "react-icons/fa6";
 import { FcDepartment } from "react-icons/fc";
 import { FaRegCalendarPlus } from "react-icons/fa";
 import { PrivateDefaultApi } from "../../utils/AxiosInstance";
+import { CgMoveRight } from "react-icons/cg";
 const SideMenu: React.FC = observer(() => {
   const [collapsed, setCollapsed] = useState(false);
   const navigate = useNavigate();
@@ -212,11 +213,15 @@ const SideMenu: React.FC = observer(() => {
       ],
       
     },
-    // {
-    //   key: 16,
-    //   icon: React.createElement(UserOutlined),
-    //   label: "Profile",
-    // },
+    {
+      key: 20,
+      icon: React.createElement(CgMoveRight),
+      label: "Migration",
+      style: (rootStore.enableManagement&&rootStore.isManager())?{display:'block'}:{display:'none'},
+      onClick: ()=>{
+        navigate('/migration')
+      }
+    },
     // {
     //   key: 17,
     //   icon: React.createElement(SettingOutlined),

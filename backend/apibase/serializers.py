@@ -44,7 +44,7 @@ class SemesterSerializer(serializers.ModelSerializer):
     class Meta:
         model = Semester
         fields = '__all__'
-
+    
 class BuildingSerializer(serializers.ModelSerializer):
     id=serializers.IntegerField(read_only=True)
     class Meta:
@@ -84,7 +84,11 @@ class CourseSemesterSerializer(serializers.ModelSerializer):
     class Meta:
         model = CourseSemester
         fields = '__all__'
-
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        if not instance.semester.is_current:
+            return None
+        return representation
 
 # Second run turn 
 class ActivitytypeSerializer(serializers.ModelSerializer):
@@ -117,7 +121,11 @@ class CourseGroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = Coursegroup
         fields = '__all__'
-
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        if not instance.course_semester.filter(semester__is_current=True).exists():
+            return None
+        return representation
 class CourseSerializer(serializers.ModelSerializer):
     coursegroup_set = CourseGroupSerializer(many=True, read_only=True)
     class Meta:
@@ -140,6 +148,12 @@ class ScheduleSerializer(serializers.ModelSerializer):
         model = Schedule
         fields = '__all__'
         read_only_fields = ['user']
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        if not instance.coursegroup.course_semester.filter(semester__is_current=True).exists():
+            return None
+        return representation
 
 class ScheduleTypeSerializer(serializers.ModelSerializer):
     class Meta:

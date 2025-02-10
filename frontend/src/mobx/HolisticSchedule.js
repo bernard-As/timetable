@@ -125,13 +125,15 @@ class HolisticScheduleStore {
     ]
     add_schedule_holder = {
         status:false,
-        type:'Daily',
-        assignmentType:'Final',
+        type:'Weekly',
+        // type:'Daily',
+        assignmentType:'Lecture',
         date:dayjs(Date.now()).format('YYYY-MM-DD'),
         start: [
             dayjs('09:00:00', 'HH:mm:ss'), // Start time
             dayjs('17:00:00', 'HH:mm:ss')  // End time
-        ]
+        ],
+        room:null
     }
     schedule_created = 0
     constructor() {

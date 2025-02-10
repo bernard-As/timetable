@@ -38,7 +38,7 @@ const SearchResult = observer(({results,model})=>{
         rootStore.enableManagement&&rootStore.isManager()&&handleDelete()
     },[rootStore.holosticScheduleContentStore.delete.targetModel])
     useEffect(()=>{
-        if(data.length>0&&data[0].key===undefined){
+        if(data?.length>0&&data[0]?.key===undefined){
             const newData = data.map(({ id, ...rest }) => ({ key: id,id:id, ...rest }));
             setData(newData);
         }

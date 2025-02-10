@@ -4,6 +4,7 @@ import P404 from './404page';
 import HolisticSchedule from './Content/HolisticSchedule';
 import MyTimetable from './MyTimeTable';
 import CompleteSchedule from './Complete';
+import Migration from './Migration';
 const ContentRoutes: React.FC = ()=>{
     return(
         <Routes>
@@ -11,6 +12,7 @@ const ContentRoutes: React.FC = ()=>{
             <Route path="/holistic-schedule/*" element={<HolisticSchedule />} />
             <Route path="/timetable" element={<MyTimetable />} />
             <Route path="/complete" element={<CompleteSchedule />} />
+            <Route path="/migration" element={<Migration />} />
             <Route path="/*" element={<P404 />} />
         </Routes>
     )

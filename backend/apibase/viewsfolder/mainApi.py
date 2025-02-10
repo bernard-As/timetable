@@ -111,7 +111,7 @@ class ViewSchedule(APIView):
 
             print(R)
         serializer = ScheduleSerializer(R, many=True)
-        modified_data = [shedule_modify_data(item) for item in serializer.data] # type: ignore
+        modified_data = [shedule_modify_data(item) for item in serializer.data if item != None] # type: ignore
         return Response(modified_data)
 
 class MySchedule(APIView):
@@ -322,3 +322,107 @@ class FreeModel(APIView):
         except Exception as e:
             print(f"Error: {e}")
             return Response({"error": "Bad Request"}, status=400)
+
+class MigrationView(APIView):
+        authentication_classes =[]
+        permission_classes = []
+
+        def post(self,request):
+            target_obj = request.data['obj']
+            sourceTerm = request.data['source']
+            targetTerm = request.data['target']
+            source = Semester.objects.get(pk=sourceTerm)
+            target = Semester.objects.get(pk=targetTerm)
+            toReturnSource = []
+            toReturnTarget = []
+            if not 'save' in request.data:
+                if(target_obj=='coursesemester'):
+                    toReturnSource = [
+                        {
+                            'program': c.program.name,
+                            'semester_num': c.semester_num,
+                            'course_num': Coursegroup.objects.filter(course_semester=c.pk).count(),
+                            'name': 'Program: '+str(c.program.shortname) + '-Semester: '+str(c.semester_num) + '-Department: '+str(c.program.department.shortname),
+                            'key_verif':str(c.program.shortname)+'-'+str(c.semester_num),
+                            'key':c.pk
+                        } for  c in
+                        CourseSemester.objects.filter(semester=source.pk)]
+                    toReturnTarget = [
+                        {
+                            'name': 'Program: '+str(c.program.shortname) + '-Semester: '+str(c.semester_num) + '-Department: '+str(c.program.department.shortname),
+                            'key_verif':str(c.program.shortname)+'-'+str(c.semester_num), # type: ignore
+                            'key':c.pk,
+                            'program': c.program.name,
+                            'semester_num': c.semester_num,
+                            'course_num': Coursegroup.objects.filter(course_semester=c.pk).count(),
+                        } for  c in
+                        CourseSemester.objects.filter(semester=target.pk)]
+
+                # for o in toReturnSource:
+                    # if o['key_verif'] in [t['key_verif'] for t in toReturnTarget]:
+                    
+                elif target_obj=='coursegroup':
+                    course_semester_source = CourseSemester.objects.get(pk=request.data['courseSemester'])
+                    course_semester_target = CourseSemester.objects.get(
+                        semester=target.pk,
+                        semester_num=course_semester_source.semester_num,
+                        program=course_semester_source.program
+                    )
+
+                    toReturnSource = [{
+                        'name':c.course.name,
+                        'key_verif':str(c.course.pk) +'-'+ str(c.group_number),
+                        'lecturer':c.lecturer.user.email,
+                        'group':c.group_number,
+                        'key':c.pk
+                    }
+                                    for c in Coursegroup.objects.filter(
+                        course_semester__in=[course_semester_source.pk,]
+                    )]
+
+                    toReturnTarget = [{
+                        'name':c.course.name,
+                        'key_verif':str(c.course.pk) +'-'+ str(c.group_number),
+                        'lecturer':c.lecturer.user.email,
+                        'group':c.group_number,
+                        'key':c.pk
+                    }
+                                    for c in Coursegroup.objects.filter(
+                        course_semester__in=[course_semester_target.pk],
+                    )]
+                for item in toReturnSource:
+                    if item['key_verif'] in [t['key_verif'] for t in toReturnTarget]:
+                        item['exists_in_target'] = True
+                    else:
+                        item['exists_in_target'] = False
+                return Response({'source':toReturnSource,'target':toReturnTarget},status=status.HTTP_200_OK)
+            else:
+                targetIds = request.data['targetIds']
+                obj=  request.data['obj']
+                if obj == 'coursesemester':
+                    for id in targetIds:
+                        try:
+                            c=CourseSemester.objects.get(pk=id)
+                            c.pk=None
+                            c.semester = target
+                            c.save()
+                        except:
+                            pass
+                else:
+                    course_semester_source = CourseSemester.objects.get(pk=request.data['courseSemester'])
+                    course_semester_target = CourseSemester.objects.get(
+                        semester=target.pk,
+                        semester_num=course_semester_source.semester_num,
+                        program=course_semester_source.program
+                    )
+                    for id in targetIds:
+                        # try:
+                            c=Coursegroup.objects.get(pk=id)
+                            c.pk=None
+                            c.save()
+                            c.course_semester.clear()
+                            c.course_semester.add(course_semester_target.pk)
+                            c.save()
+                        # except:
+                            # pass
+            return Response({},status=status.HTTP_200_OK)

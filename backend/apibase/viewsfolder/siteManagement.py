@@ -219,6 +219,8 @@ class CourseSemesterViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     queryset = CourseSemester.objects.all()
     serializer_class = CourseSemesterSerializer
+
+    
     filter_backends = [filters.SearchFilter]
     search_fields = [
         'semester_num',
@@ -234,6 +236,11 @@ class CourseSemesterViewSet(viewsets.ModelViewSet):
         'program__department__shortname',
         'program__department__color'
     ]
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        serialized_data = self.get_serializer(queryset, many=True).data
+        filtered_data = [item for item in serialized_data if item is not None]  # Filter out None elements
+        return Response(filtered_data, 200)
 
 
 class GroupViewSet(viewsets.ModelViewSet):
@@ -779,7 +786,7 @@ class CourseGroupViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
         serialized_data = self.get_serializer(queryset, many=True).data
-        modified_data = [self.modify_data(item) for item in serialized_data] # type: ignore
+        modified_data = [self.modify_data(item) for item in serialized_data if item!= None] # type: ignore
         return Response(modified_data,200)
     
     def retrieve(self, request, *args, **kwargs):
@@ -927,9 +934,9 @@ class ScheduleViewSet(viewsets.ModelViewSet):
         # Get the main coursegroup and the list of merged courses
         coursegroup = self.request.data['coursegroup']
         merged_courses = Coursegroup.objects.get(pk=coursegroup).merged_with.all()
-
+        live_term = Semester.objects.filter(is_current=True).last()
         # Save the main coursegroup entry
-        serializer.save(user=user, coursegroup=Coursegroup.objects.get(pk=coursegroup))
+        serializer.save(user=user, coursegroup=Coursegroup.objects.get(pk=coursegroup),semester=live_term)
 
         # Loop through merged courses and create entries for each merged coursegroup
         for mc in merged_courses:

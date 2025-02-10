@@ -822,14 +822,14 @@ class HolosticScheduleContentStore{
                     title:'Program',
                     dataIndex:'program',
                     key:'program',
-                    render: (_,record)=><RenderTableViewProgram id={record.program} />
+                    render: (_,record)=>record&&<RenderTableViewProgram id={record.program} />
 
                 },
                 {
                     title:'Semester',
                     dataIndex:'semester',
                     key:'semester',
-                    render: (_,record)=><RenderTableViewSemester id={record.semester} />
+                    render: (_,record)=>record&&<RenderTableViewSemester id={record.semester} />
  
                 },
                 {

@@ -94,9 +94,10 @@ export const ScheduleCell = React.memo(({record,currentDate=null})=>{
     useEffect(()=>{
         if(record!==undefined){
         // rootStore.holisticScheduleStore.add_schedule_holder.room = record.room
-        rootStore.holisticScheduleStore.add_schedule_holder.type = 'Daily'
-        rootStore.holisticScheduleStore.add_schedule_holder.assignmentType = 'Final Make-up Exam'
-        rootStore.holisticScheduleStore.add_schedule_holder.date = dayjs(currentDate,'DD-MM-YYYY').format('YYYY-MM-DD')
+        // rootStore.holisticScheduleStore.add_schedule_holder.type = 'Daily'
+        rootStore.holisticScheduleStore.add_schedule_holder.room = record[0]?.rm.id
+        // rootStore.holisticScheduleStore.add_schedule_holder.assignmentType = 'Final Make-up Exam'
+        // rootStore.holisticScheduleStore.add_schedule_holder.date = dayjs(currentDate,'DD-MM-YYYY').format('YYYY-MM-DD')
         // rootStore.holisticScheduleStore.add_schedule_holder.start = [
         //     dayjs(record.start, 'HH:mm:ss'),
         //     dayjs(record.start, 'HH:mm:ss'),

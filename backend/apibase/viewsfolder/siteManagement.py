@@ -791,9 +791,9 @@ class CourseGroupViewSet(viewsets.ModelViewSet):
     
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
-        serialized_data = self.get_serializer(instance).data if self.get_serializer(instance)!=None else None
+        serialized_data = self.get_serializer(instance).data if instance!=None else None
         modified_data = self.modify_data(serialized_data)
-        return Response(modified_data)
+        return Response(modified_data,status=status.HTTP_200_OK)
 
     def modify_data(self, item):
         if item == None:

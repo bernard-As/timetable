@@ -42,6 +42,7 @@ router.register(r'schedule', siteManagement.ScheduleViewSet, basename='schedule'
 router.register(r'scheduletype', siteManagement.ScheduleTypeViewSet, basename='schedule type')
 router.register(r'system_news', SystemNewsView, basename='system News')
 router.register(r'assistant', siteManagement.AssistantView, basename='Assistant')
+router.register(r'student-scan', StudentScanView, basename='Student scan')
 urlpatterns = [
     path('login/', LoginView.as_view()),
     path('renewStore/',StoreRenew.as_view(), name='renewStore'),

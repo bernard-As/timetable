@@ -175,3 +175,8 @@ class AssistantSerializer(serializers.ModelSerializer):
     class Meta:
         model = Assistant
         fields = '__all__'
+
+class StudentScanSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = StudentScan
+        fields = '__all__'

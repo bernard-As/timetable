@@ -279,6 +279,15 @@ class AssistantView(viewsets.ModelViewSet):
         # item['group'] = GroupSerializer(related_user.groups.all()[0]).data['id'] # type: ignore
         # item['user_permissions'] = [GroupSerializer(seri).data for  seri in related_user.user_permissions.all()]
         item['program']=[ProgramSerializer(prog).data['id'] for prog in related_user.user.program.all()] # type: ignore
+        assistant = Assistant.objects.get(id=item['id'])
+        item['coursegroup'] = [
+            {
+                'id':c.id,
+                'course':c.course.name,
+                'code':c.course.code,
+                'group':c.group_number,
+            }
+             for c in assistant.coursegroup.all() if c.course_semester.filter(semester__is_current=True).exists()]
         return item
 
 class LecturerViewSet(viewsets.ModelViewSet):
@@ -487,6 +496,15 @@ class StudentViewSet(viewsets.ModelViewSet):
         # item['faculty']=[FacultySerializer(fac).data['id'] for fac in related_user.faculty.all()] # type: ignore
         # item['department']=[DepartmentSerializer(dep).data['id'] for dep in related_user.department.all()] # type: ignore
         item['program']=[ProgramSerializer(prog).data['id'] for prog in related_user.program.all()] # type: ignore
+        student = Student.objects.get(id=item['id'])
+        item['coursegroup'] = [
+            {
+                'id':c.id,
+                'course':c.course.name,
+                'code':c.course.code,
+                'group':c.group_number,
+            }
+             for c in student.coursegroup.all() if c.course_semester.filter(semester__is_current=True).exists()]
         return item
 
     def get_short_list(self):
@@ -791,8 +809,12 @@ class CourseGroupViewSet(viewsets.ModelViewSet):
     
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
-        serialized_data = self.get_serializer(instance).data
-        modified_data = self.modify_data(serialized_data)
+        modified_data = None
+        try:
+            serialized_data = self.get_serializer(instance).data if instance != None else None
+            modified_data = self.modify_data(serialized_data)
+        except:
+            pass
         return Response(modified_data)
 
     def modify_data(self, item):

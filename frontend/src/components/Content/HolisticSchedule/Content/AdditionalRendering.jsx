@@ -358,38 +358,19 @@ export const RenderTableViewProgram = ({id})=>{
 
     )
 }
-export const RenderTableViewCourses = ({id})=>{
+export const RenderTableViewCourses = ({coursegroups})=>{
     const [data, setData] = useState();
     const [loading,setLoading] = useState(true)
 
     useEffect(()=>{
-        const getItems = async () => {
-            try {
-                const responses = await Promise.all(
-                    id.map((i) => {
-                        return PrivateDefaultApi.get('coursegroup/' + i + '/'); // Explicitly return the promise
-                    })
-                );
-                
-                const data = responses.map((response) => response.data).flat();
-                setData(data);
-            } catch (err) {
-                console.log(err);
-            }
-        };
-        
-        
-        getItems()
-    },[id])
-    useEffect(()=>{
         setLoading(false)
-    },[data])
+    },[])
     return (<>
         {loading?
         <Spin spinning={loading} size="medium"/>
         :
-        <span>{data!==undefined&&
-            data.map(d=>{
+        <span>{coursegroups!==undefined&&
+            coursegroups.map(d=>{
                 return (
                     <span
                         key={d.id}

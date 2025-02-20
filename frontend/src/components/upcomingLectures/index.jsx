@@ -37,7 +37,7 @@ const UpComingLectures = ()=>{
         const getUpcomingLectures = () => {
             PrivateDefaultApi.get(isLogin?"my-upcoming-schedule/":"upcoming-schedule/")
               .then((res) => {
-                setData(res.data);
+                setData(res.data.filter((d)=>d!=null));
               })
               .catch((error) => {
                 console.log(error);

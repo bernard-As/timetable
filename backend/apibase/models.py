@@ -459,6 +459,16 @@ class SystemNews(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+class StudentScan(models.Model):
+    """Student scan """
+    image = models.ImageField(upload_to='student_scan/')
+    student_char = models.CharField(max_length=255)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, null=True,blank=True)
+    retreived_codes= models.TextField(blank=True,null=True)
+    coursegroup = models.ForeignKey(Coursegroup, on_delete=models.CASCADE, null=True,blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
 class AdminOperations(models.Model):
     class Meta:
         permissions = [

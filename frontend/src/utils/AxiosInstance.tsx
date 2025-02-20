@@ -124,3 +124,12 @@ PrivateMainApi.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
+
+export const PrivateDefaultApiM = axios.create({
+  baseURL: process.env.REACT_APP_API_BASE_URL + 'api' || 'http://localhost:8000/api/',
+  headers: {
+    'Authorization': `Token ${getToken()}`,
+    'Content-Type': 'multipart/form-data'
+  }
+});

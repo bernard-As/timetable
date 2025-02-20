@@ -9,6 +9,9 @@ import { RiDeleteBin5Line } from "react-icons/ri";
 import { useLocation } from "react-router-dom";
 import rootStore from "../../../mobx";
 import { observer } from "mobx-react";
+import { TbTextScan2 } from "react-icons/tb";
+import scanStore from "../../../mobx/ScanStore";
+import ScanModal from "./Content/ScanModal";
 const HHeader:React.FC<{setToDisplay:any,setsearchData:any}> = observer(({setToDisplay,setsearchData})=>{
     const location = useLocation();
     const model = rootStore.holisticScheduleStore.getModelName(location)
@@ -86,6 +89,18 @@ const HHeader:React.FC<{setToDisplay:any,setsearchData:any}> = observer(({setToD
                             />
                         </Tooltip>
                     </Col>}
+                    { rootStore.holosticScheduleContentStore.header.find(h=>h.name===model)?.scan&&
+                    ((rootStore.enableManagement&&rootStore.isManager())||(model==='student'&&rootStore.isAdvisor()))&&
+                    <Col span={1}>
+                        <Tooltip 
+                            title="Scan"
+                        >
+                            <TbTextScan2  size={20} 
+                                onClick={()=>{scanStore.handleSetShowModaLScan()}}
+                                color="blue"
+                            />
+                        </Tooltip>
+                    </Col>}
                     { rootStore.holosticScheduleContentStore.header.find(h=>h.name===model)?.add&&
                     ((rootStore.enableManagement&&rootStore.isManager())||(model==='student'&&rootStore.isAdvisor()))&&
                     <Col span={1}>
@@ -122,6 +137,7 @@ const HHeader:React.FC<{setToDisplay:any,setsearchData:any}> = observer(({setToD
                     </Col>}
                 </Row>
             </Card>
+            <ScanModal/>
         </Header>
     )
 })

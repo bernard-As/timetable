@@ -67,6 +67,7 @@ class HolosticScheduleContentStore{
             search:true,
             list:true,
             add:true,
+            scan:true,
             delete:true,
             prefered:false,
         },
@@ -1368,7 +1369,7 @@ class HolosticScheduleContentStore{
                     title:'Courses',
                     dataIndex:'coursegroup',
                     key:'coursegroup',
-                    render: (_,render)=><RenderTableViewCourses id={render.coursegroup}/>                    
+                    render: (_,render)=><RenderTableViewCourses coursegroups={render.coursegroup}/>                    
                 },
                 {
                     title:'Program',

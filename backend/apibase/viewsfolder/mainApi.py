@@ -11,6 +11,7 @@ from rest_framework.views import APIView
 from apibase.models import *
 from apibase.serializers import *
 from apibase.viewsfolder.fns import canScheduleDisplay, shedule_modify_data
+from apibase.viewsfolder.tableScan import scanTable
 
 # generics
 class ViewSchedule(APIView):
@@ -202,6 +203,8 @@ class UpcomingScheduleView(generics.ListAPIView):
         ).order_by('date', 'day', 'start')[:15]
         R = []
         for schedule in toReturn:
+            if schedule == None:
+                continue
             canDisplay = canScheduleDisplay(None,schedule.pk)
             if (canDisplay):
                 R.extend([schedule])
@@ -210,7 +213,7 @@ class UpcomingScheduleView(generics.ListAPIView):
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
         serializer = self.get_serializer(queryset, many=True)
-        modified_data = [shedule_modify_data(item) for item in serializer.data] # type: ignore
+        modified_data = [shedule_modify_data(item) for item in serializer.data if item!=None] 
         return Response(modified_data)
 
 class MyUpcomingScheduleView(generics.ListAPIView):
@@ -245,6 +248,8 @@ class MyUpcomingScheduleView(generics.ListAPIView):
         ).order_by('date', 'day', 'start')[:15] 
         R = []
         for schedule in toReturn:
+            if schedule == None:
+                continue
             canDisplay = canScheduleDisplay(user.pk,schedule.pk)
             if (canDisplay):
                 R.extend([schedule])
@@ -255,7 +260,7 @@ class MyUpcomingScheduleView(generics.ListAPIView):
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
         serializer = self.get_serializer(queryset, many=True)
-        modified_data = [shedule_modify_data(item) for item in serializer.data] # type: ignore
+        modified_data = [shedule_modify_data(item) for item in serializer.data if item!=None] # type: ignore
         return Response(modified_data)
 
 class FreeModel(APIView):
@@ -446,3 +451,17 @@ class MigrationView(APIView):
                         # except:
                             # pass
             return Response({},status=status.HTTP_200_OK)
+        
+class StudentScanView(viewsets.ModelViewSet):
+    authentication_classes = ([TokenAuthentication])
+    permission_classes = ([IsAuthenticated])    
+    queryset = StudentScan.objects.all()
+    serializer_class = StudentScanSerializer
+    
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        scan = StudentScan.objects.get(pk=serializer.data['id'])
+        output = scanTable(scan.image.path)
+        return Response(output, status=status.HTTP_201_CREATED)

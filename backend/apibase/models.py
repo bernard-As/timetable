@@ -193,7 +193,7 @@ class CourseSemester(models.Model):
     class Meta:
         unique_together = ('program', 'semester','semester_num')
     def __str__(self):
-        return 'Semester: '+str(self.semester_num)+ ' Program: '+ self.program.shortname + 'Department: ' + self.program.department.shortname
+        return 'Semester: '+str(self.semester_num)+ ' Program: '+ self.program.shortname + 'Department: ' + self.program.department.shortname+ ' ' +self.semester.year+'-'+self.semester.season
 class Users(User):
     CRED_TYPE = [
         ("SYSADM", "SystemAdmin"),
@@ -277,7 +277,7 @@ class Coursegroup(models.Model):
     activitytype = models.ManyToManyField(ActivityType)
     # registeredstudents = models.ManyToManyField(Student, through='Enrollment')
     prerequisites = models.ManyToManyField(Course, related_name='requiredCourse', blank=True)
-    course_semester = models.ManyToManyField(CourseSemester)
+    course_semester = models.ManyToManyField(CourseSemester,related_name='course_groups')
     status = models.BooleanField(default=True)
     is_elective = models.BooleanField(default=False)
     description = models.TextField(blank=True)
@@ -423,7 +423,19 @@ class Schedule(models.Model):
             Q(day=self.day) & Q(date=self.date) if self.date else Q(day=self.day)
         ).filter(
             Q(start__lt=self.end) & Q(end__gt=self.start)
-        ).exclude(id=self.id)  # Exclude the current instance if updating
+        ).filter(
+            # coursegroup__course_semester__semester__id__in=self.coursegroup.course_semester..values('semester__id')
+            semester=self.semester
+        ).exclude(id=self.id)
+
+        # overlapping_schedule = Schedule.objects.filter(
+        #     room=self.room,
+        #     type=self.type
+        # ).filter(
+        #     Q(day=self.day) & Q(date=self.date) if self.date else Q(day=self.day)
+        # ).filter(
+        #     Q(start__lt=self.end) & Q(end__gt=self.start)
+        # ).exclude(id=self.id)  # Exclude the current instance if updating
 
         if overlapping_schedule.exists():
             # pass

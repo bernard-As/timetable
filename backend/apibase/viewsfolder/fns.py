@@ -1,6 +1,8 @@
 from apibase.models import *
 
 def shedule_modify_data(item):
+        if item==None:
+             return
         Iam = Schedule.objects.get(pk=item['id'])
         item['type_name'] = Iam.type.name
         lecturer = Iam.coursegroup.lecturer

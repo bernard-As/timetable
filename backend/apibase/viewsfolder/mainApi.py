@@ -418,9 +418,29 @@ class MigrationView(APIView):
                     for id in targetIds:
                         # try:
                             c=Coursegroup.objects.get(pk=id)
+
+                            if Coursegroup.objects.filter(
+                                course=c.course.pk,
+                                group_number=c.group_number,
+                                course_semester__id=course_semester_target.pk
+                            ):
+                                continue
+
                             c.pk=None
                             c.save()
+                            c_cs = c.course_semester.all()
                             c.course_semester.clear()
+                            for c_c in c_cs:
+                                new_c = None
+                                try:
+                                    new_c = CourseSemester.objects.get(
+                                        program=c_c.program.pk,
+                                        semester=target.pk,
+                                        semester_num=c_c.semester_num
+                                    )
+                                    c.course_semester.add(new_c.pk)
+                                except:
+                                    pass
                             c.course_semester.add(course_semester_target.pk)
                             c.save()
                         # except:

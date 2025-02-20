@@ -57,12 +57,12 @@ PrivateDefaultApi.interceptors.response.use(
       })
       rootStore.tockenChecked = true;
     }else if(error&&error.response && error.response.status === 500){
-      rootStore.notification.notify({
-        type:'error',
-        text: 'An Unexpected error occur. Please try later',
-        title:'Unexpected',
-        timeout:1500
-      })
+      // rootStore.notification.notify({
+      //   type:'error',
+      //   text: 'An Unexpected error occur. Please try later',
+      //   title:'Unexpected',
+      //   timeout:1500
+      // })
       // window.location.href = `${process.env.REACT_APP_BASE_URL}login`;
     }else if(error&&error.response && error.response.status === 400){
       rootStore.notification.notify({
@@ -87,12 +87,12 @@ PrivateApi.interceptors.response.use(
         timeout:1500
       })
     }else if(error&&error.response && error.response.status === 500){
-      rootStore.notification.notify({
-        type:'error',
-        text: 'An Unexpected error occur. Please try later',
-        title:'Unexpected',
-        timeout:1500
-      })
+      // rootStore.notification.notify({
+      //   type:'error',
+      //   text: 'An Unexpected error occur. Please try later',
+      //   title:'Unexpected',
+      //   timeout:1500
+      // })
     }else if(error&&error.response && error.response.status === 404){
       rootStore.notification.notify({
         type:'error',

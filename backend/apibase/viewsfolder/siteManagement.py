@@ -818,6 +818,8 @@ class CourseGroupViewSet(viewsets.ModelViewSet):
         return Response(modified_data)
 
     def modify_data(self, item):
+        if item == None:
+            return
         course = Course.objects.get(pk=item['course'])
         item['code'] = course.code
         item['name'] = course.name

@@ -157,7 +157,7 @@ const MyTimetable = ()=>{
                     const filteredData = res.data.filter(item=>item.type===selectedScheduleType)
                     setData(filteredData)
                 }else{
-                    setData(res.data.filter(item=>item.type!==3));
+                    setData(res.data);
                 }
             }).catch((error)=>{
                 console.log(error);

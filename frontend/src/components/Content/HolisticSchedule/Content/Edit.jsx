@@ -151,7 +151,7 @@ useEffect(() => {
         selectedCourseGroupM.map((s) => 
           PrivateDefaultApi.post('view_schedule/', {
             model: 'course',
-            id: s,
+            id: s.id,
           })
         )
       );
@@ -800,7 +800,6 @@ useEffect(() => {
                     //   option.children.toLowerCase().includes(input.toLowerCase())
                     // }
                     onChange={(event)=>{
-                      console.log(event)
                       setselectedCourseGroupM(event)
                     }}
                       onSelect={(event)=>{

@@ -158,7 +158,7 @@ useEffect(() => {
         selectedCourseGroupM.map((s) => 
           PrivateDefaultApi.post('view_schedule/', {
             model: 'course',
-            id: s,
+            id: s.id,
           })
         )
       );

@@ -165,11 +165,13 @@ class MySchedule(APIView):
                 return Response({"error": str(e)}, status=400)
         R = []
         for schedule in toReturn:
+            if schedule==None:
+                continue
             canDisplay = canScheduleDisplay(user.pk,schedule.pk)
             if (canDisplay):
                 R.extend([schedule])
         serializer = ScheduleSerializer(R, many=True)
-        modified_data = [shedule_modify_data(item) for item in serializer.data] # type: ignore
+        modified_data = [shedule_modify_data(item) for item in serializer.data if item !=None] # type: ignore
         return Response(modified_data)
 
 

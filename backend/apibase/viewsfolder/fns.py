@@ -51,7 +51,11 @@ def shedule_modify_data(item):
     
 
 def canScheduleDisplay(userPk, schedulePk):
-    schedule = Schedule.objects.get(pk=schedulePk)
+    live_semester = Semester.objects.get(is_current=True)
+    try:
+          schedule = Schedule.objects.get(pk=schedulePk,semester=live_semester)
+    except:
+        return False
     if(not userPk):
          if schedule.type.can_other_view:
               return True

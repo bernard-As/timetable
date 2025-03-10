@@ -758,18 +758,28 @@ class CourseViewSet(viewsets.ModelViewSet):
             item['user_name'] =  Users.objects.get(pk=item['user']).first_name+' '+Users.objects.get(pk=item['user']).last_name
         except:
             item['user_name'] = 'Unknow'
-        
-            for index, cg in enumerate(item['coursegroup']):
-                course_semester_ids = cg.get('course_semester')  # Get the 'course_semester' field from the current dictionary
-                if course_semester_ids is not None:
-                    related_programs = CourseSemester.objects.filter(id__in=course_semester_ids).values_list('program__pk', flat=True)
-                    item['coursegroup_set'][index]['program'] = list(related_programs)
-                    related_department = CourseSemester.objects.filter(id__in=course_semester_ids).values_list('department__pk', flat=True)
-                    item['coursegroup_set'][index]['department'] = list(related_department)
-                    more_fac = Department.objects.filter(id__in=related_department).values_list('faculty__pk', flat=True)
-                    item['coursegroup_set'][index]['faculty'] = list(more_fac)
-                    uniSemester = CourseSemester.objects.filter(id__in=course_semester_ids).values_list('semester__pk', flat=True)
-                    item['coursegroup_set'][index]['uniSemes'] = list(uniSemester)
+        item['coursegroup'] = [cg.pk for cg in coursegroups]
+        item['coursegroup_set'] = []  # Initialize as an empty list
+        for cg in coursegroups:
+            if cg is None:
+                continue
+            
+            # Get the relevant data
+            sms = [sm.pk for sm in cg.course_semester.filter(semester__is_current=True)]
+            ps = [sm.program.pk for sm in cg.course_semester.filter(semester__is_current=True)]
+            ds = [sm.program.department.pk for sm in cg.course_semester.filter(semester__is_current=True)]
+            fs = [sm.program.department.faculty.pk for sm in cg.course_semester.filter(semester__is_current=True)]
+            
+            # Create a new dictionary for the current course group
+            course_group_info = {
+                'uniSemes': sms,
+                'program': ps,
+                'department': ds,
+                'faculty': fs
+            }
+            
+            # Append the dictionary to the list
+            item['coursegroup_set'].append(course_group_info)
 
         return item
 

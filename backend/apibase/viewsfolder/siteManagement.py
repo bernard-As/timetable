@@ -496,6 +496,8 @@ class StudentViewSet(viewsets.ModelViewSet):
         # item['faculty']=[FacultySerializer(fac).data['id'] for fac in related_user.faculty.all()] # type: ignore
         # item['department']=[DepartmentSerializer(dep).data['id'] for dep in related_user.department.all()] # type: ignore
         item['program']=[ProgramSerializer(prog).data['id'] for prog in related_user.program.all()] # type: ignore
+        item['department'] = [p.department.pk for p in related_user.program.all()]
+        item['faculty'] = [p.faculty.pk for p in Department.objects.filter(id__in=item['department'])]
         student = Student.objects.get(id=item['id'])
         item['coursegroup'] = [
             {

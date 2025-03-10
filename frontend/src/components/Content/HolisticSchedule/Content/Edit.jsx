@@ -40,8 +40,13 @@ const [courseData,setCourseData] = useState([])
 
   useEffect(()=>{
         PrivateDefaultApi.get(`${model.apiUrl}/${id}/`).then((res)=>{
-            setData(res.data)
-            setselectedCourseGroupM(res.data.coursegroup)
+            let d = res.data;
+            d.coursegroup = d.coursegroup.map(c => ({
+              value: c.id,
+              label: c.code
+            }));
+            setData(d)
+            setselectedCourseGroupM(d.coursegroup?.map(c=>c.value))
         }).catch((error)=>{
             console.error(error)
         })
@@ -51,7 +56,7 @@ const [courseData,setCourseData] = useState([])
       if(id)
         url = url+id+'/'
       PrivateDefaultApi.get(url).then((res)=>{
-        console.log('hello')
+        // console.log('hello')
         rootStore.holosticScheduleContentStore.addadditionallyFetchedData({
           target:targetModel,
           data:res.data
@@ -122,7 +127,7 @@ const [courseData,setCourseData] = useState([])
         timeout:1500
     })
         console.log('Failed:', errorInfo);
-    };
+    }; 
     const onSearch= (value)=>{
       PrivateDefaultApi.get('coursegroup/?search='+value).then((res)=>{
           setData(res.data)
@@ -147,6 +152,8 @@ const [courseData,setCourseData] = useState([])
 useEffect(() => {
   const getItems = async () => {
     try {
+      console.log(selectedCourseGroupM,'selectedCourseGroupM');
+      
       const responses = await Promise.all(
         selectedCourseGroupM.map((s) => 
           PrivateDefaultApi.post('view_schedule/', {
@@ -182,7 +189,6 @@ useEffect(() => {
             }
             newSh = [...newSh.filter(n=>n.timeslot!==sc.timeslot),sc]
         })
-      console.log('hi')
       setTableData(newSh)
     },[timeSlots,courseData])
 
@@ -781,7 +787,7 @@ useEffect(() => {
             }
             {
               model.addFields.includes('coursegroup_m')&&
-              additionalData.find(ad=>ad.target==='coursegroup')&&
+              // additionalData.find(ad=>ad.target==='coursegroup')&&
               <Form.Item
                 label="Courses"
                 name="coursegroup"
@@ -800,7 +806,6 @@ useEffect(() => {
                     //   option.children.toLowerCase().includes(input.toLowerCase())
                     // }
                     onChange={(event)=>{
-                      console.log(event)
                       setselectedCourseGroupM(event)
                     }}
                       onSelect={(event)=>{
@@ -810,9 +815,10 @@ useEffect(() => {
                       mode="multiple"
                       allowClear
                       filterOption={false} 
+                      // value={selectedCourseGroupM}
                       // initialValue={localStorage.getItem(`${model.name}_coursegroup_m`)}
                     >
-                      {additionalData.find(ad=>ad.target==='coursegroup').data.map(p=>{
+                      {additionalData.find(ad=>ad.target==='coursegroup')?.data.map(p=>{
                         return p.status&&
                         <Select.Option key={p.id} value={p.id}>{p.code} G{p.group_number} ~ {p.name}</Select.Option>
                       })

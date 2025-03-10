@@ -65,12 +65,12 @@ PrivateDefaultApi.interceptors.response.use(
       // })
       // window.location.href = `${process.env.REACT_APP_BASE_URL}login`;
     }else if(error&&error.response && error.response.status === 400){
-      rootStore.notification.notify({
-        type:'error',
-        text: `Error=> ${Object.keys(error.response.data).map(key => `${key}: ${error.response.data[key]}`).join('\n')}`,
-        title:'Unexpected',
-        timeout:1500
-      })
+      // rootStore.notification.notify({
+      //   type:'error',
+      //   text: `Error=> ${Object.keys(error.response.data).map(key => `${key}: ${error.response.data[key]}`).join('\n')}`,
+      //   title:'Unexpected',
+      //   timeout:1500
+      // })
     }
     return Promise.reject(error);
   }

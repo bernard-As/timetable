@@ -1,9 +1,10 @@
-import { Col, Dropdown, Row, Tooltip } from "antd";
+import { Button, Col, Dropdown, Row, Tooltip } from "antd";
 import { FcFilledFilter } from "react-icons/fc";
 import analisysStore from "../../mobx/AnalisysStore";
 import { observer } from "mobx-react";
 import General from "./General";
 import Lecturer from "./Lecturer";
+import Room from "./Room";
 const Content = observer(()=>{
     return (
         <div>
@@ -17,14 +18,19 @@ const Content = observer(()=>{
                         
                     >
                         <Tooltip title="Select">
-                            <FcFilledFilter size={22}/>
+                            <Button
+                                icon = {<FcFilledFilter size={22}/>}
+                                label={'Menu'}
+                            ></Button>
+                            
                         </Tooltip>
                     </Dropdown>
                 </Col>
             </Row>
 
-            <General/>
-            <Lecturer/>
+            {analisysStore.selectedAnalisysType==='general'&&<General/>}
+            {analisysStore.selectedAnalisysType==='lecturer'&&<Lecturer/>}
+            {analisysStore.selectedAnalisysType==='room'&&<Room/>}
         </div>
     )    
 })

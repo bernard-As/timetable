@@ -22,6 +22,7 @@ router = DefaultRouter()
 urlpatterns = [
     path('default/', DefaultView.as_view()),
     path('lecturer/', LecturerView.as_view()),
+    path('room/', RoomView.as_view()),
 ]
 
 # urlpatterns = format_suffix_patterns(urlpatterns)

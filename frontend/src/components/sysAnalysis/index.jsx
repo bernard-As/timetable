@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import rootStore from "../../mobx";
-import { Button, Drawer, FloatButton, Space, Tooltip } from "antd";
+import { Button, Drawer, FloatButton, Space, Tag, Tooltip } from "antd";
 import { GrSystem } from "react-icons/gr";
 import { observer } from "mobx-react";
 import { VscDebugRerun } from "react-icons/vsc";
@@ -48,7 +48,8 @@ const SystemAnalisys = observer(() => {
         open={openDrawer}
         extra={
           <Space>
-            <Button 
+            <Tag color="gold">Set on Midterms</Tag>
+            {/* <Button 
                 onClick={onClose}
                 icon={<VscDebugRerun color="green"/>}
                 type={"text"}
@@ -56,7 +57,7 @@ const SystemAnalisys = observer(() => {
                 // loading
             >
               Run all
-            </Button>
+            </Button> */}
             <Button type={'primary'} danger ghost onClick={onClose}>Close</Button>
             </Space>
         }

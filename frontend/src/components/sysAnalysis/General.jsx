@@ -1,4 +1,4 @@
-import { Button, Col, Row, Table, Typography } from "antd";
+import { Button, Col, Row, Spin, Table, Typography } from "antd";
 import { observer } from "mobx-react";
 import { FaArrowRight } from "react-icons/fa";
 import { FaArrowDown } from "react-icons/fa";
@@ -8,10 +8,12 @@ import { useEffect, useState } from "react";
 const General = observer(() => {
     const [data, setData] = useState();
     const [tableData, setTableData] = useState([]);
+    const [loading,setLoading] = useState(true);
     const getGeneralData = async() => {
         const response = await AnalysisApi.post('default/');
         if(response.status===200){
-            console.log(response.data);
+            // console.log(response.data);
+            setLoading(false)
             setData(response.data);
         }
     }
@@ -118,11 +120,23 @@ const General = observer(() => {
                 
             </Row>
             <br />
-            {analisysStore.selectedAnalisysType==='general'&&<Table 
+            {loading? <Spin>
+                <div
+                    style={{
+                        height:500,
+                        width:500,
+                    }}
+                >
+
+                </div>
+            </Spin>:
+                analisysStore.selectedAnalisysType==='general'&&<Table 
                 columns={columns}
                 dataSource={tableData}
                 pagination={false}
-            />}
+            />
+            }
+            {}
 
         </div>
     );

@@ -11,12 +11,12 @@ import { RxCrossCircled } from "react-icons/rx";
 import { GrOverview } from "react-icons/gr";
 import { CgDetailsLess } from "react-icons/cg";
 import { render } from "react-dom";
-const Lecturer = observer(() => {
+const Room = observer(() => {
     const [data, setData] = useState();
     const [tableData, setTableData] = useState([]);
     const [loading,setLoading] = useState(true)
-    const getLecturerData = async() => {
-        const response = await AnalysisApi.post('lecturer/');
+    const getData = async() => {
+        const response = await AnalysisApi.post('room/');
         if(response.status===200){
             // console.log(response.data);
             setLoading(false)
@@ -25,26 +25,26 @@ const Lecturer = observer(() => {
     }
     const columns = [
         {
-          title: 'Email',
-          dataIndex: 'email',
-          key: 'email',
-          render: (text,record) => <Tooltip title={record.name}>{text}</Tooltip>,
+          title: 'Code',
+          dataIndex: 'code',
+          key: 'code',
+          render: (text,record) => <Tooltip title={record.building}>{text}</Tooltip>,
         },
         {
-          title: 'Courses Exam',
-          dataIndex: 'coursesExam',
-          key: 'coursesExam',
+          title: 'Num.Of.Exam(s)',
+          dataIndex: 'num_exms',
+          key: 'num_exms',
         },
         {
-          title: 'Other Invigilation(s)',
-          dataIndex: 'invigilation',
-          key: 'invigilation',
-        },
-        {
-            title: 'Total Invigilation(s)',
-            dataIndex: 'total_invigilation',
-            key: 'total_invigilation',
+            title: 'Capacity',
+            dataIndex: 'capacity',
+            key: 'capacity',
           },
+        {
+          title: 'Max.Num.Std',
+          dataIndex: 'num_std',
+          key: 'num_std',
+        },
         {
           title: 'Status',
           dataIndex: 'status',
@@ -99,10 +99,10 @@ const Lecturer = observer(() => {
         data?.map((item,index)=>{
             temp.push({
                 key:index,
-                email:item.email,
-                coursesExam:item.courseExam,
-                invigilation:item.invigilation,
-                total_invigilation:item.total_invigilation,
+                code:item.code,
+                num_exms:item.num_exms,
+                capacity:item.capacity,
+                num_std:item.num_std,
                 status:item.status,
         })
     })
@@ -110,7 +110,7 @@ const Lecturer = observer(() => {
     },[data])
 
     useEffect(()=>{
-        getLecturerData();
+        getData();
     },[])
     
     
@@ -172,7 +172,7 @@ const Lecturer = observer(() => {
                 
             </Row>
             <br />
-            {analisysStore.selectedAnalisysType===analisysStore.items[1].key&&
+            {analisysStore.selectedAnalisysType===analisysStore.items[2].key&&
             
             <Tabs defaultActiveKey="1"
                 items={tabsItems}
@@ -182,4 +182,4 @@ const Lecturer = observer(() => {
         </div>
     );
 })
-export default Lecturer;
+export default Room;

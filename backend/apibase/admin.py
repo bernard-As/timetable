@@ -6,6 +6,14 @@ from .models import *
 from django.utils.translation import gettext_lazy as _
 from django import forms
 
+
+
+class UsersAdmin(admin.ModelAdmin):
+    list_display = ( 'email',)  # specify the fields to display
+    # fields = ('studentId','coursegroup')  # specify the fields to display in the detail, create, and update views
+    search_fields = ('user__email',)
+admin.site.register(Users, UsersAdmin)
+
 class StudentAdmin(admin.ModelAdmin):
     list_display = ( 'studentId',)  # specify the fields to display
     fields = ('studentId','coursegroup')  # specify the fields to display in the detail, create, and update views

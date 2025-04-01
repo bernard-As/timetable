@@ -439,6 +439,7 @@ class Schedule(models.Model):
 
         if overlapping_schedule.exists():
             # pass
+            print(overlapping_schedule)
             raise ValidationError('The schedule overlaps with another lecture in the same room.')
 
     def save(self, *args, **kwargs):

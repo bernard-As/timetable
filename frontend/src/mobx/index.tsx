@@ -65,6 +65,17 @@ class RootStore {
     }
     return false
   }
+  isLecturer(){
+    if(this.credential === 'AD'||
+      this.credential==='HOD'||
+      this.credential==='LEC'||
+      this.credential==='VR'||
+      this.credential==='PADM'||
+      this.credential==='SADM'){
+      return true
+    }
+    return false
+  }
 }
 
 const rootStore = new RootStore();

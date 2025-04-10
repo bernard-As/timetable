@@ -37,7 +37,7 @@ class ViewSchedule(APIView):
             for c in lectCourses:
                 schedules = Schedule.objects.filter(coursegroup=c.id)
                 toReturn.extend(schedules)  # Extend the list with schedules
-            invigilationShc = Schedule.objects.filter(invigilator=id,type=5)
+            invigilationShc = Schedule.objects.filter(invigilator=id,type=3)
             schedule_ids = {schedule.id for schedule in toReturn}
             
             # Add invigilation schedules that are not already in the toReturn list
@@ -133,7 +133,7 @@ class MySchedule(APIView):
         if isLecturer:
             # Fetch schedules for lecturer
             toReturn.extend(Schedule.objects.filter(coursegroup__lecturer__user=user.pk))
-            invigilationShc = Schedule.objects.filter(invigilator__user=user.pk,type=5)
+            invigilationShc = Schedule.objects.filter(invigilator__user=user.pk,type=3)
             schedule_ids = {schedule.id for schedule in toReturn}
             # return Response({"error": Users.objects.get(pk=user.pk).credential}, status=404)
             

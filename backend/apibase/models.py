@@ -426,6 +426,8 @@ class Schedule(models.Model):
         ).filter(
             # coursegroup__course_semester__semester__id__in=self.coursegroup.course_semester..values('semester__id')
             semester=self.semester
+        ).filter(
+            type__in = [1,2,4,5]
         ).exclude(id=self.id)
 
         # overlapping_schedule = Schedule.objects.filter(

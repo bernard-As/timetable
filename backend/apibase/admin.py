@@ -15,7 +15,7 @@ class UsersAdmin(admin.ModelAdmin):
 admin.site.register(Users, UsersAdmin)
 
 class StudentAdmin(admin.ModelAdmin):
-    list_display = ( 'studentId',)  # specify the fields to display
+    list_display = ( 'studentId','user')  # specify the fields to display
     fields = ('studentId','coursegroup')  # specify the fields to display in the detail, create, and update views
     search_fields = ('user__email', 'studentId')
 admin.site.register(Student, StudentAdmin)
@@ -62,9 +62,9 @@ class CourseGroupAdmin(admin.ModelAdmin):
     search_fields = (
     'course__name',
     'course__code',
-    'lecturer__user__first_name',   # Access user’s name via Lecturer
-    'lecturer__user__last_name',   # Access user’s name via Lecturer
-    'lecturer__user__email',  # Access user’s email via Lecturer
+    # 'lecturer__user__first_name',   # Access user’s name via Lecturer
+    # 'lecturer__user__last_name',   # Access user’s name via Lecturer
+    # 'lecturer__user__email',  # Access user’s email via Lecturer
 )
 
     list_filter = (

@@ -283,7 +283,7 @@ class Coursegroup(models.Model):
     description = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     def __str__(self):
-        return self.course.code + ' Group: '+ str(self.group_number)+' by: '+self.lecturer.user.email
+        return self.course.code + ' Group: '+ str(self.group_number)+' by: '+str(self.lecturer)
 class Student(models.Model):
     """Students"""
     user = models.ForeignKey(Users,on_delete=models.SET_NULL, null=True,parent_link=True)  # type: ignore

@@ -17,7 +17,7 @@ const MyTimetable = ()=>{
     const [tableMobileData,settableMobileData] = useState([])
     const [mobileColumns,setMobileColumns] = useState()
     const [marks,setMarks] = useState()
-    const [selectedScheduleType,setselectedScheduleType] = useState('3')
+    const [selectedScheduleType,setselectedScheduleType] = useState(3) //default 'All'
     const [scheduleType,setscheduleType] = useState([])
     const [columns, setColumns] = useState([]) 
     const [columns1, setColumns1] = useState([]) 
@@ -370,6 +370,7 @@ const MyTimetable = ()=>{
                 onChange={(value)=>{
                     setselectedScheduleType(value)
                 }}
+                value={selectedScheduleType}
             />
             </Col>
 

@@ -40,17 +40,13 @@ const Schedule = observer(({id,model})=>{
     ]
     const finalDays = {
         week1:{
-            start:3,
-            end:4
+            start:10,
+            end:14
         },
         week2:{
-            start:6,
-            end:11,
+            start:16,
+            end:21,
         },
-        week3:{
-            start:13,
-            end:18
-        }
     }
     const scrollToDiv = (divID) => {
 
@@ -86,7 +82,7 @@ const Schedule = observer(({id,model})=>{
             const week2Columns = []
             const week3Columns = []
             for(let i=finalDays.week1.start;i<=finalDays.week1.end;i++){
-                const m = `0${i}-01-2025`;
+                const m = `${i}-06-2025`;
                 week1Columns.push({
                     title:m,
                     dataIndex:m,
@@ -96,7 +92,7 @@ const Schedule = observer(({id,model})=>{
             }
             for(let i=finalDays.week2.start;i<=finalDays.week2.end;i++){
                 const ini = i>9?'':'0'
-                const m = `${ini}${i}-01-2025`;
+                const m = `${ini}${i}-06-2025`;
                 week2Columns.push({
                     title:m,
                     dataIndex:m,
@@ -104,15 +100,15 @@ const Schedule = observer(({id,model})=>{
                     render: (_,record) => <ScheduleCell record={record[m]} currentDate={m}/>,
                     })
             }
-            for(let i=finalDays.week3.start;i<=finalDays.week3.end;i++){
-                const m = `${i}-01-2025`;
-                week3Columns.push({
-                    title:m,
-                    dataIndex:m,
-                    key:`week3_${i+1}`,
-                    render: (_,record) => <ScheduleCell record={record[m]} currentDate={m}/>,
-                    })
-            }
+            // for(let i=finalDays.week3.start;i<=finalDays.week3.end;i++){
+            //     const m = `${i}-06-2025`;
+            //     week3Columns.push({
+            //         title:m,
+            //         dataIndex:m,
+            //         key:`week3_${i+1}`,
+            //         render: (_,record) => <ScheduleCell record={record[m]} currentDate={m}/>,
+            //         })
+            // }
             const defaultTimeslotCol = {
                 title:'TimeSlot',
                 dataIndex: 'timeslot',
@@ -126,10 +122,10 @@ const Schedule = observer(({id,model})=>{
                 defaultTimeslotCol,
                 ...week2Columns
                 ])
-            setColumns3([
-                defaultTimeslotCol,
-                ...week3Columns
-            ])    
+            // setColumns3([
+            //     defaultTimeslotCol,
+            //     ...week3Columns
+            // ])    
                     
         }else{
             setColumns( [ {
@@ -265,22 +261,22 @@ const Schedule = observer(({id,model})=>{
                 if (selectedScheduleType===5){
                     const sc1 = {timeslot:`${timeSlot.start} - ${timeSlot.end}`,}
                     for(let i=finalDays.week1.start;i<=finalDays.week1.end;i++){
-                        const m = `0${i}-01-2025`;
+                        const m = `${i}-06-2025`;
                         sc1[m] = data?.filter(d=>(getDateData(timeSlot,m,d)))
                     }
                     newSh1 = [...newSh1.filter(n=>n.timeslot!==sc1.timeslot),sc1]
                     const sc2 = {timeslot:`${timeSlot.start} - ${timeSlot.end}`,}
                     for(let i=finalDays.week2.start;i<=finalDays.week2.end;i++){
                         const ini = i>9?'':'0'
-                        const m = `${ini}${i}-01-2025`;
+                        const m = `${ini}${i}-06-2025`;
                         sc2[m] = data?.filter(d=>(getDateData(timeSlot,m,d)))
                     }
                     newSh2 = [...newSh2.filter(n=>n.timeslot!==sc2.timeslot),sc2]
                     const sc3 = {timeslot:`${timeSlot.start} - ${timeSlot.end}`,}
-                    for(let i=finalDays.week3.start;i<=finalDays.week3.end;i++){
-                        const m = `${i}-01-2025`;
-                        sc3[m] = data?.filter(d=>(getDateData(timeSlot,m,d)))
-                    }
+                    // for(let i=finalDays.week3.start;i<=finalDays.week3.end;i++){
+                    //     const m = `${i}-06-2025`;
+                    //     sc3[m] = data?.filter(d=>(getDateData(timeSlot,m,d)))
+                    // }
                     newSh3 = [...newSh3.filter(n=>n.timeslot!==sc3.timeslot),sc3]
 
 
@@ -372,6 +368,7 @@ const Schedule = observer(({id,model})=>{
                 scroll={{ x: 1000 }}
                 bordered 
             />}
+            {columns2.length>0&&<>
             <center>
             <Tag color="white" style={{
                     marginBottom:'10px',
@@ -391,7 +388,8 @@ const Schedule = observer(({id,model})=>{
                 scroll={{ x: 1000 }}
                 bordered 
             />}
-            <center>
+            </>}
+            {columns3.length>0&&<><center>
                 <Tag color="white" style={{
                     marginBottom:'10px',
                     marginTop:'10px',
@@ -408,7 +406,7 @@ const Schedule = observer(({id,model})=>{
                 pagination={false}
                 scroll={{ x: 1000 }}
                 bordered 
-            />}
+            />}</>}
 
         </div>
     }
@@ -421,24 +419,24 @@ const Schedule = observer(({id,model})=>{
       }}
       icon={<BsCalendar3Week />}
     >
-      <FloatButton 
+      {columns1.length>0&&<FloatButton 
         icon={<MdOutlineLooksOne size={21}/>}
         onClick={() => {
             scrollToDiv('week1')
         }}
-    />
-      <FloatButton 
+    />}
+    {columns2.length>0&&  <FloatButton 
         icon={<MdOutlineLooksTwo size={21}/>}
         onClick={() => {
             scrollToDiv('week2')
         }}
-    />
-      <FloatButton 
+    />}
+      {columns3.length>0&&<FloatButton 
         icon={<MdOutlineLooks3 size={21}/>}
         onClick={() => {
             scrollToDiv('week3')
         }}
-    />
+    />}
     </FloatButton.Group>
 
     }

@@ -440,9 +440,11 @@ class Schedule(models.Model):
         # ).exclude(id=self.id)  # Exclude the current instance if updating
 
         if overlapping_schedule.exists():
+            if self.type.id==5:
+                pass
             # pass
-            print(overlapping_schedule)
-            raise ValidationError('The schedule overlaps with another lecture in the same room.')
+            else:
+                raise ValidationError('The schedule overlaps with another lecture in the same room.')
 
     def save(self, *args, **kwargs):
         self.clean()  # Run validation before saving

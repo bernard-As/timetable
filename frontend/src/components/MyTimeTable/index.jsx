@@ -99,15 +99,15 @@ const MyTimetable = ()=>{
                     render: (_,record) => <ScheduleCell record={record[m]} currentDate={m}/>,
                     })
             }
-            for(let i=finalDays.week3.start;i<=finalDays.week3.end;i++){
-                const m = `${i}-06-2025`;
-                week3Columns.push({
-                    title:m,
-                    dataIndex:m,
-                    key:`week3_${i+1}`,
-                    render: (_,record) => <ScheduleCell record={record[m]} currentDate={m}/>,
-                    })
-            }
+            // for(let i=finalDays.week3.start;i<=finalDays.week3.end;i++){
+            //     const m = `${i}-06-2025`;
+            //     week3Columns.push({
+            //         title:m,
+            //         dataIndex:m,
+            //         key:`week3_${i+1}`,
+            //         render: (_,record) => <ScheduleCell record={record[m]} currentDate={m}/>,
+            //         })
+            // }
             const defaultTimeslotCol = {
                 title:'TimeSlot',
                 dataIndex: 'timeslot',
@@ -218,11 +218,11 @@ const MyTimetable = ()=>{
                 }
                 newSh22 = [...newSh22.filter(n=>n.timeslot!==sc2.timeslot),sc2]
                 const sc3 = {timeslot:`${timeSlot.start} - ${timeSlot.end}`,}
-                for(let i=finalDays.week3.start;i<=finalDays.week3.end;i++){
-                    const m = `${i}-06-2025`;
-                    sc3[m] = data?.filter(d=>(getDateData(timeSlot,m,d)))
-                }
-                newSh33 = [...newSh33.filter(n=>n.timeslot!==sc3.timeslot),sc3]
+                // for(let i=finalDays.week3.start;i<=finalDays.week3.end;i++){
+                //     const m = `${i}-06-2025`;
+                //     sc3[m] = data?.filter(d=>(getDateData(timeSlot,m,d)))
+                // }
+                // newSh33 = [...newSh33.filter(n=>n.timeslot!==sc3.timeslot),sc3]
 
 
             }
@@ -449,7 +449,7 @@ const MyTimetable = ()=>{
                 scroll={{ x: 1000 }}
                 bordered 
             />}
-            <center>
+            {/* <center>
                 <Tag color="white" style={{
                     marginBottom:'10px',
                     marginTop:'10px',
@@ -466,7 +466,7 @@ const MyTimetable = ()=>{
                 pagination={false}
                 scroll={{ x: 1000 }}
                 bordered 
-            />}
+            />} */}
 
         </div>
          :
@@ -504,12 +504,12 @@ const MyTimetable = ()=>{
             scrollToDiv('week2')
         }}
     />
-      <FloatButton 
+      {/* <FloatButton 
         icon={<MdOutlineLooks3 size={21}/>}
         onClick={() => {
             scrollToDiv('week3')
         }}
-    />
+    /> */}
     </FloatButton.Group>
 
     }

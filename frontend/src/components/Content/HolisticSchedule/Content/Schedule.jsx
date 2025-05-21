@@ -269,6 +269,7 @@ const Schedule = observer(({id,model})=>{
                     for(let i=finalDays.week2.start;i<=finalDays.week2.end;i++){
                         const ini = i>9?'':'0'
                         const m = `${ini}${i}-06-2025`;
+                        
                         sc2[m] = data?.filter(d=>(getDateData(timeSlot,m,d)))
                     }
                     newSh2 = [...newSh2.filter(n=>n.timeslot!==sc2.timeslot),sc2]

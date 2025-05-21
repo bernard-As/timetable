@@ -85,7 +85,7 @@ const MyTimetable = ()=>{
             const week2Columns = []
             const week3Columns = []
             for(let i=finalDays.week1.start;i<=finalDays.week1.end;i++){
-                const m = `0${i}-01-2025`;
+                const m = `${i}-06-2025`;
                 week1Columns.push({
                     title:m,
                     dataIndex:m,
@@ -95,7 +95,7 @@ const MyTimetable = ()=>{
             }
             for(let i=finalDays.week2.start;i<=finalDays.week2.end;i++){
                 const ini = i>9?'':'0'
-                const m = `${ini}${i}-01-2025`;
+                const m = `${ini}${i}-06-2025`;
                 week2Columns.push({
                     title:m,
                     dataIndex:m,
@@ -104,7 +104,7 @@ const MyTimetable = ()=>{
                     })
             }
             for(let i=finalDays.week3.start;i<=finalDays.week3.end;i++){
-                const m = `${i}-01-2025`;
+                const m = `${i}-06-2025`;
                 week3Columns.push({
                     title:m,
                     dataIndex:m,
@@ -210,20 +210,20 @@ const MyTimetable = ()=>{
             if (selectedScheduleType===5){
                 const sc1 = {timeslot:`${timeSlot.start} - ${timeSlot.end}`,}
                 for(let i=finalDays.week1.start;i<=finalDays.week1.end;i++){
-                    const m = `0${i}-01-2025`;
+                        const m = `${i}-06-2025`;
                     sc1[m] = data?.filter(d=>(getDateData(timeSlot,m,d)))
                 }
                 newSh11 = [...newSh11.filter(n=>n.timeslot!==sc1.timeslot),sc1]
                 const sc2 = {timeslot:`${timeSlot.start} - ${timeSlot.end}`,}
                 for(let i=finalDays.week2.start;i<=finalDays.week2.end;i++){
                     const ini = i>9?'':'0'
-                    const m = `${ini}${i}-01-2025`;
+                        const m = `${ini}${i}-06-2025`;
                     sc2[m] = data?.filter(d=>(getDateData(timeSlot,m,d)))
                 }
                 newSh22 = [...newSh22.filter(n=>n.timeslot!==sc2.timeslot),sc2]
                 const sc3 = {timeslot:`${timeSlot.start} - ${timeSlot.end}`,}
                 for(let i=finalDays.week3.start;i<=finalDays.week3.end;i++){
-                    const m = `${i}-01-2025`;
+                    const m = `${i}-06-2025`;
                     sc3[m] = data?.filter(d=>(getDateData(timeSlot,m,d)))
                 }
                 newSh33 = [...newSh33.filter(n=>n.timeslot!==sc3.timeslot),sc3]

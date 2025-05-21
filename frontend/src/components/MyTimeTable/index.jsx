@@ -38,17 +38,13 @@ const MyTimetable = ()=>{
    ]
     const finalDays = {
         week1:{
-            start:3,
-            end:4
+            start:10,
+            end:14
         },
         week2:{
-            start:6,
-            end:11,
+            start:16,
+            end:21,
         },
-        week3:{
-            start:13,
-            end:18
-        }
     }
     const scrollToDiv = (divID) => {
 

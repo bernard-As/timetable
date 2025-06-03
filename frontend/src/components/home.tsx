@@ -7,6 +7,8 @@ import DynamicBreadcrumbs from './Menu/Breadcrumb';
 import DynamicContent from './Content';
 import DynamicFooter from './Footer';
 import SystemAnalisys from './sysAnalysis';
+import AssessmentModal from './AssessmentModal';
+import { CookiesProvider } from 'react-cookie';
 const { Header, Content, Sider } = Layout;
 const Home: React.FC = () =>{
     useEffect(()=>{
@@ -31,6 +33,10 @@ const Home: React.FC = () =>{
                 </Layout>
             </Layout>
             <SystemAnalisys/>
+            <CookiesProvider>
+                <AssessmentModal/>
+
+            </CookiesProvider>
         </>
     );
 }

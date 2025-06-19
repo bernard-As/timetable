@@ -35,7 +35,7 @@ const Home: React.FC = observer(() =>{
             </Layout>
             <SystemAnalisys/>
             <CookiesProvider>
-                {!rootStore.isLecturer()&&<AssessmentModal/>}
+                {/* {!rootStore.isLecturer()&&<AssessmentModal/>} */}
 
             </CookiesProvider>
         </>

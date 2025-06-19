@@ -182,6 +182,7 @@ export const  CourseDisplayInCell = ({data,setshowSetScheduleModal,setIsRecord})
             >
                 {`${data.cg.code} G${data.cg.group_number} ~Room: ${data.rm.code}`}
                 {data.type===5&&rootStore.enableManagement&&rootStore.isManager()&&data.invigilator!==null&&<span>{' '+data.invigilator}</span>}
+                {(data.type===6 || data.type===7)&&rootStore.enableManagement&&rootStore.isManager()&&data.invigilator!==null&&<span>{' '+data.invigilator}</span>}
                 {/* <Divider style={{padding:0}}/> */}
             </span>
             </Tooltip>:
@@ -192,6 +193,7 @@ export const  CourseDisplayInCell = ({data,setshowSetScheduleModal,setIsRecord})
             {`${data.cg.code} G${data.cg.group_number} ~Room: ${data.rm.code}`}
         
             {data.type===5&&rootStore.enableManagement&&rootStore.isLecturer()&&data.invigilator!==null?<span> {' '+data.invigilator}</span>:<span>{data.lecturer||' '}</span>}
+            {(data.type===6 || data.type===7)&&rootStore.enableManagement&&rootStore.isLecturer()&&data.invigilator!==null?<span> {' '+data.invigilator}</span>:<span>{data.lecturer||' '}</span>}
         </span>
             }
         </Popconfirm>:

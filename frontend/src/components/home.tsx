@@ -9,8 +9,9 @@ import DynamicFooter from './Footer';
 import SystemAnalisys from './sysAnalysis';
 import AssessmentModal from './AssessmentModal';
 import { CookiesProvider } from 'react-cookie';
+import { observer } from 'mobx-react';
 const { Header, Content, Sider } = Layout;
-const Home: React.FC = () =>{
+const Home: React.FC = observer(() =>{
     useEffect(()=>{
         rootStore.checkTokenValidity();
     },[])
@@ -34,10 +35,10 @@ const Home: React.FC = () =>{
             </Layout>
             <SystemAnalisys/>
             <CookiesProvider>
-                <AssessmentModal/>
+                {!rootStore.isLecturer()&&<AssessmentModal/>}
 
             </CookiesProvider>
         </>
     );
-}
+})
 export default  Home;

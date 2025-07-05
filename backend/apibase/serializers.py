@@ -180,3 +180,25 @@ class StudentScanSerializer(serializers.ModelSerializer):
     class Meta:
         model = StudentScan
         fields = '__all__'
+
+class SummerCourseSerializer(serializers.ModelSerializer):
+    name = serializers.SerializerMethodField()
+    code = serializers.SerializerMethodField()
+    department = serializers.SerializerMethodField()
+    student_count = serializers.SerializerMethodField()
+    class Meta:
+        model = SummerCourse
+        fields = '__all__'
+
+    def get_name(self, obj):
+        return obj.course.name if obj.course else None
+    def get_code(self, obj):
+        return obj.course.code if obj.course else None
+    def get_student_count(self, obj):
+        return obj.summer_student_selection.count() if obj.summer_student_selection else 0
+    def get_department(self, obj):
+        return obj.course.groups.first().course_semester.first().program.department.name if obj.course and obj.course.groups.exists() and obj.course.groups.first().course_semester.exists() else None
+class SummerStudentSelectionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SummerStudentSelection
+        fields = '__all__'

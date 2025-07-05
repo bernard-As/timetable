@@ -43,6 +43,8 @@ router.register(r'scheduletype', siteManagement.ScheduleTypeViewSet, basename='s
 router.register(r'system_news', SystemNewsView, basename='system News')
 router.register(r'assistant', siteManagement.AssistantView, basename='Assistant')
 router.register(r'student-scan', StudentScanView, basename='Student scan')
+router.register(r'summer-course', SummerCourseView, basename='Summer course')
+router.register(r'summer-student-selection', SummerStudentSelectionView, basename='Summer course')
 urlpatterns = [
     path('login/', LoginView.as_view()),
     path('renewStore/',StoreRenew.as_view(), name='renewStore'),
@@ -57,7 +59,8 @@ urlpatterns = [
     path('upcoming-schedule/',UpcomingScheduleView.as_view(), name='Upcoming Schedule View'),
     path('my-upcoming-schedule/',MyUpcomingScheduleView.as_view(), name='My Upcoming Schedule View'),
     path('free_model/',FreeModel.as_view(), name='Free model'),
-    path('migration_view/',MigrationView.as_view(), name='Migration view')
+    path('migration_view/',MigrationView.as_view(), name='Migration view'),
+    path('courses-selection-admin/',CourseSelectionAdminView.as_view(), name='Courses Selection Admin View')
     # path('start/',start_main,name='main')
 ]
 

@@ -474,6 +474,21 @@ class StudentScan(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+class SummerCourse(models.Model):
+    """Summer course """
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='summer_courses')
+    status = models.BooleanField(default=True)
+    description = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+class SummerStudentSelection(models.Model):
+    """Summer student selection """
+    student_num = models.CharField(max_length=255)
+    summer_course = models.ManyToManyField(SummerCourse, related_name='summer_student_selection')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
 class AdminOperations(models.Model):
     class Meta:
         permissions = [

@@ -467,3 +467,70 @@ class StudentScanView(viewsets.ModelViewSet):
         scan = StudentScan.objects.get(pk=serializer.data['id'])
         output = scanTable(scan.image.path)
         return Response(output, status=status.HTTP_201_CREATED)
+
+class SummerCourseView(viewsets.ModelViewSet):
+    queryset = SummerCourse.objects.all()
+    serializer_class = SummerCourseSerializer
+    
+    def get_queryset(self):
+        return SummerCourse.objects.filter(course__isnull=False).distinct()
+    
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+class SummerStudentSelectionView(viewsets.ModelViewSet):
+    queryset = SummerStudentSelection.objects.all()
+    serializer_class = SummerStudentSelectionSerializer
+    
+    def get_queryset(self):
+        return SummerStudentSelection.objects.filter(summer_course__course__isnull=False).distinct()
+    
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+class CourseSelectionAdminView(APIView):
+    authentication_classes = ([TokenAuthentication])
+    permission_classes = ([IsAuthenticated])
+
+    def get(self, request):
+        user = request.user
+        # if not user.is_superuser:
+            # return Response({"error": "Permission denied"}, status=403)
+        toReturn = []
+        courses = Course.objects.all()
+        for course in courses:
+            course_data = {
+                'id': course.pk,
+                'name': course.name,
+                'code': course.code,
+                'isActive': course.summer_courses.exists(),
+                # 'semester': course.groups.first().course_semester.first().program.name if course.groups.exists() else None,
+                # 'faculty': course.faculty.name if course.faculty else None,
+                # 'department': course.department.name if course.department else None,
+            }
+            toReturn.append(course_data)
+        return Response(toReturn)
+
+    def post(self, request):
+        user = request.user
+        # if not user.is_superuser:
+            # return Response({"error": "Permission denied"}, status=403)
+        courseId = request.data.get('courseId')
+        isActive = request.data.get('isActive', False)
+        if not courseId:
+            return Response({"error": "Course ID is required"}, status=400)
+        try:
+            course = Course.objects.get(pk=courseId)
+        except Course.DoesNotExist:
+            return Response({"error": "Course not found"}, status=404)
+        #check   if exist in SummerCourse
+        if isActive and not course.summer_courses.exists():
+            summerCourse = SummerCourse.objects.create(course=course, status=isActive)
+        elif not isActive and course.summer_courses.exists():
+            summerCourse = SummerCourse.objects.filter(course=course).first()
+            if summerCourse:
+                summerCourse.delete()
+        return Response({"success": "Course status updated"}, status=200)

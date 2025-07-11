@@ -469,8 +469,12 @@ class StudentScanView(viewsets.ModelViewSet):
         return Response(output, status=status.HTTP_201_CREATED)
 
 class SummerCourseView(viewsets.ModelViewSet):
+    authentication_classes =[]
+    permission_classes = []
+
     queryset = SummerCourse.objects.all()
     serializer_class = SummerCourseSerializer
+    
     
     def get_queryset(self):
         return SummerCourse.objects.filter(course__isnull=False).distinct()
@@ -481,6 +485,9 @@ class SummerCourseView(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 class SummerStudentSelectionView(viewsets.ModelViewSet):
+    authentication_classes =[]
+    permission_classes = []
+
     queryset = SummerStudentSelection.objects.all()
     serializer_class = SummerStudentSelectionSerializer
     

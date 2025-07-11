@@ -37,7 +37,7 @@ const MyTimetable = () => {
 	const [tableMobileData, settableMobileData] = useState([]);
 	const [mobileColumns, setMobileColumns] = useState();
 	const [marks, setMarks] = useState();
-	const [selectedScheduleType, setselectedScheduleType] = useState(5); //default 'All'
+	const [selectedScheduleType, setselectedScheduleType] = useState('All'); //default 'All'
 	const [scheduleType, setscheduleType] = useState([]);
 	const [columns, setColumns] = useState([]);
 	const [columns1, setColumns1] = useState([]);
